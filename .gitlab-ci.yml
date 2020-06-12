@@ -1,39 +1,17 @@
-image: node:8.10.0
+# Node docker image on which this would be run
+image: node:8.9.0
 
-cache:
-  paths:
-  - node_modules/
-
+#This command is run before actual stages start running
 before_script:
-   #generate ssh key
-     - mkdir -p ~/.ssh
-     - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-     - chmod 600 ~/.ssh/id_rsa
-     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-     - npm install
-  
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - npm install
+
 stages:
-     - build
-     - test
-     - deploy
-
-install_dependencies:
-      stage: build
-      script:
-        - npm install
-      artifacts:
-        paths:
-          - node_modules/
-
-            #test_async:
-            #stage: test
-            #script:
-            #- npm test
+  - deploy
 
 deployToAWS:
   only:
-    - master
+    - autodeploy
   stage: deploy
   script:
     - bash deploy/deploy.sh

@@ -2,7 +2,7 @@
 #!/bin/bash
 
 # any future command that fails will exit the script
-#set -e
+set -e
 #test line
 #i Lets write the public key of our aws instance
 
@@ -15,7 +15,7 @@ echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
 # ** End of alternative approach
 
 # disable the host key checking.
-#./deploy/disableHostKeyChecking.sh
+./deploy/disableHostKeyChecking.sh
 
 # we have already setup the DEPLOYER_SERVER in our gitlab settings which is a
 # comma seperated values of ip addresses.
@@ -28,12 +28,11 @@ DEPLOY_SERVERS=$DEPLOY_SERVERS
 #ALL_SERVERS=(${DEPLOY_SERVERS//,/ })
 #echo "ALL_SERVERS ${ALL_SERVERS}"
 #test
-# Lets iterate over this array and ssh into each EC2 instance
+# Leiits iterate over this array and ssh into each EC2 instance
 # Once inside the server, run updateAndRestart.sh
 #for server in "${ALL_SERVERS[@]}"
 #do
+
   echo "deploying to ${DEPLOY_SERVERS}"
-  ssh ubuntu@${DEPLOY_SERVERS} "cd /home/ubuntu/PRD && git clone git@gitlab.com:statwig-public/theledger.git && cd /home/ubuntu/PRD/theledger && npm start"
-#done
-#testi11
+  ssh ec2-user@${DEPLOY_SERVERS} 'bash' < ./deploy/start.sh
 
