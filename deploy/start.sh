@@ -23,7 +23,7 @@ services="blockchain_service"
 
 for line in $services; do
 echo "Starting $line service"
-cd /home/ec2-user/theledger/backend/$line
+cd /home/ec2-user/PRD/theledger/backend/$line
 echo "curr dir $PWD"
 echo "Running npm install"
 npm install
