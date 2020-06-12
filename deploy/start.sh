@@ -27,7 +27,7 @@ echo "curr dir $PWD"
 echo "Running npm install"
 npm install
 npm start &
-#pm2 start
+#pm2 startttt
 echo "Started $line service"
 cd ../..
 echo "curr back dire $PWD"
