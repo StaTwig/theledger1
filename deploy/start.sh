@@ -18,7 +18,7 @@ git clone https://gitlab.com/statwig-public/theledger.git
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
 #test
-cd backend
+cd /home/ec2-user/PRD/theledger/backend
 
   cd -P .
       for dir in ./*/
