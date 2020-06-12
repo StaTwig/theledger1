@@ -17,6 +17,7 @@ git clone https://gitlab.com/statwig-public/theledger.git
 #If you are not using nvm, add the actual path like
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
+#test
 
 
 services="blockchain_service"
