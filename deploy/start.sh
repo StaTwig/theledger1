@@ -18,19 +18,28 @@ git clone https://gitlab.com/statwig-public/theledger.git
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
 #test
+cd backend
+
+  cd -P .
+      for dir in ./*/
+         do cd -P "$dir" ||continue
+ echo "curr dir $PWD"
+      		 printf %s\\n "$PWD" >&2
+            npm install && pm2 start && cd "$OLDPWD" ||
+         ! break; done || ! cd - >&2
 
 
-services="blockchain_service shipping_service inventory_service user_service"
+#services="blockchain_service shipping_service inventory_service user_service"
 
-for line in $services; do
-echo "Starting $line service"
-cd /home/ec2-user/PRD/theledger/backend/$line
-echo "curr dir $PWD"
-echo "Running npm install"
-npm install
-npm start &
-echo "Started $line service"
-cd ../..
-echo "curr back dire $PWD"
-done
+#for line in $services; do
+#echo "Starting $line service"
+#cd /home/ec2-user/PRD/theledger/backend/$line
+#echo "curr dir $PWD"
+#echo "Running npm install"
+#npm install
+#npm start &
+#echo "Started $line service"
+#cd ../..
+#echo "curr back dire $PWD"
+#done
 
