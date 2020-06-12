@@ -29,17 +29,3 @@ cd /home/ec2-user/PRD/theledger/backend
          ! break; done || ! cd - >&2
 
 
-#services="blockchain_service shipping_service inventory_service user_service"
-
-#for line in $services; do
-#echo "Starting $line service"
-#cd /home/ec2-user/PRD/theledger/backend/$line
-#echo "curr dir $PWD"
-#echo "Running npm install"
-#npm install
-#npm start &
-#echo "Started $line service"
-#cd ../..
-#echo "curr back dire $PWD"
-#done
-
