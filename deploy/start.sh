@@ -10,6 +10,7 @@ set -e
 rm -rf /home/ec2-user/PRD/theledger
 
 # clone the repo again
+cd /home/ec2-user/PRD
 git clone https://gitlab.com/statwig-public/theledger.git
 
 #source the nvm file. In an non
