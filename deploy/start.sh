@@ -20,7 +20,7 @@ git clone https://gitlab.com/statwig-public/theledger.git
 #test
 
 
-services="blockchain_service"
+services="blockchain_service shipping_service inventory_service user_service"
 
 for line in $services; do
 echo "Starting $line service"
@@ -29,7 +29,6 @@ echo "curr dir $PWD"
 echo "Running npm install"
 npm install
 npm start &
-#pm2 startttt
 echo "Started $line service"
 cd ../..
 echo "curr back dire $PWD"
