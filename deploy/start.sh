@@ -12,6 +12,8 @@ rm -rf /home/ec2-user/PRD/theledger
 # clone the repo again
 cd /home/ec2-user/PRD
 git clone https://gitlab.com/statwig-public/theledger.git
+cd /home/ec2-user/PRD/theledger
+
 git checkout autodeploy
 #source the nvm file. In an non
 #If you are not using nvm, add the actual path like
