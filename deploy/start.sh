@@ -23,9 +23,9 @@ cd /home/ec2-user/PRD/theledger/backend
   cd -P .
       for dir in ./*/
          do cd -P "$dir" ||continue
- echo "curr dir $PWD"
-      		 printf %s\\n "$PWD" >&2
-            npm install && pm2 start && cd "$OLDPWD" ||
+         echo "curr dir $PWD"
+         printf %s\\n "$PWD" >&2
+         npm install && pm2 start && cd "$OLDPWD" ||
          ! break; done || ! cd - >&2
 
 
