@@ -33,6 +33,6 @@ DEPLOY_SERVERS=$DEPLOY_SERVERS_TD
 #for server in "${ALL_SERVERS[@]}"
 #do
 
-  echo "deploying to ${DEPLOY_SERVERS}"
-  ssh ubuntu@${DEPLOY_SERVERS} 'bash' < ./deploy/start.sh
+  echo "deploying to ${DEPLOY_SERVERS_TD}"
+  ssh ubuntu@${DEPLOY_SERVERS_TD} 'bash' < ./deploy/start.sh
 
