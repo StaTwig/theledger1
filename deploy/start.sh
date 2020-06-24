@@ -21,9 +21,9 @@ git checkout autodeploy_testdev
 #source /home/ubuntu/.nvm/nvm.sh
 #test1
 echo "deploying the frontend"
-cd /home/ubuntu/PRD/theledger/frontend
-npm install
-npm run build
+#cd /home/ubuntu/PRD/theledger/frontend
+#npm install
+#npm run build
 echo "deployed the frontend donuuuue"
 echo "deploying the backend"
 cd /home/ubuntu/PRD/theledger/backend
