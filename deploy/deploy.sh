@@ -20,6 +20,7 @@ echo "$SSH_PRIVATE_KEY_TD" | tr -d '\r' | ssh-add - > /dev/null
 # we have already setup the DEPLOYER_SERVER in our gitlab settings which is a
 # comma seperated values of ip addresses.
 DEPLOY_SERVERS=$DEPLOY_SERVERS_TD
+echo "DEPLOY_SERVERS"
 
 # lets split this string and convert this into array
 # In UNIX, we can use this commond to do this
@@ -33,6 +34,6 @@ DEPLOY_SERVERS=$DEPLOY_SERVERS_TD
 #for server in "${ALL_SERVERS[@]}"
 #do
 
-  echo "deploying too ${DEPLOY_SERVERS_TD}"
-  ssh ubuntu@${DEPLOY_SERVERS_TD} 'bash' < ./deploy/start.sh
+  echo "deploying too ${DEPLOY_SERVERS}"
+  ssh ubuntu@${DEPLOY_SERVERS} 'bash' < ./deploy/start.sh
 
