@@ -11,7 +11,7 @@ stages:
 
 deployToAWS:
   only:
-    - autodeploy
+    - autodeploy_testdev
   stage: deploy
   script:
     - bash deploy/deploy.sh
