@@ -24,7 +24,7 @@ echo "deploying the frontend"
 cd /home/ubuntu/PRD/theledger/frontend
 npm install
 npm run build
-echo "deployed the frontend donuue"
+echo "deployed the frontend donuuuue"
 echo "deploying the backend"
 cd /home/ubuntu/PRD/theledger/backend
 echo "goig to start process"
