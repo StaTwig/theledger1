@@ -7,26 +7,26 @@
 set -e
 
 # Delete the old repos
-rm -rf /home/ec2-user/PRD/theledger
+rm -rf /home/ubuntu/PRD/theledger
 
 # clone the repo again
-cd /home/ec2-user/PRD
+cd /home/ubuntu/PRD
 git clone https://gitlab.com/statwig-public/theledger.git
-cd /home/ec2-user/PRD/theledger
+cd /home/ubuntu/PRD/theledger
 
-git checkout autodeploy
+git checkout autodeploy_testdev
 #source the nvm file. In an non
 #If you are not using nvm, add the actual path like
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
 #test1
 echo "deploying the frontend"
-cd /home/ec2-user/PRD/theledger/frontend
+cd /home/ubuntu/PRD/theledger/frontend
 npm install
 npm run build
 echo "deployed the frontend"
 echo "deploying the backend"
-cd /home/ec2-user/PRD/theledger/backend
+cd /home/ubuntu/PRD/theledger/backend
 echo "goig to start process"
 
   cd -P .

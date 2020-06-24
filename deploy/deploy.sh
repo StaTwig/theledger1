@@ -7,7 +7,7 @@ set -e
 #i Lets write the public key of our aws instance
 
 eval $(ssh-agent -s)
-echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+echo "$SSH_PRIVATE_KEY_TD" | tr -d '\r' | ssh-add - > /dev/null
 
 # ** Alternative approach
 # echo -e "$PRIVATE_KEY" > /root/.ssh/id_rsa
@@ -19,7 +19,7 @@ echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
 
 # we have already setup the DEPLOYER_SERVER in our gitlab settings which is a
 # comma seperated values of ip addresses.
-DEPLOY_SERVERS=$DEPLOY_SERVERS
+DEPLOY_SERVERS=$DEPLOY_SERVERS_TD
 
 # lets split this string and convert this into array
 # In UNIX, we can use this commond to do this
@@ -34,5 +34,5 @@ DEPLOY_SERVERS=$DEPLOY_SERVERS
 #do
 
   echo "deploying to ${DEPLOY_SERVERS}"
-  ssh ec2-user@${DEPLOY_SERVERS} 'bash' < ./deploy/start.sh
+  ssh ubuntu@${DEPLOY_SERVERS} 'bash' < ./deploy/start.sh
 
