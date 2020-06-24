@@ -20,7 +20,12 @@ git checkout autodeploy
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
 #test1
-echo "before"
+echo "deploying the frontend"
+cd /home/ec2-user/PRD/theledger/frontend
+npm install
+npm run build
+echo "deployed the frontend"
+echo "deploying the backend"
 cd /home/ec2-user/PRD/theledger/backend
 echo "goig to start process"
 
@@ -32,4 +37,4 @@ echo "goig to start process"
 	 npm install && pm2 start && cd "$OLDPWD" ||
          ! break; done || ! cd - >&2
 
-
+echo "deployed the backend"
