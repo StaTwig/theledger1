@@ -22,8 +22,8 @@ git checkout autodeploy_testdev
 #test1
 echo "deploying the frontend"
 cd /home/ubuntu/PRD/theledger/frontend
-npm install
-npm run build
+/home/ubuntu/node/bin/npm install
+/home/ubuntu/node/bin/npm run build
 
 echo "deploying the backend"
 cd /home/ubuntu/PRD/theledger/backend
