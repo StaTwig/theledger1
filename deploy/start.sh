@@ -34,7 +34,7 @@ echo "goig to start process"
          do cd -P "$dir" ||continue
          echo "curr dir $PWD"
          printf %s\\n "$PWD" >&2
-	 npm install && (npm start &) && cd "$OLDPWD" ||
+	 /usr/bin/npm install && (/usr/bin/npm start &) && cd "$OLDPWD" ||
          ! break; done || ! cd - >&2
 
 echo "deployed the backend"
