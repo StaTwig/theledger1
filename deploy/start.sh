@@ -20,7 +20,7 @@ git checkout autodeploy_testdev
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
 #test1
-echo "deploying the frontend"
+echo "deploying the frontend 1"
 cd /home/ubuntu/PRD/theledger/frontend
 /home/ubuntu/node/bin/npm install
 /home/ubuntu/node/bin/npm run build
