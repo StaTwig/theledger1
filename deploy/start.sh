@@ -21,6 +21,7 @@ git checkout development
 #test1
 echo "deploying the frontend"
 cd $HOME/theledger/frontend
+export PATH=$PATH:/home/ubuntu/node/bin
 npm install
 ENVIRONMENT=test npm run build
 
