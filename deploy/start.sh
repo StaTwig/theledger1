@@ -19,7 +19,7 @@ git checkout development
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
 #test1
-echo "deploying the frontend 1"
+echo "deploying the frontend"
 cd $HOME/theledger/frontend
 npm install
 ENVIRONMENT=test npm run build
