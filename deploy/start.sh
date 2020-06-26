@@ -7,34 +7,33 @@
 set -e
 
 # Delete the old repos
-rm -rf /home/ubuntu/PRD/theledger
+rm -rf $HOME/theledger
 
 # clone the repo again
-cd /home/ubuntu/PRD
 git clone https://gitlab.com/statwig-public/theledger.git
-cd /home/ubuntu/PRD/theledger
+cd ./theledger
 
-git checkout autodeploy_testdev
+git checkout development
 #source the nvm file. In an non
 #If you are not using nvm, add the actual path like
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
 #test1
 echo "deploying the frontend 1"
-cd /home/ubuntu/PRD/theledger/frontend
-#/usr/bin/npm install
-#/usr/bin/npm run build
+cd $HOME/theledger/frontend
+npm install
+ENVIRONMENT=test npm run build
 
 echo "deploying the backend"
-cd /home/ubuntu/PRD/theledger/backend
-echo "goig to start process"
-
-  cd -P .
-      for dir in ./*/
-         do cd -P "$dir" ||continue
-         echo "curr dir $PWD"
-         printf %s\\n "$PWD" >&2
-	 /usr/bin/npm install && (/usr/bin/npm start &) && cd "$OLDPWD" ||
-         ! break; done || ! cd - >&2
+cd $HOME/theledger/backend
+echo "Staring the build and deployment of services..... Go Grab a "
+printf '\U2615\n'
+cd -P .
+for dir in ./*/
+    do cd -P "$dir" ||continue
+    echo "curr dir $PWD"
+    printf %s\\n "$PWD" >&2
+    npm install && pm2 start && pm2 save && cd "$OLDPWD" ||
+    ! break; done || ! cd - >&2
 
 echo "deployed the backend"
