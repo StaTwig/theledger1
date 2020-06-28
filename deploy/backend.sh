@@ -19,7 +19,6 @@ git checkout autodeploy_testdev
 #If you are not using nvm, add the actual path like
 # PATH=/home/ubuntu/node/bin:$PATH
 #source /home/ubuntu/.nvm/nvm.sh
-#test1
 echo "before"
 cd /home/ec2-user/PRD/theledger/backend
 echo "goig to start process"
