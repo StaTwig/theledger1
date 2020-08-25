@@ -53,19 +53,19 @@ exports.addPermissions = [
         if (result.success) {
           logger.log('info', '<<<<< RbacService < RbacController < addPermissions : token verifed successfully');
           console.log(req.body.permissions)
-          // const rbac_object = await RbacModel.find({})
-          // if(rbac_object){
-          //   console.log("Rbac Object : ", rbac_object);
-          //   const rbac_object_1 = new RbacModel({
-          //     permissions: req.body.permissions
-          //   })
-          //   rbac_object_1.updateOne(rbac_object)
-          // }
-          const rbac = new RbacModel({
-            permissions: req.body.permissions,
-          });
-
-          await rbac.save();
+          const rbac_object = await RbacModel.find({})
+          if(rbac_object){
+            await RbacModel.remove();
+            const rbac = new RbacModel({
+              permissions: req.body.permissions
+            })
+            await rbac.save()
+          } else{
+            const rbac = new RbacModel({
+              permissions: req.body.permissions,
+            });
+            await rbac.save();  
+          }
           apiResponse.successResponseWithData(res, 'Success');
         } else {
           logger.log('warn', '<<<<< RbacService < RbacController < addPermissions : user is not authenticated')
