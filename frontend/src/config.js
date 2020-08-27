@@ -1,4 +1,5 @@
 export const TEST_SERVER_URL = 'http://test.vaccineledger.com:9001';
+export const TECHM_SERVER_URL = 'http://techm.vaccineledger.com:9001';
 export const LOCAL_SERVER_URL_USER = 'http://localhost:3001';
 export const LOCAL_SERVER_URL_SHIPMENT = 'http://localhost:3002';
 export const LOCAL_SERVER_URL_INVENTORY = 'http://localhost:3007';
@@ -118,6 +119,32 @@ export function config() {
       addNewProduct:`${TEST_SERVER_URL}/productmanagement/api/products/addProductName`,
       getProducts: `${TEST_SERVER_URL}/productmanagement/api/products/getProductNames`,
       addMultipleProducts:`${TEST_SERVER_URL}/productmanagement/api/products/addMultipleProducts`,
+    },
+    techm: {
+      loginUrl: `${TECHM_SERVER_URL}/usermanagement/api/auth/login`,
+      registerUrl: `${TECHM_SERVER_URL}/usermanagement/api/auth/register`,
+      verifyOtpUrl: `${TECHM_SERVER_URL}/usermanagement/api/auth/verify-otp`,
+      userInfoUrl: `${TECHM_SERVER_URL}/usermanagement/api/auth/userInfo`,
+      getAllUsersUrl: `${TECHM_SERVER_URL}/usermanagement/api/auth/getAllUsers`,
+      updateProfileUrl: `${TECHM_SERVER_URL}/usermanagement/api/auth/updateProfile`,
+      upload: `${TECHM_SERVER_URL}/usermanagement/api/auth/upload`,
+      shipmentsUrl: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/fetchUserShipments`,
+      getProducts: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/getProducts`,
+      getManufacturers: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/getManufacturers`,
+      createShipmentUrl: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/createShipment`,
+      shipmentsSearch: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/fetchShipments?key=`,
+      createPurchaseOrderUrl: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/createPurchaseOrder`,
+      fetchAllPurchaseOrdersUrl: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/fetchPublisherPurchaseOrders`,
+      fetchAllPurchaseOrderUrl: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/fetchpurchaseOrder?key=`,
+      fetchPurchaseOrderStatisticsUrl: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/purchaseOrderStatistics`,
+      inventorySearch: `${TECHM_SERVER_URL}/inventorymanagement/api/inventory/getInventoryDetailsForProduct?key=`,
+      inventoriesUrl: `${TECHM_SERVER_URL}/inventorymanagement/api/inventory/getAllInventoryDetails`,
+      addInventoryUrl: `${TECHM_SERVER_URL}/inventorymanagement/api/inventory/addNewInventory`,
+      trackShipment: `${TECHM_SERVER_URL}/shipmentmanagement/api/shipping/trackShipment?shipmentId=`,
+      trackTemperature:`${TECHM_SERVER_URL}/tracktracemanagement/api/track/fetchTemp`,
+      addNewProduct:`${TECHM_SERVER_URL}/productmanagement/api/products/addProductName`,
+      getProducts: `${TECHM_SERVER_URL}/productmanagement/api/products/getProductNames`,
+      addMultipleProducts:`${TECHM_SERVER_URL}/productmanagement/api/products/addMultipleProducts`,
     },
     prod: {
       loginUrl: `${PROD_SERVER_URL}/usermanagement/api/auth/login`,

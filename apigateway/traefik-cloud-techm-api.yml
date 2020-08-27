@@ -18,5 +18,5 @@ log:
 providers:
     # Enable the file provider to define routers / middlewares / services in file
     file:
-        filename: ./config-dev-cloud-api.toml
+        filename: ./config-techm-cloud-api.toml
   
