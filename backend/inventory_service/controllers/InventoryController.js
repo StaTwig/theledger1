@@ -28,6 +28,7 @@ exports.getTotalCount = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < getTotalCount : token verifed successfully')
+
           permission_request = {
             "result" : result,
             "permissionRequired" : "viewInventory"
@@ -59,6 +60,7 @@ exports.getTotalCountOnHold = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < getTotalCountOnHold : token verified successfully')
+
           permission_request = {
             "result" : result,
             "permissionRequired" : "viewInventory"
@@ -379,7 +381,7 @@ exports.addMultipleInventories = [
 
           permission_request = {
             "result" : result,
-            "permissionRequired" : "viewInventory"
+            "permissionRequired" : "addInventory"
           }
           checkPermissions(permission_request, response, async permissionResult => {
             if(permissionResult.success) {

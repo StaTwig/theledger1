@@ -34,13 +34,24 @@ exports.shipmentStatistics = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < shipmentStatistics : token verified successfully, querying data by publisher');
-          const { address } = req.user;
-          const response = await axios.get(
-            `${blockchain_service_url}/queryDataByPublishers?stream=${stream_name}&address=${address}`,
-          );
-          const items = response.data.items;
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < shipmentStatistics : queried data by publisher');
-          res.json({ data: items });
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewShipment"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { address } = req.user;
+              const response = await axios.get(
+                `${blockchain_service_url}/queryDataByPublishers?stream=${stream_name}&address=${address}`,
+              );
+              const items = response.data.items;
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < shipmentStatistics : queried data by publisher');
+              res.json({ data: items });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < shipmentStatistics : refuted token');
           res.status(403).json(result);
@@ -60,13 +71,24 @@ exports.purchaseOrderStatistics = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < purchaseOrderStatistics : token verified successfully, querying data by publisher');
-          const { address } = req.user;
-          const response = await axios.get(
-            `${blockchain_service_url}/queryDataByPublishers?stream=${po_stream_name}&address=${address}`,
-          );
-          const items = response.data.items;
-          res.json({ data: items });
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < purchaseOrderStatistics : queried data by publisher');
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewPO"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { address } = req.user;
+              const response = await axios.get(
+                `${blockchain_service_url}/queryDataByPublishers?stream=${po_stream_name}&address=${address}`,
+              );
+              const items = response.data.items;
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < purchaseOrderStatistics : queried data by publisher');
+              res.json({ data: items });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < purchaseOrderStatistics : refuted token');
           res.status(403).json(result);
@@ -87,13 +109,24 @@ exports.fetchShipments = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchShipments : token verified successfully, querying data by key')
-          const { key } = req.query;
-          const response = await axios.get(
-            `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${key}`,
-          );
-          const items = response.data.items;
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchShipments : quried by key')
-          res.json({ data: items });
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "receiveShipment"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { key } = req.query;
+              const response = await axios.get(
+                `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${key}`,
+              );
+              const items = response.data.items;
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchShipments : quried by key')
+              res.json({ data: items });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < fetchShipments : refuted token')
           res.status(403).json(result);
@@ -114,12 +147,23 @@ exports.fetchAllPurchaseOrders = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchAllPurchaseOrders : token verified successfully, querying all stream keys')
-          const response = await axios.get(
-            `${blockchain_service_url}/queryAllStreamKeys?stream=${po_stream_name}`,
-          );
-          const items = response.data.items;
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchAllPurchaseOrders : queried all stream keys')
-          res.json({ data: items });
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "receivePO"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const response = await axios.get(
+                `${blockchain_service_url}/queryAllStreamKeys?stream=${po_stream_name}`,
+              );
+              const items = response.data.items;
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchAllPurchaseOrders : queried all stream keys')
+              res.json({ data: items });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < fetchAllPurchaseOrders : refuted token')
           res.status(403).json(result);
@@ -140,14 +184,25 @@ exports.fetchPublisherPurchaseOrders = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchPublisherPurchaseOrders : token verified successfully, querying all publisher keys')
-          const { address } = req.user;
-          const response = await axios.get(
-            `${blockchain_service_url}/queryAllPublisherKeys?stream=${po_stream_name}&address=${address}`,
-          );
-          const items = response.data.items;
-          let unique_items = [...new Set(items)];
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchPublisherPurchaseOrders : queried all publisher keys')
-          res.json({ data: unique_items });
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewPO"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { address } = req.user;
+              const response = await axios.get(
+                `${blockchain_service_url}/queryAllPublisherKeys?stream=${po_stream_name}&address=${address}`,
+              );
+              const items = response.data.items;
+              let unique_items = [...new Set(items)];
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchPublisherPurchaseOrders : queried all publisher keys')
+              res.json({ data: unique_items });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < fetchPublisherPurchaseOrders : refuted token')
           res.status(403).json(result);
@@ -209,138 +264,148 @@ exports.createShipment = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : token verified successfully, shipment creation started')
-          const { address, email } = req.user;
 
-          const { data } = req.body;
-          const { shipmentId } = data;
-          const userData = {
-            stream: stream_name,
-            key: shipmentId,
-            address: req.query.address ? req.query.address : address,
-            data: data,
-          };
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "createShipmentOrder"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { address, email } = req.user;
 
-          const response = await axios.post(
-            `${blockchain_service_url}/publish`,
-            userData,
-          );
-          const txnId = response.data.transactionId;
-          const userModel = await UserModel.findOne({ address });
-          const sender_address = address;
-          const receiver_address = data.receiver;
-          const sender = await UserTransactionModel.findOne({
-            destinationUser: sender_address,
-          });
-          const receiver = await UserTransactionModel.findOne({
-            destinationUser: receiver_address,
-          });
-          const shipmentFound = await ShipmentModel.findOne({ shipmentId });
-          const organisationFound = await OrganisationModel.findOne({
-            organisationId: userModel.organisation,
-          });
-          //User Transaction Collection
-          if (!sender) {
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : assigning sender address')
-            const newUser = new UserTransactionModel({
-              destinationUser: sender_address,
-              shipmentIds: [shipmentId],
-            });
-            await newUser.save();
-          } else {
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : shipment with sender found')
-            //const txnIds = [...sender.shipmentIds, shipmentId];
-            const shipmentFound = sender.shipmentIds.find(shpId => shpId === shipmentId);
-            if(!shipmentFound){
-              logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : updating shipment for sender in model')
-              const shipmentIds = [...sender.shipmentIds, shipmentId];
-              await UserTransactionModel.updateOne(
-                { destinationUser: sender_address },
-                { shipmentIds },
+              const { data } = req.body;
+              const { shipmentId } = data;
+              const userData = {
+                stream: stream_name,
+                key: shipmentId,
+                address: req.query.address ? req.query.address : address,
+                data: data,
+              };
+    
+              const response = await axios.post(
+                `${blockchain_service_url}/publish`,
+                userData,
               );
-            }
-          }
-
-          if (!receiver) {
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : assigning receiver address')
-            const newUser = new UserTransactionModel({
-              destinationUser: receiver_address,
-              shipmentIds: [shipmentId],
-            });
-            await newUser.save();
-          } else {
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : shipment with receiver found')
-            //const txnIds = [...receiver.txnIds, txnId];
-            const shipmentFound = receiver.shipmentIds.find(shpId => shpId === shipmentId);
-            if(!shipmentFound){
-              logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : updating shipment for receiver in model')
-              const shipmentIds = [...receiver.shipmentIds, shipmentId];
-              await UserTransactionModel.updateOne(
-                { destinationUser: receiver_address },
-                { shipmentIds },
-              );
-            }
-          }
-          //Shipment Collection
-          if (!shipmentFound) {
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : shipment found in collection')
-            const newShipment = new ShipmentModel({
-              shipmentId,
-              txnIds: [txnId],
-            });
-            await newShipment.save();
-          } else {
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : updating shipment in shipment model')
-            const txnIds = [...shipmentFound.txnIds, txnId];
-            await ShipmentModel.updateOne({ shipmentId }, { txnIds });
-          }
-          //Organisation Collection
-          if (!organisationFound) {
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : assigning organisation')
-            const newOrganisation = new OrganisationModel({
-              organisationId: userModel.organisation,
-              shipmentNumber: [shipmentId],
-            });
-            await newOrganisation.save();
-          } else {
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : organisation already present')
-            const shipmentNumbers = [
-              ...organisationFound.shipmentNumbers,
-              data.shipmentId,
-            ];
-
-            await OrganisationModel.updateOne(
-              { organisationId: userModel.organisation },
-              { shipmentNumbers },
-            );
-          }
-          const emptyShipmentNumber = data.products.find(
-            product => product.serialNumber === '',
-          );
-          const emptyBatchNumber = data.products.find(
-            product => product.batchNumber === '',
-          );
-          if(!emptyBatchNumber && !emptyShipmentNumber) {
-            //Products Collection
-            logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : Shipment ad batch numbers are not empty')
-            await utility.asyncForEach(data.products, async product => {
-              const productQuery = { serialNumber: product.serialNumber };
-              const productFound = await ProductModel.findOne(productQuery);
-              if (productFound) {
-                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : product found')
-                await ProductModel.updateOne(productQuery, {
-                  txnIds: [...productFound.txnIds, txnId],
+              const txnId = response.data.transactionId;
+              const userModel = await UserModel.findOne({ address });
+              const sender_address = address;
+              const receiver_address = data.receiver;
+              const sender = await UserTransactionModel.findOne({
+                destinationUser: sender_address,
+              });
+              const receiver = await UserTransactionModel.findOne({
+                destinationUser: receiver_address,
+              });
+              const shipmentFound = await ShipmentModel.findOne({ shipmentId });
+              const organisationFound = await OrganisationModel.findOne({
+                organisationId: userModel.organisation,
+              });
+              //User Transaction Collection
+              if (!sender) {
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : assigning sender address')
+                const newUser = new UserTransactionModel({
+                  destinationUser: sender_address,
+                  shipmentIds: [shipmentId],
                 });
+                await newUser.save();
               } else {
-                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : creating new product')
-                const newProduct = new ProductModel({
-                  serialNumber: product.serialNumber,
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : shipment with sender found')
+                //const txnIds = [...sender.shipmentIds, shipmentId];
+                const shipmentFound = sender.shipmentIds.find(shpId => shpId === shipmentId);
+                if(!shipmentFound){
+                  logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : updating shipment for sender in model')
+                  const shipmentIds = [...sender.shipmentIds, shipmentId];
+                  await UserTransactionModel.updateOne(
+                    { destinationUser: sender_address },
+                    { shipmentIds },
+                  );
+                }
+              }
+    
+              if (!receiver) {
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : assigning receiver address')
+                const newUser = new UserTransactionModel({
+                  destinationUser: receiver_address,
+                  shipmentIds: [shipmentId],
+                });
+                await newUser.save();
+              } else {
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : shipment with receiver found')
+                //const txnIds = [...receiver.txnIds, txnId];
+                const shipmentFound = receiver.shipmentIds.find(shpId => shpId === shipmentId);
+                if(!shipmentFound){
+                  logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : updating shipment for receiver in model')
+                  const shipmentIds = [...receiver.shipmentIds, shipmentId];
+                  await UserTransactionModel.updateOne(
+                    { destinationUser: receiver_address },
+                    { shipmentIds },
+                  );
+                }
+              }
+              //Shipment Collection
+              if (!shipmentFound) {
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : shipment found in collection')
+                const newShipment = new ShipmentModel({
+                  shipmentId,
                   txnIds: [txnId],
                 });
-                await newProduct.save();
+                await newShipment.save();
+              } else {
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : updating shipment in shipment model')
+                const txnIds = [...shipmentFound.txnIds, txnId];
+                await ShipmentModel.updateOne({ shipmentId }, { txnIds });
               }
-            });
-          }
-
+              //Organisation Collection
+              if (!organisationFound) {
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : assigning organisation')
+                const newOrganisation = new OrganisationModel({
+                  organisationId: userModel.organisation,
+                  shipmentNumber: [shipmentId],
+                });
+                await newOrganisation.save();
+              } else {
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : organisation already present')
+                const shipmentNumbers = [
+                  ...organisationFound.shipmentNumbers,
+                  data.shipmentId,
+                ];
+    
+                await OrganisationModel.updateOne(
+                  { organisationId: userModel.organisation },
+                  { shipmentNumbers },
+                );
+              }
+              const emptyShipmentNumber = data.products.find(
+                product => product.serialNumber === '',
+              );
+              const emptyBatchNumber = data.products.find(
+                product => product.batchNumber === '',
+              );
+              if(!emptyBatchNumber && !emptyShipmentNumber) {
+                //Products Collection
+                logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : Shipment ad batch numbers are not empty')
+                await utility.asyncForEach(data.products, async product => {
+                  const productQuery = { serialNumber: product.serialNumber };
+                  const productFound = await ProductModel.findOne(productQuery);
+                  if (productFound) {
+                    logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : product found')
+                    await ProductModel.updateOne(productQuery, {
+                      txnIds: [...productFound.txnIds, txnId],
+                    });
+                  } else {
+                    logger.log('info', '<<<<< ShipmentService < ShipmentController < createShipment : creating new product')
+                    const newProduct = new ProductModel({
+                      serialNumber: product.serialNumber,
+                      txnIds: [txnId],
+                    });
+                    await newProduct.save();
+                  }
+                });
+              }
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < createShipment : user not authenticated')
           return apiResponse.ErrorResponse(res, 'User not authenticated');
@@ -362,8 +427,19 @@ exports.reviewShipment = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < reviewShipment : token verified successfully')
-          const { shipment_id } = result.data.shipment_id;
-          res.json('Shipment Review');
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "scanShipment"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { shipment_id } = result.data.shipment_id;
+              res.json('Shipment Review');
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < reviewShipment : could not verify token')
           res.status(403).json(result);
@@ -384,8 +460,20 @@ exports.verifyShipment = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < verifyShipment : token verified successfully')
-          const { shipment_id } = result.data.shipment_id;
-          res.json('Shipment Verify');
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "completeShipment"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { shipment_id } = result.data.shipment_id;
+              res.json('Shipment Verify');
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
+
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < verifyShipment : could not verify token')
           res.status(403).json(result);
@@ -406,29 +494,41 @@ exports.modifyShipment = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < modifyShipment : token verified successfully, querying data by key')
-          const { data } = result.data;
-          const { key, status } = req.query;
-          const response = await axios.get(
-            `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${key}`,
-          );
 
-          const item = response.data.items[response.data.items.length - 1];
-          const shipment = JSON.parse(item.data);
-          shipment.status = status;
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "scanShipment"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { data } = result.data;
+              const { key, status } = req.query;
+              const response = await axios.get(
+                `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${key}`,
+              );
+    
+              const item = response.data.items[response.data.items.length - 1];
+              const shipment = JSON.parse(item.data);
+              shipment.status = status;
+    
+              const { address } = req.user;
+              const userData = {
+                stream: stream_name,
+                key: shipment.shipmentId,
+                address: address,
+                data: shipment,
+              };
+              const postResponse = await axios.post(
+                `${blockchain_service_url}/publish`,
+                userData,
+              );
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < modifyShipment : queried data by key')
+              res.status(200).json({ response: postResponse.data.transactionId });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
 
-          const { address } = req.user;
-          const userData = {
-            stream: stream_name,
-            key: shipment.shipmentId,
-            address: address,
-            data: shipment,
-          };
-          const postResponse = await axios.post(
-            `${blockchain_service_url}/publish`,
-            userData,
-          );
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < modifyShipment : queried data by key')
-          res.status(200).json({ response: postResponse.data.transactionId });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < modifyShipment : refuted token')
           res.status(403).json(result);
@@ -449,13 +549,24 @@ exports.fetchPurchaseOrder = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchPurchaseOrder : token verified successfully, querying data by key')
-          const { key } = req.query;
-          const response = await axios.get(
-            `${blockchain_service_url}/queryDataByKey?stream=${po_stream_name}&key=${key}`,
-          );
-          const items = response.data.items;
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchPurchaseOrder : queried data by key')
-          res.json({ data: items });
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewPO"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { key } = req.query;
+              const response = await axios.get(
+                `${blockchain_service_url}/queryDataByKey?stream=${po_stream_name}&key=${key}`,
+              );
+              const items = response.data.items;
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchPurchaseOrder : queried data by key')
+              res.json({ data: items });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < fetchPurchaseOrder : refuted token')
           res.status(403).json(result);
@@ -475,21 +586,32 @@ exports.createPurchaseOrder = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < createPurchaseOrder : token verified successfully, publishing to blockchain')
-          const { address } = req.user;
-          const { data } = req.body;
- 	  const orderID  = "PO" + Math.floor(1000 + Math.random() * 9000);
-          const userData = {
-            stream: po_stream_name,
-            key: orderID,
-            address: address,
-            data: data,
-          };
-          const response = await axios.post(
-            `${blockchain_service_url}/publish`,
-            userData,
-          );
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < createPurchaseOrder : published to blockchain')
- 	  res.status(200).json({ txid: response.data.transactionId, orderID: orderID});
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "createPO"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { address } = req.user;
+              const { data } = req.body;
+              const orderID  = "PO" + Math.floor(1000 + Math.random() * 9000);
+              const userData = {
+                stream: po_stream_name,
+                key: orderID,
+                address: address,
+                data: data,
+              };
+              const response = await axios.post(
+                `${blockchain_service_url}/publish`,
+                userData,
+              );
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < createPurchaseOrder : published to blockchain')
+              res.status(200).json({ txid: response.data.transactionId, orderID: orderID});
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < createPurchaseOrder : refuted token')
           res.status(403).json(result);
@@ -510,6 +632,13 @@ exports.fetchPublisherLatestShipments = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchPublisherLatestShipments : token verified successfully, querying all publisher keys')
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewShipment"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
           //const { address } = req.query;
           const { address } = req.user;
           const response = await axios.get(
@@ -529,6 +658,10 @@ exports.fetchPublisherLatestShipments = [
           }
           logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchPublisherLatestShipments : queried data by key')
           res.json({ data: items_array });
+        }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < fetchPublisherLatestShipments : refuted token')
           res.status(403).json(result);
@@ -549,23 +682,34 @@ exports.fetchAllLatestShipments = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchAllLatestShipments : token verified successfully, querying all stream keys')
-          const response = await axios.get(
-            `${blockchain_service_url}/queryAllStreamKeys?stream=${stream_name}`,
-          );
-          var keys = response.data.items;
-          const unique_keys = [...new Set(keys)];
-          var items_array = new Array();
-          for (var i = 0; i < unique_keys.length; i++) {
-            var key = unique_keys[i];
 
-            const response = await axios.get(
-              `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${key}`,
-            );
-            const items = response.data.items;
-            items_array.push(items);
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewShipment"
           }
-          logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchAllLatestShipments : queried all stream keys')
-          res.json({ data: items_array });
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const response = await axios.get(
+                `${blockchain_service_url}/queryAllStreamKeys?stream=${stream_name}`,
+              );
+              var keys = response.data.items;
+              const unique_keys = [...new Set(keys)];
+              var items_array = new Array();
+              for (var i = 0; i < unique_keys.length; i++) {
+                var key = unique_keys[i];
+    
+                const response = await axios.get(
+                  `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${key}`,
+                );
+                const items = response.data.items;
+                items_array.push(items);
+              }
+              logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchAllLatestShipments : queried all stream keys')
+              res.json({ data: items_array });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< ShipmentService < ShipmentController < fetchAllLatestShipments : refuted token')
           res.status(403).json(result);
