@@ -1,5 +1,6 @@
 const ProductNamesModel = require('../models/ProductNamesModel');
 const { body, validationResult } = require('express-validator');
+const checkPermissions = require('../middlewares/rbac_middleware').checkPermissions;
 const xlsx = require('node-xlsx');
 const multer = require('multer');
 const moveFile = require('move-file');
@@ -75,7 +76,7 @@ exports.addMultipleProducts = [
 
           permission_request = {
             "result" : result,
-            "permissionRequired" : "addNewProduct"
+            "permissionRequired" : ""
           }
           checkPermissions(permission_request, response, async permissionResult => {
             if(permissionResult.success) {
@@ -181,7 +182,7 @@ exports.addProductName = [
 
           permission_request = {
             "result" : result,
-            "permissionRequired" : "addProduct"
+            "permissionRequired" : "addNewProduct"
           }
           checkPermissions(permission_request, response, async permissionResult => {
             if(permissionResult.success) {
