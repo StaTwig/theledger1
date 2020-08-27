@@ -19,6 +19,7 @@ const stream_name = process.env.STREAM;
 const init = require('../logging/init');
 const logger = init.getLog();
 
+
 exports.getTotalCount = [
   auth,
   async (req, res) => {
@@ -27,7 +28,17 @@ exports.getTotalCount = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < getTotalCount : token verifed successfully')
-          res.json('Total inventory count');
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewInventory"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              res.json('Total inventory count');
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< InventoryService < InventoryController < getTotalCount : refuted token')
           res.status(403).json(result);
@@ -48,7 +59,17 @@ exports.getTotalCountOnHold = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < getTotalCountOnHold : token verified successfully')
-          res.json('Total inventory count on Hold');
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewInventory"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              res.json('Total inventory count on Hold');
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log('warn', '<<<<< InventoryService < InventoryController < getTotalCountOnHold : refuted token')
           res.status(403).json(result);
@@ -69,7 +90,19 @@ exports.getExpiringInventory = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < getExpiringInventory : token verified successfully')
-          res.json('Total inventory count expiring');
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewInventory"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              res.json('Total inventory count expiring');
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
+                      
         } else {
           logger.log('warn', '<<<<< InventoryService < InventoryController < getExpiringInventory : refuted token')
           res.status(403).json(result);
@@ -90,8 +123,20 @@ exports.getInventoryforProduct = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < getInventoryforProduct : token verified successfullly')
-          const { product_id } = result.data.key;
-          res.json('Inventory details for product');
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewInventory"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { product_id } = result.data.key;
+              res.json('Inventory details for product');
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
+
         } else {
           logger.log('warn', '<<<<< InventoryService < InventoryController < getInventoryforProduct : refuted token')
           res.status(403).json(result);
@@ -112,14 +157,26 @@ exports.getInventoryDetailsForProduct = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < getInventoryDetailsForProduct : token verified successfullly, querying data by key')
-          const { key } = req.query;
-          const response = await axios.get(
-            `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${key}`,
-          );
-          const items = response.data.items;
-          console.log('items', items);
-          logger.log('info', '<<<<< InventoryService < InventoryController < getInventoryDetailsForProduct : queried data by key')
-          res.json({ data: items });
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewInventory"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { key } = req.query;
+              const response = await axios.get(
+                `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${key}`,
+              );
+              const items = response.data.items;
+              console.log('items', items);
+              logger.log('info', '<<<<< InventoryService < InventoryController < getInventoryDetailsForProduct : queried data by key')
+              res.json({ data: items });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
+
         } else {
           logger.log('warn', '<<<<< InventoryService < InventoryController < getInventoryDetailsForProduct : refuted token')
           res.status(403).json(result);
@@ -141,52 +198,60 @@ exports.getAllInventoryDetails = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < getAllInventoryDetails : token verified successfullly, querying data by publisher')
-          const { address } = req.user;
-          const response = await axios.get(
-            `${blockchain_service_url}/queryDataByPublishers?stream=${stream_name}&address=${address}`,
-          );
-          const items = response.data.items;
-          var tot_qty = 0;
-	
-	  await axios.get(`${product_service_url}/getProductNames`, {
-          headers: {
-            'Authorization': req.headers.authorization
-          }
-        })
-        .then((res) => {
-        for (i=0;i<res.data.data.length;i++)
-                {
-                        var test = res.data.data[i].productName;
-                        products_array.push(test)
-                }
-        })
-        .catch((error) => {
-	logger.log('error', '<<<<< InventoryService < InventoryController < getAllInventoryDetails : Error in fetching products list')
-        })
-                products_array.forEach(element => {
-                var ele = `${element}`;
-        });
 
-          var total_inv = items.length;
-          for (i=0;i<items.length;i++){
-              var productName = JSON.parse(items[i].data).productName;
-              var count = parseInt(JSON.parse(items[i].data).quantity);
-              tot_qty = tot_qty + count;
-		
-	      const index = products_array.indexOf(productName);
-                        var name = products_array[index];
-                        if(name in dict)
-		   	 {
-                        	var exis = dict[name];
-                        	var new_val = count;
-                        	dict[name] = exis + new_val;
-                           }	
-                        else {
-                        	  dict[name] = count;
-                      	}
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewInventory"
           }
-          logger.log('info', '<<<<< InventoryService < InventoryController < getAllInventoryDetails : queried and pushed data')
-	  res.json({ data: items , count :{tot_qty:tot_qty,tot_inv:total_inv},dict:dict});
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { address } = req.user;
+              const response = await axios.get(
+                `${blockchain_service_url}/queryDataByPublishers?stream=${stream_name}&address=${address}`,
+              );
+              const items = response.data.items;
+              var tot_qty = 0;
+              
+              await axios.get(`${product_service_url}/getProductNames`, {
+                headers: {
+                'Authorization': req.headers.authorization
+                }
+              })
+              .then((res) => {
+                for (i=0;i<res.data.data.length;i++){
+                  var test = res.data.data[i].productName;
+                  products_array.push(test)
+                }
+              })
+              .catch((error) => {
+                logger.log('error', '<<<<< InventoryService < InventoryController < getAllInventoryDetails : Error in fetching products list')
+              })
+              products_array.forEach(element => {
+                var ele = `${element}`;
+              });
+    
+              var total_inv = items.length;
+              for (i=0;i<items.length;i++){
+                var productName = JSON.parse(items[i].data).productName;
+                var count = parseInt(JSON.parse(items[i].data).quantity);
+                tot_qty = tot_qty + count;
+                const index = products_array.indexOf(productName);
+                var name = products_array[index];
+                if(name in dict){
+                  var exis = dict[name];
+                  var new_val = count;
+                  dict[name] = exis + new_val;
+                }	else {
+                  dict[name] = count;
+                }
+              }
+              logger.log('info', '<<<<< InventoryService < InventoryController < getAllInventoryDetails : queried and pushed data')
+              res.json({ data: items , count :{tot_qty:tot_qty,tot_inv:total_inv},dict:dict});
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
+
         } else {
           logger.log('warn', '<<<<< InventoryService < InventoryController < getAllInventoryDetails : refuted token')
           res.status(403).json(result);
@@ -253,20 +318,32 @@ exports.addNewInventory = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < addNewInventory : token verified successfullly, publishing data')
-          const { data } = req.body;
-          const { address } = req.user;
-          const userData = {
-            stream: stream_name,
-            key: data.serialNumber,
-            address: address,
-            data: data,
-          };
-          const response = await axios.post(
-            `${blockchain_service_url}/publish`,
-            userData,
-          );
-          logger.log('info', '<<<<< InventoryService < InventoryController < addNewInventory : publised data to blockchain')
-          res.status(200).json({ response: response.data.transactionId });
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "addInventory"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { data } = req.body;
+              const { address } = req.user;
+              const userData = {
+                stream: stream_name,
+                key: data.serialNumber,
+                address: address,
+                data: data,
+              };
+              const response = await axios.post(
+                `${blockchain_service_url}/publish`,
+                userData,
+              );
+              logger.log('info', '<<<<< InventoryService < InventoryController < addNewInventory : publised data to blockchain')
+              res.status(200).json({ response: response.data.transactionId });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
+
         } else {
           logger.log('warn', '<<<<< InventoryService < InventoryController < addNewInventory : refuted token')
           res.status(403).json(result);
@@ -299,25 +376,36 @@ exports.addMultipleInventories = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< InventoryService < InventoryController < addNewInventory : token verified successfullly, publishing data')
-          const { inventories } = req.body;
-          const { address } = req.user;
-          let txnIds = [];
-          await utility.asyncForEach(inventories, async data => {
-            const userData = {
-              stream: stream_name,
-              key: data.serialNumber,
-              address: address,
-              data: data,
-            };
-            const response = await axios.post(
-              `${blockchain_service_url}/publish`,
-              userData,
-            );
-            txnIds.push((response.data.transactionId));
-            logger.log('info', '<<<<< InventoryService < InventoryController < addNewInventory : publised data to blockchain')
-          })
 
-          res.status(200).json({ response: txnIds });
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewInventory"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const { inventories } = req.body;
+              const { address } = req.user;
+              let txnIds = [];
+              await utility.asyncForEach(inventories, async data => {
+                const userData = {
+                  stream: stream_name,
+                  key: data.serialNumber,
+                  address: address,
+                  data: data,
+                };
+                const response = await axios.post(
+                  `${blockchain_service_url}/publish`,
+                  userData,
+                );
+                txnIds.push((response.data.transactionId));
+                logger.log('info', '<<<<< InventoryService < InventoryController < addNewInventory : publised data to blockchain')
+              })
+              res.status(200).json({ response: txnIds });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
+
         } else {
           logger.log('warn', '<<<<< InventoryService < InventoryController < addNewInventory : refuted token')
           res.status(403).json(result);

@@ -374,7 +374,10 @@ exports.verifyConfirm = [
                   `${blockchain_service_url}/grantPermission`,
                   userData,
                 ); //Granting permissons to the user
-
+                logger.log(
+                  'info',
+                  '<<<<< UserService < AuthController < verifyConfirm : granted permission to user',
+                );
                 //Update user as confirmed
                 UserModel.findOneAndUpdate(query, {
                   isConfirmed: 1,
