@@ -35,8 +35,19 @@ exports.getProductNames = [
             'info',
             '<<<<< ProductNamesService < ProductNamesController < getProductNames : token verifed successfully',
           );
-          const productNames = await ProductNamesModel.find({});
-          res.json({ data: productNames });
+
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "viewProductList"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const productNames = await ProductNamesModel.find({});
+              res.json({ data: productNames });
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log(
             'warn',
@@ -61,49 +72,60 @@ exports.addMultipleProducts = [
     try {
       checkToken(req, res, async result => {
         if (result.success) {
-          const dir = `uploads`;
-          if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-          }
-          await moveFile(req.file.path, `${dir}/${req.file.originalname}`);
-          const obj = xlsx.parse(`${dir}/${req.file.originalname}`); // parses a file
-          const data = obj[0].data;
-          const products = data
-            .map(element => {
-              return {
-                productName: element[0],
-                productCategory: element[1],
-                productSubCategory: element[2],
-                manufacturer: element[3],
-                storageConditions: element[4],
-                description: element[5],
-              };
-            })
-            .filter((product, index) => index > 0);
-          let err = '';
-          await utility.asyncForEach(products, async product => {
 
-            if(err) return;
-            const productDetail = new ProductNamesModel({
-              productName: product.productName,
-              manufacturer: product.manufacturer,
-              productCategory: product.productCategory,
-              productSubCategory: product.productSubCategory,
-              storageConditions: product.storageConditions,
-              description: product.description,
-            });
-            try {
-              await productDetail.save();
-            }catch(e) {
-              err = product.productName;
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "addNewProduct"
+          }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              const dir = `uploads`;
+              if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+              }
+              await moveFile(req.file.path, `${dir}/${req.file.originalname}`);
+              const obj = xlsx.parse(`${dir}/${req.file.originalname}`); // parses a file
+              const data = obj[0].data;
+              const products = data
+                .map(element => {
+                  return {
+                    productName: element[0],
+                    productCategory: element[1],
+                    productSubCategory: element[2],
+                    manufacturer: element[3],
+                    storageConditions: element[4],
+                    description: element[5],
+                  };
+                })
+                .filter((product, index) => index > 0);
+              let err = '';
+              await utility.asyncForEach(products, async product => {
+    
+                if(err) return;
+                const productDetail = new ProductNamesModel({
+                  productName: product.productName,
+                  manufacturer: product.manufacturer,
+                  productCategory: product.productCategory,
+                  productSubCategory: product.productSubCategory,
+                  storageConditions: product.storageConditions,
+                  description: product.description,
+                });
+                try {
+                  await productDetail.save();
+                }catch(e) {
+                  err = product.productName;
+                }
+    
+              });
+              if(err) {
+                return apiResponse.ErrorResponse(res, `Duplicate product name ${err}`);
+              }else {
+                return apiResponse.successResponseWithData(res, 'Success', products);
+              }
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
             }
-
           });
-          if(err) {
-            return apiResponse.ErrorResponse(res, `Duplicate product name ${err}`);
-          }else {
-            return apiResponse.successResponseWithData(res, 'Success', products);
-          }
         } else {
           return apiResponse.ErrorResponse(res, 'User not authenticated');
         }
@@ -156,32 +178,43 @@ exports.addProductName = [
             'info',
             '<<<<< ProductNamesService < ProductNamesController < addProductName : token verifed successfully',
           );
-          try {
-            console.log('file', req.file);
-            console.log('body', req.body);
-            const dir = `uploads`;
-            if (!fs.existsSync(dir)) {
-              fs.mkdirSync(dir);
-            }
 
-            await moveFile(req.file.path, `${dir}/${req.body.productName}.png`);
-            const product = new ProductNamesModel({
-              productName: req.body.productName,
-              manufacturer: req.body.manufacturer,
-              productCategory: req.body.productCategory,
-              productSubCategory: req.body.productSubCategory,
-              storageConditions: req.body.storageConditions,
-              description: req.body.description,
-              image: `http://${req.headers.host}/images/${
-                req.body.productName
-              }.png`,
-            });
-            await product.save();
-
-            return apiResponse.successResponseWithData(res, 'Success', product);
-          } catch (e) {
-            return apiResponse.ErrorResponse(res, e);
+          permission_request = {
+            "result" : result,
+            "permissionRequired" : "addProduct"
           }
+          checkPermissions(permission_request, response, async permissionResult => {
+            if(permissionResult.success) {
+              try {
+                console.log('file', req.file);
+                console.log('body', req.body);
+                const dir = `uploads`;
+                if (!fs.existsSync(dir)) {
+                  fs.mkdirSync(dir);
+                }
+    
+                await moveFile(req.file.path, `${dir}/${req.body.productName}.png`);
+                const product = new ProductNamesModel({
+                  productName: req.body.productName,
+                  manufacturer: req.body.manufacturer,
+                  productCategory: req.body.productCategory,
+                  productSubCategory: req.body.productSubCategory,
+                  storageConditions: req.body.storageConditions,
+                  description: req.body.description,
+                  image: `http://${req.headers.host}/images/${
+                    req.body.productName
+                  }.png`,
+                });
+                await product.save();
+    
+                return apiResponse.successResponseWithData(res, 'Success', product);
+              } catch (e) {
+                return apiResponse.ErrorResponse(res, e);
+              }
+            }else{
+              res.json("Sorry! User does not have enough Permissions")
+            }
+          });
         } else {
           logger.log(
             'warn',
