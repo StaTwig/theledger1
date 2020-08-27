@@ -35,8 +35,11 @@ exports.addPermissions = [
   auth,
   body('permissions')
     .isLength({ min: 1 })
-    .trim()
     .withMessage('At least one permission must be specified.'),
+  body('role')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('Role must be specified.'),
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -52,17 +55,14 @@ exports.addPermissions = [
       checkToken(req, res, async result => {
         if (result.success) {
           logger.log('info', '<<<<< RbacService < RbacController < addPermissions : token verifed successfully');
-          console.log(req.body.permissions)
-          const rbac_object = await RbacModel.find({})
+          const { role, permissions } = req.body;
+          const rbac_object = await RbacModel.findOne({ role });
           if(rbac_object){
-            await RbacModel.remove();
-            const rbac = new RbacModel({
-              permissions: req.body.permissions
-            })
-            await rbac.save()
+            await RbacModel.update({role}, {permissions});
           } else{
             const rbac = new RbacModel({
-              permissions: req.body.permissions,
+              role,
+              permissions
             });
             await rbac.save();  
           }
