@@ -39,7 +39,7 @@ fi
 cd $HOME/PRD/current
 git clone https://gitlab.com/statwig-public/theledger.git
 cd $HOME/PRD/current/theledger
-
+python2.7  $HOME/PRD/current/theledger/deploy/aws.py start
 git checkout autodeploy_latest
 echo "Starting instances"
 cd $HOME/PRD/current/theledger
@@ -57,8 +57,8 @@ sh /home/ubuntu/predeployscripts/pre-deploy-test.sh
     #! break; done || ! cd - >&2
 sh stop.sh
 ./deploy.sh TEST ALL
-systemctl start nginx
-#pms stop 8 (tx service)
+sudo systemctl start nginx
+pm2 stop 8 
     
 if [ -d "$BASE_DIR/temp/theledger" ];then
 
