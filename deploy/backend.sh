@@ -56,7 +56,6 @@ sh /home/ubuntu/predeployscripts/pre-deploy-test.sh
 sh stop.sh
 ./deploy.sh TEST ALL
 sudo systemctl start nginx
-pm2 stop 8 
     
 if [ -d "$BASE_DIR/temp/theledger" ];then
 
