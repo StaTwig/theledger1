@@ -44,17 +44,18 @@ cd $HOME/PRD/current/theledger
 #Kill all the running process
 #pm2 kill
 sh /home/ubuntu/predeployscripts/pre-deploy-test.sh
-#cd backend
-#Starting the new deploy servicess
-#cd -P .
- #  for dir in ./*/
-  #     do cd -P "$dir" ||continue
-  #    echo "curr dir $PWD"
-   #    printf %s\\n "$PWD" >&2
-    #   npm install && pm2 start && cd "$OLDPWD" ||
-    #! break; done || ! cd - >&2
 sh stop.sh
-./deploy.sh TEST ALL
+cd backend
+#Starting the new deploy servicess
+cd -P .
+  for dir in ./*/
+       do cd -P "$dir" ||continue
+      echo "curr dir $PWD"
+       printf %s\\n "$PWD" >&2
+       npm install && pm2 start && cd "$OLDPWD" ||
+     ! break; done || ! cd - >&2
+#sh stop.sh
+#./deploy.sh TEST ALL
 sudo systemctl start nginx
     
 if [ -d "$BASE_DIR/temp/theledger" ];then
