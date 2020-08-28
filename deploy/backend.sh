@@ -2,8 +2,6 @@
 
 
 # any future command that fails will exit the script
-python2.7  $HOME/PRD/current/theledger/deploy/aws.py start
-
 set -e
 
 echo "home is" $HOME
@@ -39,8 +37,8 @@ fi
 cd $HOME/PRD/current
 git clone https://gitlab.com/statwig-public/theledger.git
 cd $HOME/PRD/current/theledger
-python2.7  $HOME/PRD/current/theledger/deploy/aws.py start
 git checkout autodeploy_latest
+python2.7 $HOME/PRD/current/theledger/deploy/aws.py start
 echo "Starting instances"
 cd $HOME/PRD/current/theledger
 #Kill all the running process
