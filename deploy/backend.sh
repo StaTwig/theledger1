@@ -45,7 +45,7 @@ cd $HOME/PRD/current/theledger
 #pm2 kill
 sh /home/ubuntu/predeployscripts/pre-deploy-test.sh
 #sh stop.sh
-cd backend
+#cd backend
 #Starting the new deploy servicess
 #cd -P .
  # for dir in ./*/
