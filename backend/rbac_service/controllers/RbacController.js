@@ -16,16 +16,16 @@ exports.getPermissions = [
       checkToken(req, res, async result => {
         if (result.success) {
           
-          console.log('info', '<<<<< RbacService < RbacController < getPermissions : token verifed successfully');
+          logger.log('info', '<<<<< RbacService < RbacController < getPermissions : token verifed successfully');
           const permissions = await RbacModel.find({});
           res.json({ data: permissions });
         } else {
-          console.log('warn', '<<<<< RbacService < RbacController < getPermissions : user is not authenticated')
+          logger.log('warn', '<<<<< RbacService < RbacController < getPermissions : user is not authenticated')
           res.status(403).json(result);
         }
       });
     } catch (err) {
-      console.log('error', '<<<<< RbacService < RbacController < getPermissions : error (catch block)')
+      logger.log('error', '<<<<< RbacService < RbacController < getPermissions : error (catch block)')
       return apiResponse.ErrorResponse(res, err);
     }
   },

@@ -40,7 +40,7 @@ exports.shipmentStatistics = [
             "result" : result,
             "permissionRequired" : "viewShipment"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const { address } = req.user;
               const response = await axios.get(
@@ -77,7 +77,7 @@ exports.purchaseOrderStatistics = [
             "result" : result,
             "permissionRequired" : "viewPO"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const { address } = req.user;
               const response = await axios.get(
@@ -115,7 +115,7 @@ exports.fetchShipments = [
             "result" : result,
             "permissionRequired" : "receiveShipment"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const { key } = req.query;
               const response = await axios.get(
@@ -153,7 +153,7 @@ exports.fetchAllPurchaseOrders = [
             "result" : result,
             "permissionRequired" : "receivePO"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const response = await axios.get(
                 `${blockchain_service_url}/queryAllStreamKeys?stream=${po_stream_name}`,
@@ -190,7 +190,7 @@ exports.fetchPublisherPurchaseOrders = [
             "result" : result,
             "permissionRequired" : "viewPO"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const { address } = req.user;
               const response = await axios.get(
@@ -270,7 +270,7 @@ exports.createShipment = [
             "result" : result,
             "permissionRequired" : "createShipmentOrder"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const { address, email } = req.user;
 
@@ -433,7 +433,7 @@ exports.reviewShipment = [
             "result" : result,
             "permissionRequired" : "scanShipment"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, permissionResult => {
             if(permissionResult.success) {
               const { shipment_id } = result.data.shipment_id;
               res.json('Shipment Review');
@@ -466,7 +466,7 @@ exports.verifyShipment = [
             "result" : result,
             "permissionRequired" : "completeShipment"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, permissionResult => {
             if(permissionResult.success) {
               const { shipment_id } = result.data.shipment_id;
               res.json('Shipment Verify');
@@ -500,7 +500,7 @@ exports.modifyShipment = [
             "result" : result,
             "permissionRequired" : "scanShipment"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const { data } = result.data;
               const { key, status } = req.query;
@@ -555,7 +555,7 @@ exports.fetchPurchaseOrder = [
             "result" : result,
             "permissionRequired" : "viewPO"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const { key } = req.query;
               const response = await axios.get(
@@ -592,7 +592,7 @@ exports.createPurchaseOrder = [
             "result" : result,
             "permissionRequired" : "createPO"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const { address } = req.user;
               const { data } = req.body;
@@ -638,7 +638,7 @@ exports.fetchPublisherLatestShipments = [
             "result" : result,
             "permissionRequired" : "viewShipment"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
           //const { address } = req.query;
           const { address } = req.user;
@@ -688,7 +688,7 @@ exports.fetchAllLatestShipments = [
             "result" : result,
             "permissionRequired" : "viewShipment"
           }
-          checkPermissions(permission_request, response, async permissionResult => {
+          checkPermissions(permission_request, async permissionResult => {
             if(permissionResult.success) {
               const response = await axios.get(
                 `${blockchain_service_url}/queryAllStreamKeys?stream=${stream_name}`,
