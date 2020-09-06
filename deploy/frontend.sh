@@ -24,6 +24,6 @@ echo "$pwd"
 chmod 600 $HOME/keys/testdevserver.pem
 #testdevserverttt
 scp -r -i $HOME/keys/testdevserver.pem /home/ubuntu/theledger/frontend/dist  ubuntu@ec2-13-232-141-136.ap-south-1.compute.amazonaws.com:/home/ubuntu/build_files
-scp -r -i $HOME/keys/testdevserver.pem /home/ubuntu/theledger/frontend/index.html  ubuntu@ec2-13-232-141-136.ap-south-1.compute.amazonaws.com:/home/ubuntu/build_files/
+scp -r -i $HOME/keys/testdevserver.pem /home/ubuntu/theledger/frontend/index.html  ubuntu@ec2-13-232-141-136.ap-south-1.compute.amazonaws.com:/home/ubuntu/build_files/index.html_`date '+%m%d'.'%H'00`
 
 python2.7  $HOME/theledger/deploy/aws.py stop
