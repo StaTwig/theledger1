@@ -132,6 +132,7 @@ exports.getInventoryDetailsForProduct = [
   },
 ];
 
+var total_inv = 0, total_qty = 0,total_ne = 0,total_ne = 0;
 var today_inv = 0,week_inv = 0,month_inv = 0,year_inv = 0;
 var today_qty = 0,week_qty = 0,month_qty = 0,year_qty = 0;
 var today_exp = 0,week_exp = 0,month_exp = 0,year_exp = 0;
@@ -260,6 +261,7 @@ exports.getAllInventoryDetails = [
           today_ne = 0,week_ne = 0,month_ne = 0,year_ne = 0;
           today_inv = 0,week_inv = 0,month_inv = 0,year_inv = 0;
           today_qty = 0,week_qty = 0,month_qty = 0,year_qty = 0;
+          total_inv = 0, total_qty = 0,total_ne = 0,total_ne = 0;
 
           for (i=0;i<items.length;i++){
               var productName = JSON.parse(items[i].data).productName;
@@ -294,33 +296,40 @@ exports.getAllInventoryDetails = [
                         if (created_date == undefined) {
                             created_date = today_full;
                         }
-                        var s = getDateDiff(today, expiry_date1, today_full, created_date, count)
+                        var s = getDateDiff(today, expiry_date1, today_full, created_date, count);
+                        total_exp = today_exp + week_exp + month_exp + year_exp;
+                        total_ne = today_ne + week_ne + month_ne + year_ne;
+                        total_inv = today_inv + week_inv + month_inv + year_inv;
+                        total_qty = today_qty + week_qty + month_qty + year_qty;
                     }
-
           logger.log('info', '<<<<< InventoryService < InventoryController < getAllInventoryDetails : queried and pushed data')
           res.json({
                         data: items,
                         dict: dict,
                         counts: {
                             inventoryAdded: {
+                                total : total_inv,
                                 thisYear: year_inv,
                                 thisMonth: month_inv,
                                 thisWeek: week_inv,
                                 today: today_inv
                             },
                             currentInventory: {
+                                total : total_qty,
                                 thisYear: year_qty,
                                 thisMonth: month_qty,
                                 thisWeek: week_qty,
                                 today: today_qty
                             },
                             vaccinesNearExpiration: {
+                                total : total_ne,
                                 thisYear: year_ne,
                                 thisMonth: month_ne,
                                 thisWeek: week_ne,
                                 today: today_ne
                             },
                             vaccinesExpired: {
+                                total : total_exp,
                                 thisYear: year_exp,
                                 thisMonth: month_exp,
                                 thisWeek: week_exp,
@@ -339,6 +348,7 @@ exports.getAllInventoryDetails = [
     }
   },
 ];
+
 
 exports.addNewInventory = [
   auth,
