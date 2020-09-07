@@ -763,6 +763,7 @@ exports.fetchUserShipments = [
             const {
                 user
             } = req;
+            const { skip, limit } = req.query;
             const userObject = await UserModel.findOne({
                 address: user.address
             });
@@ -782,8 +783,11 @@ exports.fetchUserShipments = [
 
                 if (destinationUser) {
                     logger.log('info', '<<<<< ShipmentService < ShipmentController < fetchUserShipments : destination user shipments')
-                    shipmentIds = destinationUser.shipmentIds;
+                    shipmentIds = destinationUser.shipmentIds.reverse().filter(
+                    (shipmentId, index) => index >= parseInt(skip) && index < (parseInt(limit) + parseInt(skip)),
+                  );
                 }
+
                 await utility.asyncForEach(shipmentIds, async shipmentId => {
                     const response = await axios.get(
                         `${blockchain_service_url}/queryDataByKey?stream=${stream_name}&key=${shipmentId}`,
