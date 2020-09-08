@@ -60,7 +60,9 @@ const FormPage = (props) => {
                     props.errorMessage && <div className="alert alert-danger">{props.errorMessage}</div>
                   }
                   <div className="text-center mt-2">
-                    <button type="button" className="btn btn-primary" onClick={props.onSignup}>
+                    <button type="button" className="btn btn-primary" 
+                      disabled={!(props.name && props.email && props.password)}
+                      onClick={props.onSignup}>
                       SIGNUP
                     </button>
                   </div>
