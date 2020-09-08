@@ -1004,13 +1004,7 @@ exports.fetchUserShipments = [
       const { user } = req;
       const { skip, limit } = req.query;
       const userObject = await UserModel.findOne({ address: user.address });
-       transit = 0,shipped = 0,received = 0;
-       today_total = 0,week_total = 0,month_total = 0,year_total = 0;
-       tt = 0,wt = 0,mt = 0,yt = 0;
-       ts = 0,ws = 0,ms = 0,ys = 0;
-       tr = 0,wr = 0,mr = 0,yr = 0;
-
-    if (userObject.role !== 'Warehouse') {
+      if (userObject.role !== 'Warehouse') {
         logger.log(
           'info',
           '<<<<< ShipmentService < ShipmentController < fetchUserShipments : fetching user shipments',
@@ -1043,7 +1037,7 @@ exports.fetchUserShipments = [
           items_array.push(itemsObject);
         });
 
-        total = items_array.length;
+         total = items_array.length;
                 for (i = 0; i < items_array.length; i++) {
                     var myDate = new Date(items_array[i].shipmentDate);
                     var m = myDate.getMonth();
@@ -1141,7 +1135,7 @@ exports.fetchUserShipments = [
                         }
                     }
                 });
-        } else {
+      } else {
         logger.log(
           'info',
           '<<<<< ShipmentService < ShipmentController < fetchUserShipments : finding user shipment in Organisation Model',
@@ -1171,8 +1165,7 @@ exports.fetchUserShipments = [
               items_array.push(itemsObject);
             });
           }
-
-                        total = items_array.length;
+        total = items_array.length;
                         for (i = 0; i < items_array.length; i++) {
                             var myDate = new Date(items_array[i].shipmentDate);
                             var m = myDate.getMonth();
