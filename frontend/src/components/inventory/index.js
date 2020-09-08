@@ -67,7 +67,32 @@ const Inventory = (props) => {
 setInventoryExpired(count);
 setInventoryExpiring(near);
   })
-const products = Object.keys(props.inventoriesCount.dict)
+
+  const selectEllipse = (product) => {
+    let selectedEllipse=""
+    if(product === "DTwP"){
+      selectedEllipse = "ellipseOne"
+    } else if(product === "MMR"){
+      selectedEllipse = "ellipseTwo"
+    } else if(product === "PVC"){
+      selectedEllipse = "ellipseThree"
+    } else if(product === "HepB"){
+      selectedEllipse = "ellipseFour"
+    } else if(product === "BCG"){
+      selectedEllipse = "ellipseFive"
+    } else if(product === "IPV"){
+      selectedEllipse = "ellipseSix"
+    } else if(product === "HiB"){
+      selectedEllipse = "ellipseSeven"
+    } else if(product === "RV"){
+      selectedEllipse = "ellipseEight"
+    } else if(product === "OPV"){
+      selectedEllipse = "ellipseNine"
+    }
+    return selectedEllipse;
+  }
+
+  const products = Object.keys(props.inventoriesCount.dict)
   return (
     <div className="inventory">
       <div className="d-flex justify-content-between">
@@ -170,7 +195,7 @@ const products = Object.keys(props.inventoriesCount.dict)
                  {products.map((product, index) => (
                     <div className="col-sm-6"  key={index}>
                   <div className="d-flex card flex-column align-items-center">
-                    <div className="round-sign ellipseOne">{product}</div>
+                    <div className={"round-sign " + (selectEllipse(product))}>{product}</div>
                     <p className="product">{product}</p>
                     <h3>Qty : {props.inventoriesCount.dict[product]}</h3>
                   </div>
