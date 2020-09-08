@@ -44,13 +44,15 @@
       padding: 1px 22px;
       align-self: center;
       font-size: 12px;
+      font-weight: bold;
+      text-align: center;
       color: #707070;
     }
-
 
     
     .rTableCell {
       color: $black;
+      align-content: center;
         font-weight: 400;
       a {
         color: $black;
@@ -66,6 +68,7 @@
     .combine-data {
       display: flex;
       align-items: center;
+      text-align: center;
       font-weight: bold;
       
         color: #0093E9;
@@ -107,12 +110,13 @@
     .form-group {
       .react-date-picker__wrapper{
               border:none;
+              
       }
      .react-datepicker__month-wrapper{
         height:30px;
         width:205px;
+        
       }
-    
     
       margin-bottom: 0;
       border-bottom: none;
@@ -120,7 +124,7 @@
      
       .form-field {
         border: none;
-        font-size: 10px;
+        font-size: 12px;
       }
     }
 

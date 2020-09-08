@@ -48,10 +48,10 @@ const Table = (props) => {
                 
                   } >
               <div className="rTableCell">
-                <div className="combine-data">
+                {/* <div className="combine-data" > */}
                 {shipment.client}
                   
-                </div>
+                {/* </div> */}
               </div>
               <div className="rTableCell">{shipment.shipmentId}</div>
              

@@ -59,6 +59,7 @@ const EditRow = props => {
             }
             className="form-field"
             placeholder="Enter Quantity"
+            style={{fontSize:12}}
             value={quantity}
             onChange={e =>
               handleInventoryChange(idx, 'quantity', e.target.value)
@@ -106,6 +107,7 @@ const EditRow = props => {
             type="number"
             className="form-field1"
             placeholder="Min"
+            style={{fontSize:12}}
             onKeyDown={e =>
               (e.keyCode === 69 ||
                 e.keyCode === 189 ||
@@ -124,6 +126,7 @@ const EditRow = props => {
             type="number"
             className="form-field1"
             placeholder="Max"
+            style={{fontSize:12}}
             onKeyDown={e =>
               (e.keyCode === 69 ||
                 e.keyCode === 189 ||
@@ -146,6 +149,7 @@ const EditRow = props => {
             type="text"
             className="form-field"
             placeholder="Enter Batch Number"
+            style={{fontSize:12}}
             value={batchNumber}
             onChange={e =>
               handleInventoryChange(idx, 'batchNumber', e.target.value)
@@ -159,6 +163,7 @@ const EditRow = props => {
             type="text"
             className="form-field"
             placeholder="Enter Serial Numbers"
+            style={{fontSize:12}}
             value={serialNumber}
             onChange={e =>
               handleInventoryChange(idx, 'serialNumber', e.target.value)

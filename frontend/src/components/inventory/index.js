@@ -181,10 +181,10 @@ setInventoryExpiring(near);
       </div>
       <div className="ribben-space">
         <div className="row no-gutter">
-          <div className="col-sm-12 col-xl-9">
+          <div className="col-sm-12 col-xl-9 rTableHeader">
             <Table data={tableHeaders}{...props} />
           </div>
-          <div className="col-sm-12 col-xl-3">
+          <div className="col-sm-12 col-xl-3" >
             <div className="list-container">
               <div className="d-flex justify-content-between align-items-center">
                 <h4>Product List</h4>
