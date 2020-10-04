@@ -19,6 +19,11 @@ import ShipmentFailPopUp from './shipmentFailPopUp';
 import Modal from '../../shared/modal';
 import ReactTooltip from 'react-tooltip';
 
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
+
 const NewShipment = props => {
   const dispatch = useDispatch();
 
@@ -72,6 +77,7 @@ const NewShipment = props => {
   const [openCreatedInventory, setOpenCreatedInventory] = useState(false);
   const [openShipmentFail, setOpenShipmentFail] = useState(false);
   const [shipmentError, setShipmentError] = useState('');
+  const [address, setAddress] = React.useState('');
   
   const closeModal = () => {
     setOpenCreatedInventory(false);
@@ -234,6 +240,18 @@ const NewShipment = props => {
     }
   };
 
+  // // let address;
+  // const handleChange = _address => {
+  //   address = _address;
+  //   return address;
+  // }
+  const handleSelect = async address => {
+    geocodeByAddress(address)
+      .then(results => getLatLng(results[0]))
+      .then(latLng => console.log('Success', latLng))
+      .catch(error => console.error('Error', error));
+  };
+
   const onSelectPO = async item => {
     setPo(item);
     const result = await getPO(item);
@@ -295,14 +313,54 @@ const NewShipment = props => {
           </div>
           <div className="input-group">
             <label htmlFor="shipmentId">Supplier Location</label>
-            <input
+            {/* <input
               type="text"
               className="form-control"
               placeholder="Enter Location"
               onChange={e => setSupplierLocation(e.target.value)}
               value={supplierLocation}
-              
-            />
+            /> */}
+
+            <PlacesAutocomplete
+              value={address} //{supplierLocation}
+              onChange={setAddress} //{e => setSupplierLocation(e.target.value)}
+              onSelect={handleSelect}
+            >
+            {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+            <div>
+              <input
+                {...getInputProps({
+                  placeholder: 'Enter Location',
+                  className: 'form-control',
+                })}
+              />
+              <div className="autocomplete-dropdown-container">
+                {/* {loading && <div>Loading...</div>} */}
+                {console.log("Hello there", suggestions)}
+                {suggestions.map(suggestion => {
+                  const className = suggestion.active
+                    ? 'suggestion-item--active'
+                    : 'suggestion-item';
+                  // inline style for demonstration purpose
+                  const style = suggestion.active
+                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                    return (
+                      <div
+                        {...getSuggestionItemProps(suggestion, {
+                        className,
+                        style,
+                        })}
+                      >
+                        <span>{suggestion.description}</span>
+                      </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </PlacesAutocomplete>
+
           </div>
           <div className="input-group">
             <label htmlFor="shipmentId">Shipment Date</label>
@@ -348,7 +406,7 @@ const NewShipment = props => {
 
           <div className="input-group ">
          
-          <label htmlFor="shipmentId "> Estimated Delivery</label>
+          <label htmlFor="shipmentId "> Estimate Delivery Date</label>
               <div className="form-control">
             <DatePicker
               className="date"

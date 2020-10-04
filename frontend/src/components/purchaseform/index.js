@@ -6,6 +6,11 @@ import DropdownButton from '../../shared/dropdownButtonGroup';
 import { createPO ,setReviewPos,getProducts,getManufacturers} from '../../actions/poActions';
 import { useDispatch,useSelector} from "react-redux";
 
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
+
 const tableHeader = ['Product Name', 'Manufacturer', 'Quantity'];
 
 const PurchaseForm = props => {
@@ -30,6 +35,7 @@ const PurchaseForm = props => {
   const [quantityError, setquantityError] = useState('');
   const [productError, setproductError] = useState('');
   const [manufacturerError, setmanufacturerError] = useState('');
+  const [address, setAddress] = React.useState('');
  
   useEffect(() => {
     async function fetchData() {
@@ -140,6 +146,13 @@ if (deliveryTo.length<1||deliveryTo === 'Select Receiver'){
     }
   };
 
+  const handleSelect = async address => {
+    geocodeByAddress(address)
+      .then(results => getLatLng(results[0]))
+      .then(latLng => console.log('Success', latLng))
+      .catch(error => console.error('Error', error));
+  };
+
   return (
     <div className="purchaseform">
       <div className="d-flex justify-content-between">
@@ -170,13 +183,52 @@ if (deliveryTo.length<1||deliveryTo === 'Select Receiver'){
         </div>
         <div className="input-group">
           <label className="reference">Delivery Location</label>
-          <input
+          {/* <input
             type="text"
             className="form-control"
             placeholder="Enter Delivery Location"
             value={destination}
             onChange={e => setDestination(e.target.value)}
-          />
+          /> */}
+
+            <PlacesAutocomplete
+              value={address} //{destination}
+              onChange={setAddress} //{e => setDestination(e.target.value)}
+              onSelect={handleSelect}
+            >
+            {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+            <div>
+              <input
+                {...getInputProps({
+                  placeholder: 'Enter Delivery Location',
+                  className: 'form-control',
+                })}
+              />
+              <div className="autocomplete-dropdown-container">
+                {loading && <div>Loading...</div>}
+                {suggestions.map(suggestion => {
+                  const className = suggestion.active
+                    ? 'suggestion-item--active'
+                    : 'suggestion-item';
+                  // inline style for demonstration purpose
+                  const style = suggestion.active
+                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                    return (
+                      <div
+                        {...getSuggestionItemProps(suggestion, {
+                        className,
+                        style,
+                        })}
+                      >
+                        <span>{suggestion.description}</span>
+                      </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </PlacesAutocomplete>
          
         </div>
       </div>
