@@ -68,6 +68,12 @@
       #middlewares = ["rbac-stripprefix"]
       #If the rule matches, forward to the rbac management service (declared below)
       service = "rbac-management"
+    [http.routers.search-management]
+      rule = "Host(`test.vaccineledger.com`) && PathPrefix(`/searchmanagement/`)"
+      #If the rule matches, applies the middleware
+      #middlewares = ["search-stripprefix"]
+      #If the rule matches, forward to the rbac management service (declared below)
+      service = "search-management"
 
   [http.middlewares]
     [http.middlewares.test-stripprefix.stripPrefix]
@@ -95,6 +101,8 @@
       prefixes = ["/productmanagement", "/productmanagement/"]
     [http.middlewares.rbac-stripprefix.stripPrefix]
       prefixes = ["/rbacmanagement", "/rbacmanagement/"]
+    [http.middlewares.search-stripprefix.stripPrefix]
+      prefixes = ["/searchmanagement", "/searchmanagement/"]
 
   [http.services]
     # Define how to reach an existing service on our infrastructure
@@ -132,3 +140,6 @@
     [http.services.rbac-management.loadBalancer]
       [[http.services.rbac-management.loadBalancer.servers]]
         url = "http://127.0.0.1:3011/"
+    [http.services.search-management.loadBalancer]
+      [[http.services.search-management.loadBalancer.servers]]
+        url = "http://127.0.0.1:3012/"
