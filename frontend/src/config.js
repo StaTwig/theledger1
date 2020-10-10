@@ -6,11 +6,13 @@ export const LOCAL_SERVER_URL_SHIPMENT = 'http://localhost:3002';
 export const LOCAL_SERVER_URL_INVENTORY = 'http://localhost:3007';
 export const LOCAL_SERVER_URL_TRACKANDTRACE = 'http://localhost:3005';
 export const LOCAL_SERVER_URL_PRODUCTS = 'http://localhost:3010';
+export const LOCAL_SERVER_URL_SEARCH = 'http://localhost:3012';
 export const STABLE_SERVER_URL_USER = 'http://3.81.12.69:3001';
 export const STABLE_SERVER_URL_SHIPMENT = 'http://3.81.12.69:3002';
 export const STABLE_SERVER_URL_INVENTORY = 'http://3.81.12.69:3007';
 export const STABLE_SERVER_URL_TRACKANDTRACE = 'http://3.81.12.69:3005';
 export const STABLE_SERVER_URL_PRODUCTS = 'http://3.81.12.69:3010';
+export const STABLE_SERVER_URL_SEARCH = 'http://3.81.12.69:3012';
 export const DEV_SERVER_URL = 'http://127.0.0.1:9001';
 
 export function config() {
@@ -43,6 +45,7 @@ export function config() {
       trackTemperature:`${LOCAL_SERVER_URL_TRACKANDTRACE}/tracktracemanagement/api/track/fetchTemp`,
       addNewProduct:`${LOCAL_SERVER_URL_PRODUCTS}/productmanagement/api/products/addProductName`,
       addMultipleProducts:`${LOCAL_SERVER_URL_PRODUCTS}/productmanagement/api/products/addMultipleProducts`,
+      track:`${LOCAL_SERVER_URL_SEARCH}/searchmanagement/api/search/track`,
     },
     dev: {
       loginUrl: `${DEV_SERVER_URL}/usermanagement/api/auth/login`,
@@ -71,7 +74,7 @@ export function config() {
       trackTemperature:`${DEV_SERVER_URL}/tracktracemanagement/api/track/fetchTemp`,
       addNewProduct:`${DEV_SERVER_URL}/productmanagement/api/products/addProductName`,
       addMultipleProducts:`${DEV_SERVER_URL}/productmanagement/api/products/addMultipleProducts`,
-
+      track:`${DEV_SERVER_URL}/searchmanagement/api/search/track`,
     },
     stable: {
       loginUrl: `${STABLE_SERVER_URL_USER}/usermanagement/api/auth/login`,
@@ -100,7 +103,7 @@ export function config() {
       trackTemperature:`${STABLE_SERVER_URL_TRACKANDTRACE}/tracktracemanagement/api/track/fetchTemp`,
       addNewProduct:`${STABLE_SERVER_URL_PRODUCTS}/productmanagement/api/products/addProductName`,
       addMultipleProducts:`${STABLE_SERVER_URL_PRODUCTS}/productmanagement/api/products/addMultipleProducts`,
-    
+      track:`${STABLE_SERVER_URL_SEARCH}/searchmanagement/api/search/track`,
     },
     test: {
       loginUrl: `${TEST_SERVER_URL}/usermanagement/api/auth/login`,
@@ -129,6 +132,7 @@ export function config() {
       addNewProduct:`${TEST_SERVER_URL}/productmanagement/api/products/addProductName`,
       getProducts: `${TEST_SERVER_URL}/productmanagement/api/products/getProductNames`,
       addMultipleProducts:`${TEST_SERVER_URL}/productmanagement/api/products/addMultipleProducts`,
+      track:`${TEST_SERVER_URL}/searchmanagement/api/search/track`,
     },
     demo: {
       loginUrl: `${DEMO_SERVER_URL}/usermanagement/api/auth/login`,
@@ -157,6 +161,7 @@ export function config() {
       addNewProduct:`${DEMO_SERVER_URL}/productmanagement/api/products/addProductName`,
       getProducts: `${DEMO_SERVER_URL}/productmanagement/api/products/getProductNames`,
       addMultipleProducts:`${DEMO_SERVER_URL}/productmanagement/api/products/addMultipleProducts`,
+      track:`${DEMO_SERVER_URL}/searchmanagement/api/search/track`,
     },
     prod: {
       loginUrl: `${PROD_SERVER_URL}/usermanagement/api/auth/login`,
@@ -185,6 +190,7 @@ export function config() {
       trackTemperature:`${PROD_SERVER_URL}/tracktracemanagement/api/track/fetchTemp`,
       addNewProduct:`${PROD_SERVER_URL}/productmanagement/api/products/addProductName`,
       addMultipleProducts:`${PROD_SERVER_URL}/productmanagement/api/products/addMultipleProducts`,
+      track:`${PROD_SERVER_URL}/searchmanagement/api/search/track`,
     }
   };
 
