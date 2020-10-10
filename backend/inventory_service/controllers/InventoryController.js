@@ -634,7 +634,7 @@ exports.addNewInventory = [
                 expiryDate: response.data.expiryDate,
                 serialNumber: response.data.serialNumber,
                 owner: response.data.owner,
-                transactionIds: [response.data.transactionIds]
+                transactionIds: [response.data.transactionId]
               });
              await newInventory.save();
 
