@@ -1219,41 +1219,6 @@ exports.trackShipment = [
   },
 ];
 
-exports.trackProduct = [
-  auth,
-  async (req, res) => {
-    try {
-      const { serialNumber } = req.query;
-      logger.log(
-        'info',
-        '<<<<< ShipmentService < ShipmentController < trackProduct : tracking product, querying by transaction hash',
-      );
-      InventoryModel.findOne({ serialNumber: serialNumber }).then(async user => {
-        let txnIDs = user.transactionIds;
-        let items_array = [];
-        await utility.asyncForEach(txnIDs, async txnId => {
-          const response = await axios.get(
-              `${blockchain_service_url}/queryDataByRawTxHash?txid=${txnId}`,
-          );
-          const items = response.data.items;
-          items_array.push(items);
-        });
-        logger.log(
-          'info',
-          '<<<<< ShipmentService < ShipmentController < trackProduct : tracked product, queried data by transaction hash',
-        );
-        res.json({ data: items_array });
-      });
-    } catch (err) {
-      logger.log(
-        'error',
-        '<<<<< ShipmentService < ShipmentController < trackProduct : error (catch block)',
-      );
-      return apiResponse.ErrorResponse(res, err);
-    }
-  },
-];
-
 let counts_array = [];
 var today = 0,
   week = 0,
