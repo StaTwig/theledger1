@@ -36,6 +36,7 @@ exports.getTotalCount = [
           checkPermissions(permission_request, permissionResult => {
             if(permissionResult.success) {
               res.json('Total inventory count');
+              // apiResponse.successResponseWithData(res, 'Total Inventory Count');
             }else{
               res.json("Sorry! User does not have enough Permissions")
             }
@@ -68,6 +69,7 @@ exports.getTotalCountOnHold = [
           checkPermissions(permission_request, permissionResult => {
             if(permissionResult.success) {
               res.json('Total inventory count on Hold');
+              // apiResponse.successResponseWithData(res, 'Total Inventory count on Hold');
             }else{
               res.json("Sorry! User does not have enough Permissions")
             }
@@ -100,6 +102,7 @@ exports.getExpiringInventory = [
           checkPermissions(permission_request, permissionResult => {
             if(permissionResult.success) {
               res.json('Total inventory count expiring');
+              // apiResponse.successResponseWithData(res, 'Total Inventory count expiring');
             }else{
               res.json("Sorry! User does not have enough Permissions")
             }
@@ -133,6 +136,7 @@ exports.getInventoryforProduct = [
             if(permissionResult.success) {
               const { product_id } = result.data.key;
               res.json('Inventory details for product');
+              // apiResponse.successResponseWithData(res, 'Inventory details for product');
             }else{
               res.json("Sorry! User does not have enough Permissions")
             }
@@ -172,6 +176,7 @@ exports.getInventoryDetailsForProduct = [
               console.log('items', items);
               logger.log('info', '<<<<< InventoryService < InventoryController < getInventoryDetailsForProduct : queried data by key')
               res.json({ data: items });
+              // apiResponse.successResponseWithData(res, items);
             }else{
               res.json("Sorry! User does not have enough Permissions")
             }
@@ -405,6 +410,7 @@ exports.getAllInventoryDetails = [
                               }
                           }
                       });
+                      // apiResponse.successResponseWithData(res, items);
                     }else{
                       res.json("Sorry! User does not have enough Permissions")
                     }
@@ -505,6 +511,7 @@ exports.addNewInventory = [
             );
             logger.log('info', '<<<<< InventoryService < InventoryController < addNewInventory : publised data to blockchain')
             res.status(200).json({ response: response.data.transactionId });
+            // apiResponse.successResponseWithData(res, response.data.transactionId);
           }else{
             res.json("Sorry! User does not have enough Permissions")
           }

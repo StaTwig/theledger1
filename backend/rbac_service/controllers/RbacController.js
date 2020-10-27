@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 //helper file to prepare responses.
 const checkToken = require('../middlewares/middleware').checkToken;
 const auth = require('../middlewares/jwt');
+const apiResponse = require('../helpers/apiResponse');
 
 const apiResponse = require('../helpers/apiResponse');
 
@@ -19,9 +20,11 @@ exports.getPermissions = [
           logger.log('info', '<<<<< RbacService < RbacController < getPermissions : token verifed successfully');
           const permissions = await RbacModel.find({});
           res.json({ data: permissions });
+          // return apiResponse.successResponseWithData(res, permissions);
         } else {
           logger.log('warn', '<<<<< RbacService < RbacController < getPermissions : user is not authenticated')
           res.status(403).json(result);
+          // return apiResponse.ErrorResponse(res, 'User not authenticated');
         }
       });
     } catch (err) {
