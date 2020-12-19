@@ -9,37 +9,70 @@ import './style.scss';
 import DropdownButton from '../../shared/dropdownButtonGroup';
 import { createPO ,setReviewPos,getProducts,getManufacturers} from '../../actions/poActions';
 import { useDispatch,useSelector} from "react-redux";
+import {getConstants} from '../../actions/shipmentActions';
 
-const tableHeader = ['Material ID', 'Product Name', 'Manufacturer', 'Quantity'];
+
+// const result = getConstants();
+// console.log("Results here : ", result)
+// const constantValues = result.data
+
+// console.log("Constants here : ", constantValues)
+// if(constantValues !== undefined){}
+// const tableHeader = constantValues.tableHeader
+// const tableHeader = ['Material ID', 'Product Name', 'Manufacturer', 'Quantity'];
 
 const PurchaseForm = props => {
+
+  // const [constantValues, setConstants]= useState({})
+  // useEffect(() => {
+  //       async function fetchConstants() {
+  //         const result = await getConstants();
+  //         setConstants(result.data)
+  //         }
+  //         fetchConstants();
+  //    });    
+
+  const result = getConstants();
+  console.log("Results here : ", result)
+  const constantValues = result.data
+  
+  console.log("Constants here : ", constantValues)
+  // if(constantValues !== undefined){}
+  const tableHeader = constantValues.tableHeader
+  
   const editPo = useSelector(state => {
     return state.editPo;
   });
   const { user, users } = props;
 
   const userNames = users.map(usr => usr.name);
-  const vendorIds = ['1900000363','1900000501','1900008579','1900000363','1900007249','1900007249','1900000462','1900000363'];
+  const vendorIds = constants.vendorIds
+  // const vendorIds = ['1900000363','1900000501','1900008579','1900000363','1900007249','1900007249','1900000462','1900000363'];
   const [deliveryTo, setDeliveryTo] = useState(editPo.receiver.name);
   const [sendPOTo, setSendPOTo] = useState(editPo.sendPOTo);
   const [vendorId, setVendorId] = useState(editPo.vendorId);
   const [unicefPo, setUnicefPo] = useState(editPo.unicefPo);
-  const unicefPos =['45163183','45163206','45163239','45163283','45163284','45163285','45163287','45163289']
+  const unicefPos = constants.unicefPos
+  // const unicefPos =['45163183','45163206','45163239','45163283','45163284','45163285','45163287','45163289']
   const [vendorName, setVendorName] = useState(editPo.vendorName);
-  const poNums = ['45163183','45163206','45163239','45163283','45163284','45163285','45163287','45163289']
+  const poNums = constants.poNums
+  // const poNums = ['45163183','45163206','45163239','45163283','45163284','45163285','45163287','45163289']
   const [poNum, setPoNum] = useState(editPo.poNum);
   const [locationId, setLocationId] = useState(editPo.locationId);
-  const locationIds = ['5577','5588','5597','5543','5581','5623','5548','5573'];
+  const locationIds = constants.locationIds
+  // const locationIds = ['5577','5588','5597','5543','5581','5623','5548','5573'];
   const [products, setProducts] = useState([]);
   const [shippedFrom, setShippedFrom] = useState(editPo.shippedFrom);
   const [toLocation, setToLocation] = useState(editPo.toLocation);
-  const locations= ['Niger','Guinea','Madagascar','Congo','Mali','Ethiopia','Republic of Cameroon','Chad'];
+  const locations = constants.locations
+  // const locations= ['Niger','Guinea','Madagascar','Congo','Mali','Ethiopia','Republic of Cameroon','Chad'];
   const [manufacturers, setManufacturers] = useState([]);
   const [product, setProduct] = useState(Object.keys(editPo.products[0])[0].split('-')[0]);
   const [manufacturer, setManufacturer] = useState(Object.keys(editPo.products[0])[0].split('-')[1]);
   const [quantity, setQuantity] = useState(editPo.products[0][`${product}-${manufacturer}`]);
   const  [materialId, setMaterialId] = useState(editPo.materialId);
-  const  materialIds= ['S359190','S359191','S359192','S359193','S359194', 'S359195', 'S359196', 'S359197']
+  const materialIds = constants.materialIds
+  // const  materialIds= ['S359190','S359191','S359192','S359193','S359194', 'S359195', 'S359196', 'S359197']
   const [destination, setDestination] = useState(editPo.destination);
   const [client, setClient] = useState(editPo.client);
   const [message, setMessage] = useState('');
@@ -66,8 +99,9 @@ const PurchaseForm = props => {
     fetchData();
   },[]);
 
-  const poFields= ['sendPOTo','vendorId','unicefPo','vendorName','poNum','locationId','shippedFrom','toLocation',
-                      'materialId','product','manufacturer','quantity'];
+  const poFields = constants.poFields
+  // const poFields= ['sendPOTo','vendorId','unicefPo','vendorName','poNum','locationId','shippedFrom','toLocation',
+                      // 'materialId','product','manufacturer','quantity'];
 
     const checkValidationErrors = (validations) => {
       let error = false;

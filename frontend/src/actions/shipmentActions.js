@@ -70,6 +70,15 @@ export const getTemperature = async () => {
   }
 };
 
+export const getConstants = async () => {
+  try {
+    const result = await axios.get(config().trackConstants);
+    return result.data;
+  } catch (e) {
+    return e.response;
+  }
+};
+
 
 export const getShipmentsById = query => {
   try {

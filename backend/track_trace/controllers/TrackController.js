@@ -278,6 +278,33 @@ exports.fetchTemp = [
   }
 ];
 
+exports.fetchConstants = [
+  (req, res) => {
+    try {
+      var constantObject = {
+        poFields: ['sendPOTo','vendorId','unicefPo','vendorName','poNum','locationId','shippedFrom','toLocation',
+        'materialId','product','manufacturer','quantity'],
+        materialIds: ['S359190','S359191','S359192','S359193','S359194', 'S359195', 'S359196', 'S359197'],
+        locations: ['Niger','Guinea','Madagascar','Congo','Mali','Ethiopia','Republic of Cameroon','Chad'],
+        locationIds: ['5577','5588','5597','5543','5581','5623','5548','5573'],
+        poNums: ['45163183','45163206','45163239','45163283','45163284','45163285','45163287','45163289'],
+        unicefPos: ['45163183','45163206','45163239','45163283','45163284','45163285','45163287','45163289'],
+        vendorIds: ['1900000363','1900000501','1900008579','1900000363','1900007249','1900007249','1900000462','1900000363'],
+        tableHeader: ['Material ID', 'Product Name', 'Manufacturer', 'Quantity']
+      }
+      logger.log('info', '<<<<< TrackTraceService < TrackController < fetchConstants : successfully sending response with data ');
+      return apiResponse.successResponseWithData(
+        res,
+        "All Constants sent",
+        constantObject
+      );    
+    } catch (err) {
+      logger.log('error', '<<<<< TrackTraceService < TrackController < fetchConstants : error (catch block) ');
+      return apiResponse.ErrorResponse(res, err);
+    }
+  }
+];
+
 exports.track = [
   auth,
   async (req, res) => {
