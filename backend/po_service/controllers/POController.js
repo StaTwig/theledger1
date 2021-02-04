@@ -3,15 +3,17 @@ const fs = require('fs');
 const moveFile = require('move-file');
 const XLSX = require('xlsx');
 const axios = require('axios');
+const uniqid = require('uniqid');
 
-const { sanitizeBody } = require('express-validator');
-const UserTransactionModel = require('../models/UserTransactionModel');
 const UserModel = require('../models/UserModel');
 const POModel = require('../models/POModel');
 const ShipmentModel = require('../models/ShipmentModel');
 const InventoryModel = require('../models/InventoryModel');
 const NotificationModel = require('../models/NotificationModel');
 const RecordModel = require('../models/RecordModel');
+const OrganisationModel = require('../models/OrganisationModel');
+const ProductModel = require('../models/ProductModel');
+const WarehouseModel = require('../models/WarehouseModel');
 //this helper file to prepare responses.
 const apiResponse = require('../helpers/apiResponse');
 const utility = require('../helpers/utility');
@@ -43,18 +45,20 @@ exports.purchaseOrderStatistics = [
             '<<<<< ShipmentService < ShipmentController < purchaseOrderStatistics : token verified successfully, querying data by publisher',
           );
           const permission_request = {
-            result: result,
+            role: req.user.role,
             permissionRequired: 'viewPO',
           };
-          checkPermissions(permission_request, async permissionResult => {
+           checkPermissions(permission_request, async permissionResult => {
             if (permissionResult.success) {
               const { address, role } = req.user;
               const { skip, limit } = req.query;
-              var supplierPOs = await wrapper.findRecordsAndSort(RecordModel,{"supplier.supplierIncharge":address},skip,limit);
-              var customerPos = await wrapper.findRecordsAndSort(RecordModel,{"customer.customer_incharge":address},skip,limit);
-	      var creatorPos = await wrapper.findRecordsAndSort(RecordModel,{"createdBy":address},skip,limit);
+	       const poTableArray = [];
 
-              var poItems,poItemsSupplier,poItemsCustomer,poItemsCreator = [];
+              var supplierPOs = await wrapper.findRecordsAndSort(RecordModel,{"supplier.supplierIncharge":address},skip,limit);
+              var customerPos = await wrapper.findRecordsAndSort(RecordModel,{"customer.customerIncharge":address},skip,limit);
+	      var creatorPos = await wrapper.findRecordsAndSort(RecordModel,{"createdBy":address},skip,limit);
+	
+              var allPos,poItemsSupplier,poItemsCustomer,poItemsCreator = [];
 
               poItemsSupplier = supplierPOs.map(po => {
                 const status = po.status === 'Created' ? 'Sent' : po.status;
@@ -75,24 +79,48 @@ exports.purchaseOrderStatistics = [
               });
 	      
 
-               poItems = poItemsSupplier.concat(poItemsCustomer,poItemsCreator)
-              
-		if(role === 'powerUser') {
-                /*const allPos = await POModel.find({})
-                  .sort({ createdAt: -1 })
-                  .skip(parseInt(skip))
-                  .limit(parseInt(limit));*/
+               allPos = poItemsSupplier.concat(poItemsCustomer,poItemsCreator)
 
-		 const allPos = await wrapper.findAllRecords(RecordModel,skip,limit);
-		 console.log("31",allPos)
-                 //const poItemsFiltered = allPos.filter(po => !poItems.find(poItem => poItem.orderID === po.orderID));
-                poItems = [...poItems, ...allPos];
-              }
+		if(role === 'powerUser') {
+ 		  allPos = await wrapper.findAllRecords(RecordModel,skip,limit);
+		}
+
+	         for (i=0; i< allPos.length;i++)
+		{
+		  const productArray = [];
+		  const supplier = await wrapper.findOneRecord(OrganisationModel,{"id":allPos[i].supplier.supplierOrganisation})
+	          const customer = await wrapper.findOneRecord(OrganisationModel,{"id":allPos[i].customer.customerOrganisation})
+		  const product = await wrapper.findOneRecord(ProductModel,{"id":allPos[i].products[0].productId})
+	          const deliveryLocation =  await wrapper.findOneRecord(WarehouseModel,{"id":allPos[i].customer.shippingAddress.shippingAddressId})
+		  for (j=0;j<allPos[i].products.length;j++)
+		   {
+			var productId = allPos[i].products[j].productId;
+			const product = await wrapper.findOneRecord(ProductModel,{"id": "prod-9bhkk6yiutx"})
+			var product1 = {productID : allPos[i].products[j].productId,quantity: allPos[i].products[j].quantity,
+			productName:product.name,manufacturer:product.manufacturer }
+			productArray.push(product1)
+	    	   }  	
+		   poItems = {
+			     suppplierOrgID:allPos[i].supplier.supplierOrganisation,
+			     supplierOrgName:supplier.name,
+		  	     purchaseOrderID : allPos[i].id,
+			     externalId: allPos[i].externalId,
+			     customerOrgID:allPos[i].customer.customerOrganisation,
+			     customerOrgName: customer.name,
+			     customerCountryName: customer.country.name,
+			     customerCountryID: customer.country.id,
+			     products: productArray,
+			     deliveryLocationId: allPos[i].customer.shippingAddress.shippingAddressId,
+			     deliveryLocation: deliveryLocation.postalAddress,
+			     status: allPos[i].poStatus
+		     }
+			    poTableArray.push(poItems)
+			}
               logger.log(
                 'info',
                 '<<<<< ShipmentService < ShipmentController < purchaseOrderStatistics : queried data by publisher',
               );
-              res.json({ data: poItems });
+              res.json({ data: poTableArray });
             } else {
               res.json('Sorry! User does not have enough Permissions');
             }
@@ -274,6 +302,57 @@ exports.fetchPurchaseOrderBC = [
   },
 ];
 
+exports.fetchPurchaseOrder = [
+  auth,
+  async (req, res) => {
+    try {
+      const { authorization } = req.headers;
+      checkToken(req, res, async result => {
+        if (result.success) {
+          logger.log(
+            'info',
+            '<<<<< ShipmentService < ShipmentController < fetchPurchaseOrder : token verified successfully, querying data by key',
+          );
+
+            const permission_request = {
+            role: req.user.role,
+            permissionRequired: 'viewPO',
+          };
+
+	  checkPermissions(permission_request, async permissionResult => {
+            if (permissionResult.success) {
+              const { poId } = req.query;
+             console.log("key",poId) 
+	    var POitems = await wrapper.findOneRecord(RecordModel,{"id":poId});
+            var customerOrg = POitems.customer.customerOrganisation;
+	    
+	     return apiResponse.successResponseWithData(
+                res,
+                'Purchase Order Info',
+                POitems,
+              );
+            } else {
+              res.json('Sorry! User does not have enough Permissions');
+            }
+          });
+        } else {
+          logger.log(
+            'warn',
+            '<<<<< ShipmentService < ShipmentController < fetchPurchaseOrder : refuted token',
+          );
+          res.status(403).json(result);
+        }
+      });
+} catch (err) {
+      logger.log(
+        'error',
+        '<<<<< ShipmentService < ShipmentController < fetchPurchaseOrder : error (catch block)',
+      );
+      return apiResponse.ErrorResponse(res, err);
+    }
+  },
+];
+
 exports.changePOStatus = [
   auth,
   async (req, res) => {
@@ -343,110 +422,47 @@ exports.createPurchaseOrder = [
   auth,
   async (req, res) => {
     try {
-      checkToken(req, res, async result => {
-        if (result.success) {
-          logger.log(
-            'info',
-            '<<<<< ShipmentService < ShipmentController < createPurchaseOrder : token verified successfully, publishing to blockchain',
-          );
+      /* req.body
+       {
+         "externalId": "po1234", //User enters
+         "creationDate": "2021-01-28T18:30:00.000Z", //Date should be in ISO Format from UI
+         "lastUpdatedOn": "2021-01-28T18:30:00.000Z", //Date should be in ISO Format from UI
+         "supplier": {
+           "supplierOrganisation": "organx12345", // use id from Organisation object
+           "supplierIncharge": "emp-1f8ukke4uhhy" // use primaryContactId
+         },
+         "customer": {
+           "customerOrganisation": "org-11111", //use id from customer organisation dropdown
+           "customerIncharge": "emp-18gpp20egkkf54n59", //use primaryContactId
+           "shippingAddress": {
+            "shippingAddressId": "war-1234", //use id from customer location id dorpdown
+            "shipmentReceiverId": "emp-18gpp1kcckke7vrwh" // use supervisors[0] from cuostmer location id dropdown
 
-          const permission_request = {
-            result: result,
-            permissionRequired: 'createPO',
-          };
-            checkPermissions(permission_request, async permissionResult => {
-            if (permissionResult.success) {
-              try {
-                const { address } = req.user;
-                const { data } = req.body;
-                const orderID = data.orderID || 'PO' + Math.floor(1000 + Math.random() * 9000);
-
-                const userData = {
-                  stream: po_stream_name,
-                  key: orderID,
-                  address: address,
-                  data: data,
-                };
-
-                const response = await axios.post(
-                  `${blockchain_service_url}/publish`,
-                  userData,
-                );
-		console.log("response",response)
-                const txnIdPO = response.data.transactionId;
-                const POFound = await RecordModel.findOne({ id : orderID });
-		console.log("POFound",POFound)
-                if (!POFound) {
-                  logger.log(
-                    'info',
-                    '<<<<< ShipmentService < ShipmentController < createPO : PO found in collection',
-                  );
-
-                 /* const newPO = {
-                    ...data,
-                    status: req.user.address  === data.sendpoto.address ? 'Accepted':'Created',
-                    orderID,
-                    txnIds: [txnIdPO],
-                    sender: req.user.address,
-                    receiver: req.user.address  === data.sendpoto.address ? data.receiver.address : data.sendpoto.address,
-                    txnId: txnIdPO,
-                  };*/
-		 let date_ob = new Date();
-                 let date = ('0' + date_ob.getDate()).slice(-2);
-                 let month = ('0' + (date_ob.getMonth() + 1)).slice(-2);
-                 let year = date_ob.getFullYear();
-                 var today = date + '-' + month + '-' + year;
-                 var createdDate = { createdDate: today };
-
-		 const newPO = {
-			 id : orderID,
-			 creationDate : today,
-			 createdBy : req.user.address,
-			 poStatus : 'Created',
-			 potransactionIds: txnIdPO,
-			 ...data
-                  };
-		console.log("newPO",newPO)
-                  //await newPO.save();
-		 
-		//wrapper.insertOneRecord(POModel, newPO, function(error,response){
-		//	})
-
-		wrapper.insertOneRecord(RecordModel, newPO, function(error,response){
-                        })
-                } else {
-                  logger.log(
-                    'info',
-                    '<<<<< ShipmentService < ShipmentController < createPO : updating PO in PO model',
-                  );
-                  const txnIds = [...POFound.potransactionIds, txnIdPO];
-		  wrapper.updateRecord(RecordModel,{ id: orderID }, { potransactionIds: txnIds })
-		  //await POModel.updateOne({ orderID }, { txnIds });
-                }
-
-                logger.log(
-                  'info',
-                  '<<<<< ShipmentService < ShipmentController < createPurchaseOrder : published to blockchain',
-                );
-                res.status(200).json({
-                  txid: response.data.transactionId,
-                  orderID: orderID,
-                });
-              } catch (e) {
-                return apiResponse.ErrorResponse(res, 'Error from Blockchain');
-              }
-            } else {
-              res.json('Sorry! User does not have enough Permissions');
+           }
+         },
+         "products": [
+            {
+              "productId": "prod-9bhkk6yiutx", // use id from products
+              "productQuantity": 1000,
             }
-          });
-        } else {
-          logger.log(
-            'warn',
-            '<<<<< ShipmentService < ShipmentController < createPurchaseOrder : refuted token',
-          );
-          return apiResponse.ErrorResponse(res, result);
-        }
+          ],
+       }
+       */
+      const { externalId, creationDate, supplier, customer, products, lastUpdatedOn } = req.body;
+      const { createdBy, lastUpdatedBy } = req.user.id;
+      const purchaseOrder = new RecordModel({
+        id: uniqid('po-'),
+        externalId,
+        creationDate,
+        supplier,
+        customer,
+        products,
+        lastUpdatedOn,
+        createdBy,
+        lastUpdatedBy
       });
+      const result  = await purchaseOrder.save();
+      return apiResponse.successResponseWithData(res, 'Created PO Success', result.id);
     } catch (err) {
       logger.log(
         'error',
@@ -510,7 +526,7 @@ exports.addPOsFromExcel = [
                       date: item['Document Date'],
                       destination: item['Country Name'],
                       products: [
-                        { [productManufacturer: item['Order Quantity'],po_quantity_delivered: "QNTY1" },
+                        { [productManufacturer]: item['Order Quantity'] },
                       ],
                       receiver: {
                         address: receiverDetails.address,
