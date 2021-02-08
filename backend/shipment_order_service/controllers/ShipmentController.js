@@ -4,6 +4,7 @@ const apiResponse = require("../helpers/apiResponse");
 const auth = require("../middlewares/jwt");
 const checkToken = require("../middlewares/middleware").checkToken;
 const ShipmentModel = require("../models/ShipmentModel");
+const ShippingOrder = require("../models/ShippingOrderModel")
 const init = require("../logging/init");
 const logger = init.getLog();
 
@@ -20,6 +21,16 @@ exports.createShipment = [
           await shipment
             .save()
             .then((shipments) => {
+              ShippingOrder.findByIdAndUpdate(req.body.shippingOrderId,{
+                $push: { soShipmentsIds: data.id},
+              },
+              {
+                new: true,
+              }
+            ).exec((err, result) => {
+              if (err) {
+                return res.status(422).json({ error: err });
+              }})
               return apiResponse.successResponseWithData(
                 res,
                 "Shipment Created",
