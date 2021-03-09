@@ -1,18 +1,27 @@
-import React,{useEffect, useState} from 'react'
-import { getRegions,getCountryByRegion, getWareHousesByCountry} from '../../actions/inventoryActions';
+import React,{useEffect, useState} from 'react';
+import { useDispatch } from 'react-redux'
+
+import {
+    getRegions,
+    getCountryByRegion,
+    getWareHousesByCountry,
+    getWareHousesByRegion,
+    getProductDetailsByWarehouseId
+} from '../../actions/inventoryActions';
 import CloseIcon from '../../assets/icons/cross.svg';
 import DropdownButton from '../dropdownButtonGroup';
 import './style.scss'
-
    const SearchWareHouse = props => {
-    const { warehouse} = props?.dashBarData;
+       const dispatch = useDispatch();
     const [region,setRegion]= useState('Select Region')
     const [regions,setRegions]= useState([])
     const [country,setCountry] = useState('Select Country')
-    const [countrys,setCountrys] = useState([])
-    const [warehous,setWareHous]=useState('Select Warehouse')
-    const [warehouses,setWareHouses]=useState([])
-
+    const [countries,setCountries] = useState([])
+    const [warehouseId,setWareHouseId]=useState('Select Warehouse')
+    const [warehouses,setWareHouses]=useState([]);
+    const [warehouseIds,setWareHouseIds]=useState([]);
+    const [ products, setProducts ] = useState([]);
+    const [ warehouse, setWarehouse ] = useState({});
     useEffect(() => {
         async function fetchData() {
           const result = await getRegions();
@@ -24,24 +33,50 @@ import './style.scss'
         const onCountries = async (item) => {
            const countryResult = await getCountryByRegion(item);
         if (countryResult.status === 1) {
-            setCountrys(countryResult.data.countries)
+            setCountries(countryResult.data.countries)
+        }
+    }
+
+    const onRegionChange = async item => {
+        setRegion(item)
+        onCountries(item);
+        const regionResult = await getWareHousesByRegion(item);
+        if (regionResult.status === 1) {
+            setWareHouses(regionResult.data);
+            const warehouseList = regionResult.data.map(w => w.id);
+            setWareHouseIds(warehouseList);
+        }
+    }
+
+    const onCountryChange = async item => {
+        setRegion(item)
+        onCountries(item);
+        const regionResult = await getWareHousesByCountry(item);
+        if (regionResult.status === 1) {
+            setWareHouses(regionResult.data);
+            const warehouseList = regionResult.data.map(w => w.id);
+            setWareHouseIds(warehouseList);
         }
     }
 
     const onWarehouses = async (item) => {
         const warehousesResult = await getWareHousesByCountry(item);
      if (warehousesResult.status === 1) {
-         setWareHouses(warehousesResult.data)
+         setWareHouses(warehousesResult.data);
+         const warehouseList = warehousesResult.data.map(w => w.id);
+         setWareHouseIds(warehouseList);
      }
  }
-
+       const onSearchWareHouse = async (warehouseId) => {
+            props.onWarehouseSelect(warehouseId);
+       }
     return (
         <div className="dashbar">
             <div>
                 <button type="button" className="close" onClick={() =>
                     {
                         props.setDashVisible(false)
-                        props.setDashBarData({})
+                        //props.setDashBarData({})
                     }
                 }>
                     <img src={CloseIcon} alt="Close" with="30" height="30" />
@@ -53,12 +88,7 @@ import './style.scss'
                     <div className="form-control ml-5">
                         <DropdownButton
                             name={region}
-                            onSelect={item =>
-                                {
-                                setRegion(item)
-                                onCountries(item)
-                                }
-                            }
+                            onSelect={onRegionChange}
                             groups={regions}
                         />
                     </div>
@@ -74,7 +104,7 @@ import './style.scss'
                                 onWarehouses(item)
                                 }
                             }
-                            groups={countrys}
+                            groups={countries}
                         />
                     </div>
                 </div>
@@ -82,18 +112,18 @@ import './style.scss'
                     <label htmlFor="shipmentId" className="mt-2">Warehouse</label>
                     <div className="form-control ml-4">
                         <DropdownButton
-                            name={warehous}
+                            name={warehouseId}
                             onSelect={item => {
-                                setWareHous(item)
-                                props.onSearchWareHouse(item)
+                                setWareHouseId(item)
+                                onSearchWareHouse(item)
                             }}
-                            groups={warehouses}
+                            groups={warehouseIds}
                         />
                     </div>
                 </div>
             </div>
-            <div className=" panel  mb-4 searchwarehouse dashsearch address searchpanel">
-            <div className="d-flex flex-row ">
+            {warehouses.length > 0 && <div className=" panel  mb-4 searchwarehouse dashsearch address searchpanel">
+                {warehouses.map(w => <div className="d-flex flex-row " onClick={() =>props.onWarehouseSelect(w.id)}>
                     <ul className="mr-3">
                         <li className="mb-2 text-secondary">Country ID</li>
                         <li className="mb-2 text-secondary">Country</li>
@@ -101,13 +131,13 @@ import './style.scss'
                         <li className="mb-1 text-secondary">Warehouse Name</li>
                     </ul>
                     <ul>
-                        <li className="mb-2">{warehouse?.warehouseCountryId}</li>
-                        <li className="mb-2">{warehouse?.warehouseCountryName}</li>
-                        <li className="mb-2">{warehouse?.warehouseId}</li>
-                        <li className="mb-1">{warehouse?.warehouseName}</li>
+                        <li className="mb-2">{w.country.id}</li>
+                        <li className="mb-2">{w.country.name}</li>
+                        <li className="mb-2">{w.id}</li>
+                        <li className="mb-1">{w.title}</li>
                     </ul>
-            </div>
-            </div>
+                </div>)}
+            </div>}
 
         </div>
     )

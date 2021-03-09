@@ -697,9 +697,13 @@ exports.addProductsToInventory = [
           }
           let serialNumbersRange = true
          for(let i=0; i< products.length; i++) {
-            if(products[i].serialNumbersRange.split('-').length < 2) {
-              serialNumbersRange = false;
-              break;
+           if (products[i].serialNumbersRange.split('-').length < 2) {
+             let snoref = Date.now();
+             products[i].serialNumbersRange =
+               "DSL" + (parseInt(snoref) - parseInt(products[i].quantity - 1)) +
+               "-DSL" + snoref;
+              // serialNumbersRange = false;
+              // break;
             }
          }
          if(!serialNumbersRange) {
@@ -1415,8 +1419,8 @@ exports.getProductDetailsByWarehouseId = [
   async (req, res) => {
     try {
       const { warehouseId } = req.query;
-      const warehouseDetails = await WarehouseModel.find({"id":warehouseId})
-      const val = warehouseDetails[0].warehouseInventory
+      const warehouseDetails = await WarehouseModel.findOne({"id":warehouseId})
+      const val = warehouseDetails.warehouseInventory
       const productList = await InventoryModel.find({"id":val});
       const list = JSON.parse(JSON.stringify(productList[0].inventoryDetails))
       var productArray = [];
@@ -1427,15 +1431,15 @@ exports.getProductDetailsByWarehouseId = [
                         var product1 = {productName: product[0].name, productId: product[0].id,manufacturer:product[0].manufacturer,quantity: list[j].quantity};
                         productArray.push(product1)
                    }
-      var warehouse = {"warehouseCountryId":warehouseDetails[0].country.id,"warehouseCountryName":warehouseDetails[0].country.name,"warehouseId":warehouseDetails[0].id,
-      "warehouseName":warehouseDetails[0].title,"warehouseAddress":warehouseDetails[0].postalAddress,"warehouseLocation":warehouseDetails[0].location}
-	    
+      var warehouse = {"warehouseCountryId":warehouseDetails.country.id,"warehouseCountryName":warehouseDetails.country.name,"warehouseId":warehouseDetails.id,
+      "warehouseName":warehouseDetails.title,"warehouseAddress":warehouseDetails.postalAddress,"warehouseLocation":warehouseDetails.location}
+
       return apiResponse.successResponseWithData(
         res,"Fetch success",
-	{
-	warehouse,
+        {
+        warehouse,
         productArray
-	}
+        }
       );
     } catch (err) {
       logger.log(
@@ -1475,7 +1479,7 @@ exports.getCountryDetailsByRegion = [
     try {
       const { region } = req.query;
       const regionDetails = await RegionModel.find({"name":region})
-	console.log(regionDetails[0].country)
+        console.log(regionDetails[0].country)
      // var countryArray = [];
       /*for (j=0;j<regionDetails.length;j++)
                    {
@@ -1485,7 +1489,7 @@ exports.getCountryDetailsByRegion = [
 
       return apiResponse.successResponseWithData(
         res,"Fetch success",
-	      {"countries": regionDetails[0].country}
+              {"countries": regionDetails[0].country}
       );
     } catch (err) {
       logger.log(
@@ -1513,17 +1517,17 @@ exports.getRegions = [
   },
 ];
 
-exports.getWarehouseDetailsByCountry = [
+exports.getWarehouseDetailsByRegion = [
   auth,
   async (req, res) => {
     try {
-      const { country } = req.query;
-      const warehouseDetails = await WarehouseModel.find({"country.name":country})
-      
+      const { region } = req.query;
+      const warehouseDetails = await WarehouseModel.find({"region.name":region})
+
       var warehouseArray = [];
       for (j=0;j<warehouseDetails.length;j++)
                    {
-                        var warehouseId = warehouseDetails[j].id;
+                        var warehouseId = warehouseDetails[j];
                         warehouseArray.push(warehouseId)
                    }
 
@@ -1541,4 +1545,30 @@ exports.getWarehouseDetailsByCountry = [
   },
 ];
 
+exports.getWarehouseDetailsByCountry = [
+  auth,
+  async (req, res) => {
+    try {
+      const { country } = req.query;
+      const warehouseDetails = await WarehouseModel.find({"country.name":country})
 
+      var warehouseArray = [];
+      for (j=0;j<warehouseDetails.length;j++)
+                   {
+                        var warehouseId = warehouseDetails[j];
+                        warehouseArray.push(warehouseId)
+                   }
+
+      return apiResponse.successResponseWithData(
+        res,"Fetch success",
+        warehouseArray
+      );
+    } catch (err) {
+      logger.log(
+        'error',
+        '<<<<< ShippingOrderService < ShippingController < fetchAllShippingOrders : error (catch block)',
+      );
+      return apiResponse.ErrorResponse(res, err);
+    }
+  },
+];
