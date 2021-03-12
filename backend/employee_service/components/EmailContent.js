@@ -11,7 +11,7 @@ const EmailContent = ({ name, origin, otp }) => {
     <body>
         <div class="wrapper">
             <div class="logo">
-                <img src="http://test.vaccineledger.com/dist/97b8f67db5b802bef872b0d34d7baf06.png" style="width: 200px;"/>
+                <img src="http://vaccineledger.com/dist/STATLEDGER.png.png" style="width: 200px;"/>
             </div>
             <div class="email-body">
                 <h4>Dear ${name},</h4>
