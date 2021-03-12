@@ -165,4 +165,4 @@
         url = "http://127.0.0.1:3013/"
     [http.services.analytics-management.loadBalancer]
       [[http.services.analytics-management.loadBalancer.servers]]
-        url = "http://127.0.0.1:3013/"
+        url = "http://127.0.0.1:3015/"
