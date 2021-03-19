@@ -21,8 +21,17 @@ const NewShipment = (props) => {
   const [shippingOrderId, setShippingOrderId] = useState(
     "Select Shipping Order ID"
   );
-  const [shippingOrderId, setShippingOrderId] = useState(
-    "Select Shipping Order ID"
+  const [senderOrgId, setSenderOrgId] = useState(
+    "Select Organisation Name"
+  );
+  const [senderOrgLoc, setSenderOrgLoc] = useState(
+    "Select Organisation Location"
+  );
+  const [receiverOrgId, setReceiverOrgId] = useState(
+    "Select Organisation Name"
+  );
+  const [receiverOrgLoc, setReceiverOrgLoc] = useState(
+    "Select Delivery Location"
   );
   const user = useSelector((state) => state.user);
   const [shippingOrderDetails, setShippingOrderDetails] = useState({});
@@ -108,6 +117,11 @@ const NewShipment = (props) => {
     setErrorMessage("");
 
     if (shippingOrderId === "Select Shipping Order ID") {
+      setErrorMessage("Shipping Order Id cannot be empty");
+      return;
+    }
+
+    if (senderOrgId === "Select Organisation Name") {
       setErrorMessage("Shipping Order Id cannot be empty");
       return;
     }
