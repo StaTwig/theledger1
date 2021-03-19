@@ -21,6 +21,9 @@ const NewShipment = (props) => {
   const [shippingOrderId, setShippingOrderId] = useState(
     "Select Shipping Order ID"
   );
+  const [shippingOrderId, setShippingOrderId] = useState(
+    "Select Shipping Order ID"
+  );
   const user = useSelector((state) => state.user);
   const [shippingOrderDetails, setShippingOrderDetails] = useState({});
   const [po, setPo] = useState("");
@@ -220,7 +223,6 @@ const NewShipment = (props) => {
           <label htmlFor="client" className="headsup">
             From
           </label>
-
           <div className="row">
             <div className="col-md-6 com-sm-12">
               <div className="form-group">
