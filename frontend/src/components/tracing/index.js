@@ -30,6 +30,8 @@ const Tracing = props => {
   const [openPurchase, setOpenPurchase] = useState(false);
   const [openShipping, setOpenShipping] = useState(false);
   const tracking = props.trackData;
+  const mapData = props.mapData;
+  const tempData = props.tempData;
   //const productCard = props.productDetails;
   //const poCard = props.poDetails;
 
@@ -70,7 +72,7 @@ const Tracing = props => {
         </div>
         <div className="col-sm-8">
           <div className="row mb-4">
-            <div className="panel col mr-1 geo commonpanle"><p className="heading">Geographical Tracking</p> <Map /> </div>
+            <div className="panel col mr-1 geo commonpanle"><p className="heading">Geographical Tracking</p> <Map mapData={mapData} /> </div>
             <div className="panel commonpanle col">
               <div className="d-flex justify-content-between">
                 <div class="row ml-3">
@@ -91,7 +93,7 @@ const Tracing = props => {
                   <div className="info">Last Upadated on</div>
                   <div className="info">07:00 am</div>
                 </div>
-              </div><Chart /> </div>
+              </div><Chart tempData={tempData} /> </div>
           </div>
           <button 
           className="btn btn-outline-* fontSize200 enlargeTemperature float-right" 

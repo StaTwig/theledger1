@@ -20,18 +20,28 @@ for (var i = 0; i < points.length; i++) {
  
 export class MapContainer extends Component {
   render() {
+    const data = this.props.mapData;
+    var bounds = new this.props.google.maps.LatLngBounds();
+    var points = [];
+    data.forEach(row => points.push({ lat: parseFloat(row.lat), lng: parseFloat(row.long) }));
+    for (var i = 0; i < points.length; i++) 
+      bounds.extend(points[i]);
+    
     return (
       <Map google={this.props.google} zoom={14}
- 
         style = {style} 
-            
-       /* initialCenter={{
-            lat: 42.39,
-            lng: -72.52
-        }}
-        bounds={bounds}*/
- 
-        >
+        // initialCenter={{
+        //     lat: 42.39,
+        //     lng: -72.52
+        // }}
+        bounds={bounds}
+      >
+        {data.map((row, index) =>
+          <Marker
+            key={index}
+            position={{ lat: row.lat, lng: row.long }}
+          />
+        )}
       </Map>
     );
   }
