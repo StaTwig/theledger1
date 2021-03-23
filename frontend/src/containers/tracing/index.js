@@ -20,16 +20,38 @@ const TracingContainer = props => {
         setTrackData(result.data);
       else
         setTrackData({});
-      const maps = await allShipmentLocsById(shipmentId);
-      if (maps.status == 200)
-        setMapData(maps.data);
-      else
-        setMapData([]);
-      const locations = await allShipmentTempById(shipmentId);
-      if (locations.status == 200)
-        setTempData(locations.data);
-      else
-        setTempData([]);
+      fetch('http://integrations.vaccineledger.com:8080/integrationmanagement/api/v1/roambee/allgpsforshipmentid/'+shipmentId)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setMapData(result);
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
+      // const maps = await allShipmentLocsById(shipmentId);
+      // console.log(maps);
+      
+      // if (maps.status == 200)
+      //   setMapData(maps.data);
+      // else
+      //   setMapData([]);
+      fetch('http://integrations.vaccineledger.com:8080/integrationmanagement/api/v1/roambee/latestiotdataforshipmentid/'+shipmentId)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setTempData(result);
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
+      // const locations = await allShipmentTempById(shipmentId);
+      // if (locations.status == 200)
+      //   setTempData(locations.data);
+      // else
+      //   setTempData([]);
     }
     fetchData();
   },[]);
