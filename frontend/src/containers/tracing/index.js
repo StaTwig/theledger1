@@ -37,7 +37,7 @@ const TracingContainer = props => {
       //   setMapData(maps.data);
       // else
       //   setMapData([]);
-      fetch('http://integrations.vaccineledger.com:8080/integrationmanagement/api/v1/roambee/latestiotdataforshipmentid/'+shipmentId)
+      fetch('http://integrations.vaccineledger.com:8080/integrationmanagement/api/v1/roambee/lastteniotsamplesforshipmentid/'+shipmentId)
       .then(res => res.json())
       .then(
         (result) => {

@@ -696,28 +696,28 @@ exports.addProductsToInventory = [
               'Employee not assigned to any organisation',
             );
           }
-          let serialNumbersRange = true;
-          let alpha = [...Array(26)].map((_, y) => String.fromCharCode(y + 65)).join('');
-          for (let i = 0; i < products.length; i++) {
-            if (products[i].serialNumbersRange.split('-').length < 2) {
-              let snoref = Date.now();
-              let rApha = '';
-              for (let i = 0; i < 4; i++)
-                rApha += alpha.charAt(Math.floor(Math.random() * alpha.length));
+        //   let serialNumbersRange = true;
+        //   let alpha = [...Array(26)].map((_, y) => String.fromCharCode(y + 65)).join('');
+        //   for (let i = 0; i < products.length; i++) {
+        //     if (products[i].serialNumbersRange.split('-').length < 2) {
+        //       let snoref = Date.now();
+        //       let rApha = '';
+        //       for (let i = 0; i < 4; i++)
+        //         rApha += alpha.charAt(Math.floor(Math.random() * alpha.length));
               
-             products[i].serialNumbersRange =
-               "DSL" + rApha + (parseInt(snoref) - parseInt(products[i].quantity - 1)) +
-               "-DSL" + rApha + snoref;
-              // serialNumbersRange = false;
-              // break;
-            }
-          }
-         if(!serialNumbersRange) {
-           return apiResponse.ErrorResponse(
-             res,
-             `Product doesn't conatin valid serial numbers range`,
-           );
-         }
+        //      products[i].serialNumbersRange =
+        //        "DSL" + rApha + (parseInt(snoref) - parseInt(products[i].quantity - 1)) +
+        //        "-DSL" + rApha + snoref;
+        //       // serialNumbersRange = false;
+        //       // break;
+        //     }
+        //   }
+        //  if(!serialNumbersRange) {
+        //    return apiResponse.ErrorResponse(
+        //      res,
+        //      `Product doesn't conatin valid serial numbers range`,
+        //    );
+        //  }
           const inventory = await InventoryModel.findOne({
             id: warehouse.warehouseInventory,
           });
@@ -725,13 +725,15 @@ exports.addProductsToInventory = [
           let atoms = [];
           products.forEach(product => {
             const serialNumbers = product.serialNumbersRange.split('-');
-            const serialNumbersFrom = parseInt(serialNumbers[0].split(/(\d+)/)[1]);
-            const serialNumbersTo = parseInt(serialNumbers[1].split(/(\d+)/)[1]);
-            const serialNumberText = serialNumbers[1].split(/(\d+)/)[0];
-            for (let i = serialNumbersFrom; i <= serialNumbersTo; i++) {
-              const atom = `${serialNumberText+uniqid.time()}${i}`
+            if (serialNumbers.length > 1) {
+              const serialNumbersFrom = parseInt(serialNumbers[0].split(/(\d+)/)[1]);
+              const serialNumbersTo = parseInt(serialNumbers[1].split(/(\d+)/)[1]);
+              const serialNumberText = serialNumbers[1].split(/(\d+)/)[0];
+              for (let i = serialNumbersFrom; i <= serialNumbersTo; i++) {
+                const atom = `${serialNumberText}${i}`
 
-              atoms.push(atom);
+                atoms.push(atom);
+              }
             }
           })
           const dupSerialFound = await AtomModel.findOne({id: { $in: atoms}});
@@ -743,43 +745,46 @@ exports.addProductsToInventory = [
             });
 
             const serialNumbers = product.serialNumbersRange.split('-');
-            const serialNumbersFrom = parseInt(serialNumbers[0].split(/(\d+)/)[1]);
-            const serialNumbersTo = parseInt(serialNumbers[1].split(/(\d+)/)[1]);
+            if(serialNumbers.length > 1){
+              const serialNumbersFrom = parseInt(serialNumbers[0].split(/(\d+)/)[1]);
+              const serialNumbersTo = parseInt(serialNumbers[1].split(/(\d+)/)[1]);
 
-            const serialNumberText = serialNumbers[1].split(/(\d+)/)[0];
-            let atoms = [];
-
-            for (let i = serialNumbersFrom; i <= serialNumbersTo; i++) {
-              const atom = {
-                id: `${serialNumberText+uniqid.time()}${i}`,
-                label: {
-                  labelId: '',
-                  labelType: '',
-                },
-                productId: product.productId,
-                inventoryIds: [inventory.id],
-                lastInventoryId: '',
-                lastShipmentId: '',
-                poIds: [],
-                shipmentIds: [],
-                txIds: [],
-                batchNumbers: [product.batchNumber],
-                atomStatus: 'Healthy',
-                attributeSet: {
-                  mfgDate: product.mfgDate,
-                  expDate: product.expDate,
-                },
-                eolInfo: {
-                  eolId: 'IDN29402-23423-23423',
-                  eolDate: '2021-03-31T18:30:00.000Z',
-                  eolBy: id,
-                  eolUserInfo: '',
-                }
-              };
-              atoms.push(atom);
+              const serialNumberText = serialNumbers[1].split(/(\d+)/)[0];
+              let atoms = [];
+              for (let i = serialNumbersFrom; i <= serialNumbersTo; i++) {
+                const atom = {
+                  // id: `${serialNumberText + uniqid.time()}${i}`,
+                  id: `${serialNumberText}${i}`,
+                  label: {
+                    labelId: '',
+                    labelType: '',
+                  },
+                  productId: product.productId,
+                  inventoryIds: [inventory.id],
+                  lastInventoryId: '',
+                  lastShipmentId: '',
+                  poIds: [],
+                  shipmentIds: [],
+                  txIds: [],
+                  batchNumbers: [product.batchNumber],
+                  atomStatus: 'Healthy',
+                  attributeSet: {
+                    mfgDate: product.mfgDate,
+                    expDate: product.expDate,
+                  },
+                  eolInfo: {
+                    eolId: 'IDN29402-23423-23423',
+                    eolDate: '2021-03-31T18:30:00.000Z',
+                    eolBy: id,
+                    eolUserInfo: '',
+                  }
+                };
+                atoms.push(atom);
+              }
             }
-              try {
-                await AtomModel.insertMany(atoms);
+            try {
+                if(atoms.length > 0)
+                  await AtomModel.insertMany(atoms);
                 await inventory.save();
               }catch(err) {
                 console.log('err', err);
