@@ -263,7 +263,7 @@ class Profile extends React.Component {
                       <input
                         className="form-control wallet"
                         disabled
-                        value={this.state.organisation}
+                        value={this.state.organisation.split('/')[1]}
                         style={{textAlign:'left'}}
                        />
                     </div>
@@ -349,7 +349,7 @@ class Profile extends React.Component {
                       </div>
                       <div className="col">
                         <div className="row location">
-                          MY LOCATIONS
+                          MY LOCATION
                         </div>
                       </div>
                       <div className="col">
