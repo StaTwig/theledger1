@@ -579,6 +579,126 @@
 			"name": "analyticsService",
 			"item": [
 				{
+					"name": "http://localhost:3015/analyticsmanagement/api/analytics/getShipmentAnalytics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVtcC0xanB2MjN4dGtsejh0N25qIiwiZmlyc3ROYW1lIjoiTW9oaXQiLCJlbWFpbElkIjoibW9oaXRAc3RhdHdpZy5jb20iLCJyb2xlIjoicG93ZXJVc2VyIiwid2FyZWhvdXNlSWQiOiJOQSIsImlhdCI6MTYxNjg1MDA2MywiZXhwIjoxNjE2ODU3MjYzfQ.QcqCgCr6sbeAZestTrA48dzzPXjPL7n47tPF9AUi-GE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3015/analyticsmanagement/api/analytics/getShipmentAnalytics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3015",
+							"path": [
+								"analyticsmanagement",
+								"api",
+								"analytics",
+								"getShipmentAnalytics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3015/analyticsmanagement/api/analytics/getOverviewAnalytics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVtcC0xanB2MjN4dGtsejh0N25qIiwiZmlyc3ROYW1lIjoiTW9oaXQiLCJlbWFpbElkIjoibW9oaXRAc3RhdHdpZy5jb20iLCJyb2xlIjoicG93ZXJVc2VyIiwid2FyZWhvdXNlSWQiOiJOQSIsImlhdCI6MTYxNjg3MDY1NiwiZXhwIjoxNjE2ODc3ODU2fQ.mafriFqo_MbFLXrFHeYsz5uxAjIsMig5ey2_Zd0-1ug",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3015/analyticsmanagement/api/analytics/getOverviewAnalytics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3015",
+							"path": [
+								"analyticsmanagement",
+								"api",
+								"analytics",
+								"getOverviewAnalytics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3015/analyticsmanagement/api/analytics/getInventoryAnalytics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVtcC0xanB2MjN4dGtsejh0N25qIiwiZmlyc3ROYW1lIjoiTW9oaXQiLCJlbWFpbElkIjoibW9oaXRAc3RhdHdpZy5jb20iLCJyb2xlIjoicG93ZXJVc2VyIiwid2FyZWhvdXNlSWQiOiJOQSIsImlhdCI6MTYxNjg3MDY1NiwiZXhwIjoxNjE2ODc3ODU2fQ.mafriFqo_MbFLXrFHeYsz5uxAjIsMig5ey2_Zd0-1ug",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3015/analyticsmanagement/api/analytics/getInventoryAnalytics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3015",
+							"path": [
+								"analyticsmanagement",
+								"api",
+								"analytics",
+								"getInventoryAnalytics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "http://localhost:3015/analyticsmanagement/api/analytics/getAnalytics",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -588,7 +708,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVtcC0xanB2MjN4dGtsejh0N25qIiwiZmlyc3ROYW1lIjoiTW9oaXQiLCJlbWFpbElkIjoibW9oaXRAc3RhdHdpZy5jb20iLCJyb2xlIjoicG93ZXJVc2VyIiwid2FyZWhvdXNlSWQiOiJOQSIsImlhdCI6MTYxNjAxMjM3NCwiZXhwIjoxNjE2MDE5NTc0fQ.CPw60THUm9JgYufQohLqD0pX-9ZUBK9wmtwbCc2yFkM",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVtcC0xanB2MjN4dGtsejh0N25qIiwiZmlyc3ROYW1lIjoiTW9oaXQiLCJlbWFpbElkIjoibW9oaXRAc3RhdHdpZy5jb20iLCJyb2xlIjoicG93ZXJVc2VyIiwid2FyZWhvdXNlSWQiOiJOQSIsImlhdCI6MTYxNjg1MDA2MywiZXhwIjoxNjE2ODU3MjYzfQ.QcqCgCr6sbeAZestTrA48dzzPXjPL7n47tPF9AUi-GE",
 								"type": "text"
 							}
 						],
