@@ -1,11 +1,10 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 import logo from "../../assets/ABInBev.png";
 
-const Login = (props) => {
-  const {
-    setSteps,
-    setContinueClick
-  } = props;
+import "./style.css";
+
+const Login = ({ mobileNumber, onMobileChange, errorMessage, onSendOtp }) => {
   return (
     <div className="loginScreen">
       <div className="align-center pb-5 pt-5">
@@ -16,18 +15,18 @@ const Login = (props) => {
       <div className="loginUserBlock justify-content-center">
         <div className="form-group">
           <label htmlFor="username" className="userNameLabel">Username/ Mobile No.</label>
-          <input name="username" className="form-control username" />
+          <input type="text" name="username" className="form-control username" onChange={onMobileChange} value={mobileNumber} />
+          {
+            errorMessage && <div className="alert alert-danger">{errorMessage}</div>
+          }
           <button
-            onClick={() => {
-              setContinueClick(true);
-              setSteps(3);
-            }}
+            onClick={onSendOtp}
             className={`width100 btn mt-4`}
             type="button"
           >
             Send OTP
           </button>
-          <p className="signUpDesc align-center mt-3 ">Don't have an account? <b>Sign Up</b></p>
+          <p className="signUpDesc align-center mt-3 ">Don't have an account? <Link className="link" to="/signup"><b>Sign Up</b></Link></p>
         </div>
       </div>
       <div className="col text-center footer-logo">

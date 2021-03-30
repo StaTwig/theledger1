@@ -1,22 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Selection from "./selection";
-import Login from "./login";
-import VerifyPassword from './verifyPassword';
-import SignUp from './signUp';
 import "./style.scss";
 
-const Home = (props) => {
+const Home = ({ history }) => {
   const [buttonActive, setButtonActive] = useState(0);
   const [steps, setSteps] = useState(1);
   const [continueClick, setContinueClick] = useState(false);
+
+  useEffect(() => {
+    if(steps === 2) history.push('/login')
+    if(steps === 3) history.push('/verify')
+    if(steps === 4) history.push('/signup')
+  }, [steps])
 
   return (
     <div className="home">
       <div className="container centered">
         <div className="selectUser centered">
-          {/* <div>
-            <img src={backarrow} width={20} />
-          </div> */}
           {steps == 1 && (
             <Selection
               setContinueClick={setContinueClick}
@@ -26,9 +26,6 @@ const Home = (props) => {
               setSteps={setSteps}
             />
           )}
-          {steps == 2 && <Login setSteps={setSteps} setContinueClick={setContinueClick} steps={steps} />}
-          {steps == 3 && <VerifyPassword setSteps={setSteps} setContinueClick={setContinueClick} steps={steps} buttonActive={buttonActive} setButtonActive={setButtonActive} />}
-          {steps == 4 && <SignUp setSteps={setSteps} setContinueClick={setContinueClick}  />}
         </div>
       </div>
     </div>

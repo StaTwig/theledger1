@@ -7,6 +7,15 @@ import {
 import { config } from "../config";
 import axios from "axios";
 
+export const validateUser = async (data) => {
+  try {
+    const result = await axios.post(config().loginUrl, data);
+    return result;
+  } catch (e) {
+    return e.response;
+  }
+};
+
 export const updateProfile = async (data) => {
   try {
     const result = await axios.post(config().updateProfileUrl, data);

@@ -18,7 +18,7 @@ const HomeContainer = (props) => {
   return (
     <div className="Homecontainer">
       <div className="bg-image">
-          <Home />
+          <Home {...props}/>
       </div>
     </div>
   );
