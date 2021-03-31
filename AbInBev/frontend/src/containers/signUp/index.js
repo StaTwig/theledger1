@@ -8,6 +8,7 @@ const SignupContainer = (props) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [organisation, setOrganisation] = useState({ id: '', name: '' });
+  const [adminAwaiting, setAdminAwaiting] = useState(false);
   const [isNewOrg, setIsNewOrg] = useState(false);
 
   const onSignup = useCallback(async (values) => {
@@ -29,6 +30,7 @@ const SignupContainer = (props) => {
     const result = await registerUser(data);
     if (result.status === 200) {
       setShowModal(false);
+      setAdminAwaiting(true);
     } else if (result.status === 500) {
       setErrorMessage(result.data.message);
     }
@@ -56,6 +58,12 @@ const SignupContainer = (props) => {
       onSignup({});
   }
 
+  const onkeydown = (event) => {
+    if (event.keyCode === 13) {
+      checkNcontinue();
+    }
+  }
+
   return (
     <div className="Homecontainer">
       <div className="bg-image">
@@ -63,18 +71,23 @@ const SignupContainer = (props) => {
           <div className="container centered">
             <div className="selectUser centered">
               <div className="loginScreen">
-                <Signup
-                  email={email}
-                  firstName={firstName}
-                  lastName={lastName}
-                  onSignup={checkNcontinue}
-                  onfirstNameChange={e => setFirstName(e.target.value)}
-                  errorMessage={errorMessage}
-                  onEmailChange={e => setEmail(e.target.value)}
-                  onOrgChange={value => setIsNewOrg(value)}
-                  onPasswordChange={e => setPassword(e.target.value)}
-                  onlastNameChange={e => setLastName(e.target.value)}
-                />
+                <div className="container-fluid p-0" tabIndex="-1" onKeyDown={onkeydown}>
+                  <Signup
+                    email={email}
+                    firstName={firstName}
+                    lastName={lastName}
+                    onSignup={checkNcontinue}
+                    adminAwaiting={adminAwaiting}
+                    onfirstNameChange={e => setFirstName(e.target.value)}
+                    errorMessage={errorMessage}
+                    onEmailChange={e => setEmail(e.target.value)}
+                    onOrgChange={value => setIsNewOrg(value)}
+                    onPasswordChange={e => setPassword(e.target.value)}
+                    onlastNameChange={e => setLastName(e.target.value)}
+                    onOrganisationChange={org => setOrganisation({ id: org.id, name: org.name })}
+                    organisation={organisation}
+                  />
+                </div>
               </div>
             </div>
           </div>
