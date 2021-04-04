@@ -1192,3 +1192,25 @@ exports.fetchImage = async function(req, res) {
         }
     });
 };
+
+exports.getAllUsersByOrgId = [
+  body('organisationId')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('Organisation must be specified.'),
+  async(req,res)=>{
+    try {
+      const organisationId = req.body.organisationId;
+      const users = await EmployeeModel.find({ organisationId});
+
+      return apiResponse.successResponseWithData(
+        res,
+        'All the users with given Organisation Id',
+        users
+      );
+    }catch(errr){
+      return apiResponse.ErrorResponse(res, err)
+    }
+  },
+    
+];
