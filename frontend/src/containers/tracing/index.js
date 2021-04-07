@@ -4,7 +4,7 @@ import Header from '../../shared/header';
 import Sidebar from '../../shared/sidebarMenu';
 import {useDispatch, useSelector} from "react-redux";
 import {trackProduct} from "../../actions/shipmentActions";
-import { chainOfCustody, updateStatus } from "../../actions/shipmentActions";
+import { chainOfCustody, updateStatus, fetchImage } from "../../actions/shipmentActions";
 
 const TracingContainer = props => {
   //const dispatch = useDispatch();
@@ -48,6 +48,20 @@ const TracingContainer = props => {
 }
     fetchData();
   },[]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await fetchImage(props.match.params.id);
+       if (result.status==200)
+       {
+       console.log('Data Image');
+       console.log(result);
+       }else{
+        console.log('Error');
+       }
+}
+    fetchData();
+  },[]);  
 
   return (
     <div className="container-fluid p-0">
