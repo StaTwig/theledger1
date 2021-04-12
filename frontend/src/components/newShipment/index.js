@@ -10,7 +10,7 @@ import {
   getShippingOrderById,
   getWarehouseByOrgId,
   getAllOrganisations,
-  getProductsByInventoryId
+  getProductsByInventoryId,
 } from "../../actions/shippingOrderAction";
 import DropdownButton from "../../shared/dropdownButtonGroup";
 import DatePicker from "react-datepicker";
@@ -105,6 +105,8 @@ const NewShipment = (props) => {
     try {
       const prods = await getProductsByInventoryId(value);
       setProducts(prods.data);
+      console.log("Inventory here");
+      console.log(prods);
     }
     catch (err) {
       setErrorMessage(err);
@@ -541,12 +543,11 @@ const NewShipment = (props) => {
                 </div>
               </div>
             </div>
-
             <div className="row mb-3">
               <label htmlFor="productDetails" className="headsup">
                 Product Details
               </label>
-              {shippingOrderDetails?.products?.length > 0 && (
+              {shippingOrderDetails?.products?.length >= 0 && (
                 <EditTable
                   product={shippingOrderDetails?.products}
                   handleQuantityChange={(v, i) => {

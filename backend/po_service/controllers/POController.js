@@ -31,6 +31,7 @@ const products = require('../data/products');
 const manufacturers = require('../data/manufacturers');
 
 const init = require('../logging/init');
+//const { getShippingOrderIds } = require('../../../frontend/src/actions/shippingOrderAction');
 const logger = init.getLog();
 
 const userPurchaseOrders = async ( mode,orgMode, organisationId, skip, limit, callback) => {
@@ -589,6 +590,29 @@ exports.createOrder = [
       logger.log(
           'error',
           '<<<<< POService < POController < createOrder : error (catch block)',
+      );
+      return apiResponse.ErrorResponse(res, err);
+    }
+  },
+];
+
+exports.getOrderIds = [
+  auth,
+  async (req, res) => {
+    try {
+     
+      const {organisationId } = req.user;
+      const orderID = await RecordModel.find({$or:[{"supplier.supplierOrganisation":organisationId},{"receiver.receiverOrganisation":organisationId}]},'id');
+      
+      return apiResponse.successResponseWithData(
+        res,
+        'Order Ids',
+        orderID,
+      );
+    } catch (err) {
+      logger.log(
+        'error',
+        '<<<<< ShippingOrderService < ShippingController < fetchAllShippingOrders : error (catch block)',
       );
       return apiResponse.ErrorResponse(res, err);
     }

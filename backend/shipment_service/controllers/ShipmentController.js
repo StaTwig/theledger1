@@ -859,6 +859,7 @@ exports.getProductsByInventory = [
                     _id: '$inventoryDetails.productId',
                     productName: {$first: "$products.name"},
                     manufacturer: {$first: "$products.manufacturer"},
+                    type: {$first: "$products.type"},
                     productQuantity: { $sum: '$inventoryDetails.quantity' },
                     quantity: { $sum: '$inventoryDetails.quantity' },
                 },
