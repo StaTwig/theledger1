@@ -131,19 +131,9 @@ const shipmentUpdate = async (id, quantity, shipmentId, shipmentStatus, next) =>
 
 const userShipments = async ( mode, warehouseId, skip, limit, callback) => {
 
-       // var matchCondition = {};
-        //var criteria = mode + ".locationId";
-        //matchCondition[criteria] = warehouseId
-
-	
-	var matchCondition = {};
-
-        if (mode != "id")
+        var matchCondition = {};
         var criteria = mode + ".locationId";
-        else
-        var criteria = mode;
-
-        matchCondition[criteria] = warehouseId;
+        matchCondition[criteria] = warehouseId
 
         const shipments = await  ShipmentModel.aggregate([{
                 $match:
@@ -204,8 +194,8 @@ const userShipments = async ( mode, warehouseId, skip, limit, callback) => {
         ]).sort({
             createdAt: -1
         }).skip(parseInt(skip))
-
         .limit(parseInt(limit));
+
         callback(undefined, shipments)
 }
 
@@ -277,12 +267,6 @@ exports.createShipment = [
                     }
                 }, );
             }
-
-	    var warehouseId;
-	    if ( req.query.warehouseId != "")
-	    warehouseId = req.query.warehouseId;
-	    else
-	    warehouseId = data.supplier.locationId;
 
             if (flag != "N") {
                 const suppWarehouseDetails = await WarehouseModel.findOne({
@@ -1021,6 +1005,7 @@ exports.chainOfCustody = [
            	const id = req.query.shipmentId;
 		if ( id.includes("PO"))
 		{
+		console.log("PO tracking")
 
 		poDetails = await RecordModel.aggregate([{
                             $match: {
@@ -1059,11 +1044,65 @@ exports.chainOfCustody = [
 			const shipments = [];
 			for ( i=0 ; i< shipmentIds.length;i++)
 			{
-		        const shipmentData = await userShipments("id", shipmentIds[i], 0, 100, (error, data) => {
-                         shipmentDetails = data;
-                        })
-				
-			shipments.push(shipmentDetails)
+			console.log(shipmentIds[i])
+			const shipmentDetails = await  ShipmentModel.aggregate([{
+                $match:
+                   { id: shipmentIds[i] }
+            },
+            {
+                $lookup: {
+                    from: "warehouses",
+                    localField: "supplier.locationId",
+                    foreignField: "id",
+                    as: "supplier.warehouse",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$supplier.warehouse",
+                },
+            },
+            {
+                $lookup: {
+                    from: "organisations",
+                    localField: "supplier.warehouse.organisationId",
+                    foreignField: "id",
+                    as: "supplier.org",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$supplier.org",
+                },
+            },
+            {
+                $lookup: {
+                    from: "warehouses",
+                    localField: "receiver.locationId",
+                    foreignField: "id",
+                    as: "receiver.warehouse",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$receiver.warehouse",
+            },
+            },
+            {
+                $lookup: {
+                    from: "organisations",
+					localField: "receiver.warehouse.organisationId",
+                    foreignField: "id",
+                    as: "receiver.org",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$receiver.org",
+                },
+            },
+        ])
+		shipments.push(shipmentDetails)
 			}
 		
 			return apiResponse.successResponseWithData(
@@ -1081,9 +1120,8 @@ exports.chainOfCustody = [
 
 		else if ( id.includes("SH"))
 		{
-
+			console.log("Shp CCC")
                 const shipmentDetails = await  ShipmentModel.findOne({"id": req.query.shipmentId});
-
                 const poId = shipmentDetails.poId; 
                 
 		if (poId != null) {
@@ -1122,10 +1160,63 @@ exports.chainOfCustody = [
 
                 }                
 
-
-	      const shipmentData = await userShipments("id", req.query.shipmentId, 0, 100, (error, data) => {
-                         shipments = data;
-                    })
+                const shipments = await  ShipmentModel.aggregate([{
+                $match:
+                   { id: req.query.shipmentId }
+            },
+            {
+                $lookup: {
+                    from: "warehouses",
+                    localField: "supplier.locationId",
+                    foreignField: "id",
+                    as: "supplier.warehouse",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$supplier.warehouse",
+                },
+            },
+            {
+                $lookup: {
+                    from: "organisations",
+                    localField: "supplier.warehouse.organisationId",
+                    foreignField: "id",
+                    as: "supplier.org",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$supplier.org",
+                },
+            },
+            {
+                $lookup: {
+                    from: "warehouses",
+                    localField: "receiver.locationId",
+                    foreignField: "id",
+                    as: "receiver.warehouse",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$receiver.warehouse",
+	    },
+            },
+            {
+                $lookup: {
+                    from: "organisations",
+                    localField: "receiver.warehouse.organisationId",
+                    foreignField: "id",
+                    as: "receiver.org",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$receiver.org",
+                },
+            },
+        ])
 
                 return apiResponse.successResponseWithData(
                                 res,

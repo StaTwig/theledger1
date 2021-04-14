@@ -268,8 +268,8 @@ exports.register = [
 
             //   }
             // }
-            const country =  req.body?.address?.country ? req.body.address?.country : 'India';
-            const address =  req.body?.address ? req.body.address :  {};
+            const country =   'India';
+            const address =  {};
             addr = address.line1 + ', ' + address.city + ', ' + address.state + ', ' + address.pincode;
             
             const incrementCounterOrg = await CounterModel.update({
@@ -299,7 +299,7 @@ exports.register = [
               primaryContactId: employeeId,
               name: organisationName,
               id: organisationId,
-              type: req.body?.type ? req.body.type : 'CUSTOMER_SUPPLIER',
+              type:  'CUSTOMER_SUPPLIER',
               status: 'NOTVERIFIED',
               postalAddress: addr,
               warehouses: [warehouseId],
@@ -1040,7 +1040,6 @@ exports.addWarehouse = [
 
       const invCounter = await CounterModel.findOne({'counters.name':"inventoryId"},{"counters.name.$":1})
       const inventoryId = invCounter.counters[0].format + invCounter.counters[0].value;
-
       //const inventoryId = uniqid('inv-');
       const inventoryResult = new InventoryModel({ id: inventoryId });
       await inventoryResult.save();
@@ -1050,10 +1049,10 @@ exports.addWarehouse = [
         region,
         country,
         location,
+	warehouseAddress,
         supervisors,
         employees,
       } = req.body;
-
       const incrementCounterWarehouse = await CounterModel.update({
                   'counters.name': "warehouseId"
                },{
@@ -1064,7 +1063,6 @@ exports.addWarehouse = [
 
       const warehouseCounter = await CounterModel.findOne({'counters.name':"warehouseId"},{"counters.name.$":1})
       const warehouseId = warehouseCounter.counters[0].format + warehouseCounter.counters[0].value;
-
       //const warehouseId = uniqid('war-');
       const warehouse = new WarehouseModel({
         id: warehouseId,
@@ -1075,9 +1073,19 @@ exports.addWarehouse = [
         location,
         supervisors,
         employees,
+	warehouseAddress,
         warehouseInventory: inventoryResult.id,
       });
-      await warehouse.save();
+	const s = await warehouse.save();
+
+      await OrganisationModel.findOneAndUpdate({
+                    id: organisationId
+                }, {
+                    $push: {
+                        warehouses: warehouseId
+                    }
+                });
+
       return apiResponse.successResponseWithData(
         res,
         'Warehouse added success',
