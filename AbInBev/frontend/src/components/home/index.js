@@ -1,11 +1,14 @@
 import React, { useState, useCallback } from "react";
+import { useDispatch } from 'react-redux';
+import jwt_decode from 'jwt-decode';
 
 import Selection from "./selection";
 import Login from "./login";
 import VerifyPassword from './verifyPassword';
 import SignUp from './signUp';
 import "./style.scss";
-import { sendOtp, verifyOtp, registerUser } from "../../actions/userActions";
+import { sendOtp, verifyOtp, setCurrentUser, registerUser } from "../../actions/userActions";
+import setAuthToken from "../../utils/setAuthToken";
 
 const Home = (props) => {
   const [showSignUpCompletedMessage, setShowSignUpCompletedMessage] = useState(false);
@@ -14,6 +17,7 @@ const Home = (props) => {
   const [continueClick, setContinueClick] = useState(false);
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const dispatch = useDispatch();
 
   const onSendOtp = useCallback(async (email) => {
     setEmail(email);
@@ -46,7 +50,9 @@ const Home = (props) => {
       setAuthToken(token);
       const decoded = jwt_decode(token);
       localStorage.setItem('theLedgerToken', token);
-      props.history.push(`/overview`);
+      dispatch(setCurrentUser(decoded));
+      // props.history.push(`/overview`);
+      window.location.href = '/overview';
     } else {
       const err = result.data.message;
       setErrorMessage(err);
@@ -72,7 +78,7 @@ const Home = (props) => {
   });
 
   const onSignUpClick = useCallback(async (values) => {
-    let data = { firstName: values.firstName, lastName: values.lastName, emailId: values.mobile_email, organisationId: values.organisation };
+    let data = { firstName: values.firstName, lastName: values.lastName, emailId: values.mobile_email, organisationName: values.organisation, organisationId: 0 };
     const result = await registerUser(data);
     if (result.status === 200) {
       setSteps(5);
@@ -107,11 +113,14 @@ const Home = (props) => {
           {steps == 5 &&
             <>
               {
-                showSignUpCompletedMessage && <h4>Please wait while the Account Verified by Admin &nbsp; <a href="#" onClick={
-                  () => {
-                    setSteps(2);
-                  }
-                } className="signUpLink">Log In</a> &nbsp;here</h4>
+                showSignUpCompletedMessage &&
+                <>
+                  <h4>Please wait while your Account is Verified by Admin!</h4>
+                  &nbsp;
+                  <h4>
+                    <a href="#" onClick={() => { setSteps(2); }} className="signUpLink">Log In</a> &nbsp;here
+                  </h4>
+                </>
               }
             </>
           }
