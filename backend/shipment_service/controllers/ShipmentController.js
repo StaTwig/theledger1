@@ -251,9 +251,7 @@ exports.createShipment = [
   auth,
   async (req, res) => {
     try {
-      console.log(req.user);
       const data = req.body;
-      var i=0;
       const incrementCounter = await CounterModel.update(
         {
           "counters.name": "shipmentId",
@@ -278,23 +276,19 @@ exports.createShipment = [
       });
       const orgId = empData.organisationId;
       const orgName = empData.name;
-      console.log(++i);
       const orgData = await OrganisationModel.findOne({ id: orgId });
       const address = orgData.postalAddress;
       const confId = orgData.configuration_id;
       const confData = await ConfigurationModel.findOne({ id: confId });
       const process = confData.process;
-      console.log(++i);
       const supplierID = req.body.supplier.id;
       const supplierOrgData = await OrganisationModel.findOne({
         id: req.body.supplier.id,
       });
-      console.log(++i);
 
       const receiverOrgData = await OrganisationModel.findOne({
         id: req.body.receiver.id,
       });
-      console.log(++i);
 
       const supplierName = supplierOrgData.name;
       const supplierAddress = supplierOrgData.postalAddress;
@@ -450,6 +444,7 @@ exports.createShipment = [
         }
         
         event_data.payload.data = data;
+        console.log("event data is: \n");
         console.log(event_data);
 
         const shipment = new ShipmentModel(data);
