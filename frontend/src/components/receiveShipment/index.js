@@ -192,7 +192,7 @@ const ReceiveShipment = (props) => {
               </div>
            </div>
           </div>
-      </div>
+      
       <div className="row">
           <div className="col-sm-4">
             {/* <h6 className="heading mb-3">SHIPMENT SUMMARY</h6> */}
@@ -299,7 +299,7 @@ const ReceiveShipment = (props) => {
           </Modal>
         )}   */}
     </div>
-
+</div>
   );
 };
 export default ReceiveShipment;
