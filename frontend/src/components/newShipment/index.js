@@ -242,9 +242,7 @@ const NewShipment = (props) => {
   const handleSOChange = async (item) => {
     setOrderId(item);
     dispatch(turnOn());
-    const result = await getOrder(item);
-    console.log('Result');
-    console.log(result);
+    const result = await getShippingOrderById(item);
     setOrderDetails(result);
     dispatch(turnOff());
   };
@@ -369,7 +367,7 @@ const NewShipment = (props) => {
                         name2="Select Order ID"
                         onSelect={async (v) => {
                           setFieldValue("OrderId", v);
-                          handleSOChange(v);
+                          // handleSOChange(v);
                           setOrderId(v);
                           dispatch(turnOn());
                           const result = await dispatch(getOrder(v));
