@@ -8,7 +8,7 @@
 
 eval $(ssh-agent -s)
 echo "The chabi of the lock : "
-echo "$PRIVATE_KEY"
+echo "${PRIVATE_KEY}"
 echo "have you seen the chabi"
 echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
 
