@@ -12,6 +12,7 @@ before_script:
      - chmod 600 ~/.ssh/id_rsa
      - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
      - npm install
+     - npm install lint
      
   
 stages:
@@ -33,10 +34,10 @@ install_dependencies:
             #- npm test
 
 # Running Lint
-lint:
-  stage: test
-  script:
-    - npm run lint
+#lint:
+#  stage: test
+#  script:
+#    - npm run lint
 
 # Running test
 test:
