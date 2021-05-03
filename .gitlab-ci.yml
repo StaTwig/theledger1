@@ -8,7 +8,7 @@ before_script:
    #generate ssh key
      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
      - mkdir -p ~/.ssh
-     - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+     - echo -e "$PRIVATE_KEY" > ~/.ssh/id_rsa
      - chmod 600 ~/.ssh/id_rsa
      - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
      - npm install
