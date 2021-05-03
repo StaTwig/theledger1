@@ -40,10 +40,10 @@ install_dependencies:
 #    - npm run lint
 
 # Running test
-test:
-  stage: test
-  script:
-    - npm run test
+#test:
+#  stage: test
+#  script:
+#    - npm run test
 
 deployToAWS:
   only:
