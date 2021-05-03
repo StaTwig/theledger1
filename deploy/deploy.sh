@@ -12,7 +12,8 @@ echo "${PRIVATE_KEY}"
 echo "have you seen the chabi"
 echo "$PRIVATE_KEY"
 echo "ab dekhi ??? "
-echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+echo "$SAMPLE_KEY"
+echo "$SAMPLE_KEY" | tr -d '\r' | ssh-add - > /dev/null
 
 
 # ** Alternative approach
