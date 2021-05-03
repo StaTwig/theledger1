@@ -20,7 +20,8 @@ echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
 
 # we have already setup the DEPLOYER_SERVER in our gitlab settings which is a
 # comma seperated values of ip addresses.
-DEPLOY_SERVERS=$DEPLOY_SERVERS
+echo "$DEPLOY_SERVERS"
+DEPLOY_SERVERS="test.vaccineledger.com"
 
 # lets split this string and convert this into array
 # In UNIX, we can use this commond to do this
