@@ -42,7 +42,7 @@ DEPLOY_SERVERS="test.vaccineledger.com"
 #do
 echo "deploying to ${DEPLOY_SERVERS}"
 #ssh ubuntu@${DEPLOY_SERVERS} "cd /home/ubuntu/PRD && git clone git@gitlab.com:statwig-public/theledger.git && cd /home/ubuntu/PRD/theledger && npm start"
-ssh ubuntu@${DEPLOY_SERVERS} 'bash' < ./deploy/updateAndRestart.sh
+ssh ubuntu@$DEPLOY_SERVERS 'bash' < ./deploy/updateAndRestart.sh
 echo "Deployed BRanch ST-90"
 #done
 #testi11
