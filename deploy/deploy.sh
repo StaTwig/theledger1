@@ -7,8 +7,8 @@
 #i Lets write the public key of our aws instance
 
 eval $(ssh-agent -s)
-echo "The chabi of the lock : "
-echo "${PRIVATE_KEY}"
+echo "The chabi of the lock : " 
+echo "${PRIVATE_KEY}" 
 echo "have you seen the chabi"
 echo "$PRIVATE_KEY"
 echo "ab dekhi ??? "

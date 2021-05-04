@@ -1,4 +1,6 @@
+
 source /home/ubuntu/.bashrc
+touch /home/ubuntu/IWasHere
 cd theledger
 ./stop.sh
 cd ..
