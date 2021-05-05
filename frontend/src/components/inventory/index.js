@@ -17,23 +17,31 @@ import user from '../../assets/icons/brand.svg';
 import Package from '../../assets/icons/package.svg';
 import calender from '../../assets/icons/calendar.svg';
 import Status from '../../assets/icons/Status.svg';
+import { getEventsByActorOrgId} from "../../actions/eventActions";
 
 const Inventory = props => {
   const headers = {
     coloumn1: 'Product Name',
     coloumn2: 'Manufacturer',
     coloumn3: 'Quantity',
+    coloumn4: 'Manufacturer',
+    coloumn5: 'Quantity',
+
 
 
     img1: <img src={Package} width="16" height="16" />,
     img2: <img src={user} width="16" height="16" />,
     img3: <img src={Status} width="16" height="16" />,
+    img4: <img src={Status} width="16" height="16" />,
+    img5: <img src={Status} width="16" height="16" />,
   };
 
   const tableHeaders = {
     coloumn1: 'Product Name',
     coloumn2: 'Manufacturer',
     coloumn3: 'Quantity',
+    coloumn4: 'Manufacturer',
+    coloumn5: 'Quantity',
   };
   const [inventoryNearExpiration, setInventoryNearExpiration] = useState('');
   const [inventoryExpired, setInventoryExpired] = useState('');
@@ -60,9 +68,26 @@ const Inventory = props => {
      useEffect(() => {
     async function fetchData() {
       const result = await getProductList();
+      console.log('Original Data');
+      console.log(result);      
       setProductsList(result.message);
+      console.log(productsList)
       const resultAnalytics = await getInventoryAnalytics();
-      console.log(resultAnalytics);
+
+
+      // const resultEventsByOrgId = await getEventsByActorOrgId();
+      // const data = resultEventsByOrgId.data.data.data;
+      // var data_new=[];
+      // for(var i=0;i<data.length;i++){
+      //   data_new[i]= JSON.parse(data[i].payloadData).data;
+      // }
+
+      // console.log('New Data Formed');
+      // console.log(data_new);
+      // console.log("Events log");
+      // let t = resultEventsByOrgId.data.data.data[0];
+      // console.log(t);
+      // console.log(JSON.parse(t.payloadData));
       
       setInventoryAnalytics(resultAnalytics.data.inventory);
       setInventoriesCount(

@@ -22,6 +22,8 @@ export const getInventories = (skip = 0, limit = 5) => {
         const result = await axios.get(
           `${config().inventoriesUrl}?skip=${skip}&limit=${limit}`,
         );
+        console.log('Old Data');
+        console.log(result.data);
         dispatch(setInventories(result.data));
         dispatch(setInventoriesCount(result.data));
         dispatch(turnOff());
@@ -36,6 +38,32 @@ export const getInventories = (skip = 0, limit = 5) => {
       }
   }
 
+};
+
+export const getEventsByActorOrgId = async () => {
+  try {    
+      dispatch(turnOn());
+      const result = await axios.get(config().getEventsByActorOrgId);
+      const data = result.data.data.data;
+      var data_new=[];
+      for(var i=0;i<data.length;i++){
+        data_new[i]= JSON.parse(data[i].payloadData);
+      }
+
+      console.log('New Data Formed');
+      console.log(data_new);
+      dispatch(setInventories(data_new));
+      dispatch(setInventoriesCount(data_new));
+      dispatch(turnOff());
+      return result;
+  } catch (e) {
+    dispatch(turnOff());
+    return dispatch => {
+      dispatch(resetInventories(e.response));
+      dispatch(resetInventoriesCount(e.response));
+
+    };
+  }
 };
 
 export const getInventoryDetails = (skip = 0, limit = 5) => {

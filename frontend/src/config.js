@@ -6,6 +6,7 @@ export const UNICEFTEST_SERVER_URL = 'http://unicef.vaccineledger.com:9001';
 export const DEMO_SERVER_URL = 'http://vaccineledger.com:9001';
 export const LOCAL_SERVER_URL_USER = 'http://localhost:3001';
 export const LOCAL_SERVER_URL_SHIPPINGORDER ='http://localhost:3013';
+export const LOCAL_SERVER_URL_EVENT ='http://localhost:3014';
 export const LOCAL_SERVER_URL_SHIPMENT = 'http://localhost:3002';
 export const LOCAL_SERVER_URL_INVENTORY = 'http://localhost:3007';
 export const LOCAL_SERVER_URL_PO = 'http://localhost:3012';
@@ -98,8 +99,9 @@ export function config() {
       getNotificationsUrl: `${LOCAL_SERVER_URL_NOTIFICATION}/notificationmanagement/api/notification/getNotifications`,
       deleteNotificationUrl: `${LOCAL_SERVER_URL_NOTIFICATION}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${LOCAL_SERVER_URL_SHIPMENT}/shipmentmanagement/api/shipment/updateTrackingStatus`,
-      getOrderIds:`${LOCAL_SERVER_URL_PO}/pomanagement/api/po/getOrderIds`,   
-          },
+      getOrderIds:`${LOCAL_SERVER_URL_PO}/pomanagement/api/po/getOrderIds`,  
+      getEventsByActorOrgId: `${LOCAL_SERVER_URL_EVENT}/eventmanagement/api/event/getEventByActorOrgId/:actorOrgId/:eventTypePrimary/:eventTypeDesc`, 
+    },
     dev: {
       loginUrl: `${DEV_SERVER_URL}/usermanagement/api/auth/login`,
       sendOtpUrl: `${DEV_SERVER_URL}/usermanagement/api/auth/sendOtp`,
@@ -170,6 +172,7 @@ export function config() {
       deleteNotificationUrl: `${DEV_SERVER_URL}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${DEV_SERVER_URL}/shipmentmanagement/api/shipment/updateTrackingStatus`,
       getOrderIds:`${DEV_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getEventsByActorOrgId: `${DEV_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/:actorOrgId/:eventTypePrimary/:eventTypeDesc`, 
     },
     stable: {
       loginUrl: `${STABLE_SERVER_URL_USER}/usermanagement/api/auth/login`,
@@ -242,6 +245,7 @@ export function config() {
       deleteNotificationUrl: `${STABLE_SERVER_URL_PRODUCTS}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${STABLE_SERVER_URL_SHIPMENT}/shipmentmanagement/api/shipment/updateTrackingStatus`,
       getOrderIds:`${STABLE_SERVER_URL_SHIPMENT}/pomanagement/api/po/getOrderIds`,
+      getEventsByActorOrgId: `${STABLE_SERVER_URL_SHIPMENT}/eventmanagement/api/event/getEventByActorOrgId/:actorOrgId/:eventTypePrimary/:eventTypeDesc`, 
     },
     test: {
       loginUrl: `${TEST_SERVER_URL}/usermanagement/api/auth/login`,
@@ -314,7 +318,8 @@ export function config() {
       getNotificationsUrl: `${TEST_SERVER_URL}/notificationmanagement/api/notification/getNotifications`,
       deleteNotificationUrl: `${TEST_SERVER_URL}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${TEST_SERVER_URL}/shipmentmanagement/api/shipment/updateTrackingStatus`,
-       getOrderIds:`${TEST_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getOrderIds:`${TEST_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getEventsByActorOrgId: `${TEST_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/null/ADD/PRODUCTS_TO_INVENTORY`, 
     },
     demo: {
       loginUrl: `${DEMO_SERVER_URL}/usermanagement/api/auth/login`,
@@ -387,6 +392,7 @@ export function config() {
       deleteNotificationUrl: `${DEMO_SERVER_URL}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${DEMO_SERVER_URL}/shipmentmanagement/api/shipment/updateTrackingStatus`,
       getOrderIds:`${DEMO_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getEventsByActorOrgId: `${DEMO_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/:actorOrgId/:eventTypePrimary/:eventTypeDesc`,
     },
     prod: {
       loginUrl: `${PROD_SERVER_URL}/usermanagement/api/auth/login`,
@@ -459,6 +465,7 @@ export function config() {
       deleteNotificationUrl: `${PROD_SERVER_URL}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${PROD_SERVER_URL}/shipmentmanagement/api/shipment/updateTrackingStatus`,
       getOrderIds:`${PROD_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getEventsByActorOrgId: `${PROD_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/:actorOrgId/:eventTypePrimary/:eventTypeDesc`,
     },
     ainbevprod: {
       loginUrl: `${ABINBEVPROD_SERVER_URL}/usermanagement/api/auth/login`,
@@ -529,6 +536,7 @@ export function config() {
       deleteNotificationUrl: `${ABINBEVPROD_SERVER_URL}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${ABINBEVPROD_SERVER_URL}/shipmentmanagement/api/shipment/updateTrackingStatus`,
       getOrderIds:`${ABINBEVPROD_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getEventsByActorOrgId: `${ABINBEVPROD_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/:actorOrgId/:eventTypePrimary/:eventTypeDesc`,
     },
     ainbevtest: {
       loginUrl: `${ABINBEVTEST_SERVER_URL}/usermanagement/api/auth/login`,
@@ -599,6 +607,7 @@ export function config() {
       deleteNotificationUrl: `${ABINBEVTEST_SERVER_URL}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${ABINBEVTEST_SERVER_URL}/shipmentmanagement/api/shipment/updateTrackingStatus`,
       getOrderIds:`${ABINBEVTEST_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getEventsByActorOrgId: `${ABINBEVTEST_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/:actorOrgId/:eventTypePrimary/:eventTypeDesc`,
     },
     uniceftest: {
       loginUrl: `${UNICEFTEST_SERVER_URL}/usermanagement/api/auth/login`,
@@ -670,7 +679,8 @@ export function config() {
       getNotificationsUrl: `${UNICEFTEST_SERVER_URL}/notificationmanagement/api/notification/getNotifications`,
       deleteNotificationUrl: `${UNICEFTEST_SERVER_URL}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${UNICEFTEST_SERVER_URL}/shipmentmanagement/api/shipment/updateTrackingStatus`,
-       getOrderIds:`${UNICEFTEST_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getOrderIds:`${UNICEFTEST_SERVER_URL}/pomanagement/api/po/getOrderIds`,
+      getEventsByActorOrgId: `${UNICEFTEST_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/:actorOrgId/:eventTypePrimary/:eventTypeDesc`,
     },
   };
 
