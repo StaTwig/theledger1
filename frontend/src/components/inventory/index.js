@@ -75,19 +75,21 @@ const Inventory = props => {
       const resultAnalytics = await getInventoryAnalytics();
 
 
-      // const resultEventsByOrgId = await getEventsByActorOrgId();
-      // const data = resultEventsByOrgId.data.data.data;
-      // var data_new=[];
-      // for(var i=0;i<data.length;i++){
-      //   data_new[i]= JSON.parse(data[i].payloadData).data;
-      // }
+      const resultEventsByOrgId = await getEventsByActorOrgId();
+      console.log("Results");
+      console.log(resultEventsByOrgId);
+      const data = resultEventsByOrgId.data.data.data;
+      var data_new=[];
+      for(var i=0;i<data.length;i++){
+        data_new[i]= JSON.parse(data[i].payloadData).data;
+      }
 
-      // console.log('New Data Formed');
-      // console.log(data_new);
-      // console.log("Events log");
-      // let t = resultEventsByOrgId.data.data.data[0];
-      // console.log(t);
-      // console.log(JSON.parse(t.payloadData));
+      console.log('New Data Formed');
+      console.log(data_new);
+      console.log("Events log");
+      let t = resultEventsByOrgId.data.data.data[0];
+      console.log(t);
+      console.log(JSON.parse(t.payloadData));
       
       setInventoryAnalytics(resultAnalytics.data.inventory);
       setInventoriesCount(

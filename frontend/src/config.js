@@ -319,7 +319,7 @@ export function config() {
       deleteNotificationUrl: `${TEST_SERVER_URL}/notificationmanagement/api/notification/deleteNotification`,
       updateTrackingStatusUrl:`${TEST_SERVER_URL}/shipmentmanagement/api/shipment/updateTrackingStatus`,
       getOrderIds:`${TEST_SERVER_URL}/pomanagement/api/po/getOrderIds`,
-      getEventsByActorOrgId: `${TEST_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/null/ADD/PRODUCTS_TO_INVENTORY`, 
+      getEventsByActorOrgId: `${TEST_SERVER_URL}/eventmanagement/api/event/getEventByActorOrgId/null/ADD/PRODUCTS_TO_INVENTORY?skip=0&limit=100`, 
     },
     demo: {
       loginUrl: `${DEMO_SERVER_URL}/usermanagement/api/auth/login`,
