@@ -29,16 +29,9 @@ const product_service_url = process.env.PRODUCT_URL;
 
 const stream_name = process.env.STREAM;
 
-<<<<<<< HEAD
-const init = require("../logging/init");
-const OrganisationModel = require("../models/OrganisationModel");
-const AnalyticsModel = require("../models/AnalyticsModel");
-const SalesDataModel = require("../models/SalesDataModel");
-=======
 const init = require('../logging/init');
 const OrganisationModel = require('../models/OrganisationModel');
 const AnalyticsModel = require('../models/AnalyticsModel');
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
 const StateDistrictStaticDataModel = require("../models/StateDistrictStaticDataModel");
 const { request } = require("http");
 const { match } = require("assert");
@@ -1361,14 +1354,6 @@ exports.getInventoryDetails = [
   auth,
   async (req, res) => {
     try {
-<<<<<<< HEAD
-      var selectedWarehouseId = "";
-      if (req.body.warehouseId !== null) {
-        selectedWarehouseId = req.body.warehouseId;
-      }
-=======
-
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
       const employee = await EmployeeModel.findOne({ id: req.user.id });
       var warehouseId = "";
       if ( !req.query.warehouseId)
@@ -1377,37 +1362,6 @@ exports.getInventoryDetails = [
           warehouseId  = req.query.warehouseId;
       const warehouse = await WarehouseModel.findOne({ id: warehouseId })
 
-<<<<<<< HEAD
-      var warehouse;
-      if (selectedWarehouseId == "" || selectedWarehouseId == null) {
-        warehouse = await WarehouseModel.findOne({ id: employee.warehouseId });
-      } else {
-        warehouse = await WarehouseModel.findOne({ id: selectedWarehouseId });
-      }
-      if (warehouse) {
-        const inventory = await InventoryModel.findOne({
-          id: warehouse.warehouseInventory,
-        });
-        let inventoryDetails = [];
-        await utility.asyncForEach(
-          inventory.inventoryDetails,
-          async (inventoryDetail) => {
-            const product = await ProductModel.findOne({
-              id: inventoryDetail.productId,
-            });
-            const inventoryDetailClone = { ...inventoryDetail };
-            inventoryDetailClone["productName"] = product.name;
-            inventoryDetailClone["manufacturer"] = product.manufacturer;
-            inventoryDetails.push(inventoryDetailClone);
-          }
-        );
-
-        return apiResponse.successResponseWithData(
-          res,
-          "Inventory Details",
-          inventoryDetails
-        );
-=======
       if (warehouse) {
         const inventory = await InventoryModel.findOne({ id: warehouse.warehouseInventory });
         let inventoryDetails = []
@@ -1419,7 +1373,6 @@ exports.getInventoryDetails = [
           inventoryDetails.push(inventoryDetailClone);
         })
         return apiResponse.successResponseWithData(res, 'Inventory Details', inventoryDetails);
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
       } else {
         return apiResponse.ErrorResponse(
           res,
@@ -2010,10 +1963,6 @@ exports.getInventory = [
   async (req, res) => {
     try {
       const { skip, limit } = req.query;
-<<<<<<< HEAD
-      const { warehouseId } = req.user;
-      const warehouse = await WarehouseModel.findOne({ id: warehouseId });
-=======
       var warehouseId = "";
 
       if ( !req.query.warehouseId)
@@ -2022,7 +1971,6 @@ exports.getInventory = [
           warehouseId  = req.query.warehouseId;
 
       const warehouse = await WarehouseModel.findOne({ id: warehouseId })
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
       if (warehouse) {
         const inventory = await InventoryModel.aggregate([
           { $match: { id: warehouse.warehouseInventory } },
@@ -2632,60 +2580,23 @@ exports.uploadSalesData = [
       await moveFile(req.file.path, `${dir}/${req.file.originalname}`);
       const workbook = XLSX.readFile(`${dir}/${req.file.originalname}`);
       const sheet_name_list = workbook.SheetNames;
-<<<<<<< HEAD
-      const sheetJSON = XLSX.utils.sheet_to_json(
-        workbook.Sheets[sheet_name_list[0]],
-        { defval: "" }
-      );
-      let rows = [];
-      let aggregationRows = [];
-=======
       const sheetJSON = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
 
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
       let headerRow1 = _spreadHeaders(sheetJSON[0]);
       let headerRow2 = _spreadHeaders(sheetJSON[1]);
       let headerRow3 = _spreadHeaders(sheetJSON[2]);
       let headerRow4 = sheetJSON[3];
 
-<<<<<<< HEAD
-      const spuriousColumns = [
-        "__EMPTY",
-        "__EMPTY_1",
-        "__EMPTY_2",
-        "__EMPTY_3",
-        "__EMPTY_4",
-        "__EMPTY_5",
-        "__EMPTY_6",
-      ];
-      sheetJSON.forEach((row, index) => {
-        let _row = {};
-        if (index > 2 && row["__EMPTY_1"].length) {
-          let products = [];
-=======
       const spuriousColumns = ['__EMPTY', '__EMPTY_1', '__EMPTY_2', '__EMPTY_3', '__EMPTY_4', '__EMPTY_5', '__EMPTY_6'];
 
       let parsedRows = [];
 
       sheetJSON.forEach((row, index) => {
         if (index > 2 && row['__EMPTY_1'].length) {
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
           let rowKeys = Object.keys(row);
           rowKeys = rowKeys.filter((e) => spuriousColumns.indexOf(e) === -1);
           rowKeys.forEach((rowKey) => {
             let prod = {};
-<<<<<<< HEAD
-            if (
-              !rowKey.startsWith("__") &&
-              !rowKey.startsWith("t") &&
-              rowKey !== "target"
-            ) {
-              prod["productName"] = headerRow2[rowKey];
-              prod["productSubName"] = headerRow3[rowKey];
-              prod["depot"] = row["__EMPTY_1"];
-              prod["sales"] = row[rowKey];
-              prod["targetSales"] = row["t" + rowKey];
-=======
             if (!rowKey.startsWith('__') && !rowKey.startsWith('t') && rowKey !== 'target') {
               prod['productName'] = headerRow2[rowKey];
               prod['productSubName'] = headerRow3[rowKey];
@@ -2696,44 +2607,16 @@ exports.uploadSalesData = [
               prod['uploadDate'] = collectedDate;
               let depot = warehouseDistrictMapping.find(w => w.depot === row['__EMPTY_1']);
               prod['warehouseId'] = (depot && depot.warehouseId) ? depot.warehouseId : '';
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
             }
             if (Object.keys(prod).length) {
               parsedRows.push(prod);
             }
           });
-<<<<<<< HEAD
-          if (products.length) {
-            _row.products = products;
-            _row.depot = row["__EMPTY_1"];
-            rows.push(_row);
-          }
-        } else if (
-          index > 2 &&
-          !row["__EMPTY_1"].length &&
-          row["__EMPTY"].length
-        ) {
-          let products = [];
-=======
         } else if (index > 2 && !row['__EMPTY_1'].length && row['__EMPTY'].length) {
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
           let rowKeys = Object.keys(row);
           rowKeys = rowKeys.filter((e) => spuriousColumns.indexOf(e) === -1);
           rowKeys.forEach((rowKey) => {
             let prod = {};
-<<<<<<< HEAD
-            if (
-              !rowKey.startsWith("__") &&
-              !rowKey.startsWith("t") &&
-              rowKey !== "target"
-            ) {
-              prod["productName"] = headerRow2[rowKey];
-              prod["productSubName"] = headerRow3[rowKey];
-              prod["isDistrictAggregate"] = true;
-              prod["districtName"] = row["__EMPTY"];
-              prod["sales"] = row[rowKey];
-              prod["targetSales"] = row["t" + rowKey];
-=======
             if (!rowKey.startsWith('__') && !rowKey.startsWith('t') && rowKey !== 'target') {
               prod['productName'] = headerRow2[rowKey];
               prod['productSubName'] = headerRow3[rowKey];
@@ -2743,41 +2626,21 @@ exports.uploadSalesData = [
               prod['sales'] = row[rowKey];
               prod['targetSales'] = row['t' + rowKey];
               prod['uploadDate'] = collectedDate;
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
             }
             if (Object.keys(prod).length) {
               parsedRows.push(prod);
             }
           });
-<<<<<<< HEAD
-          if (products.length) {
-            _row.products = products;
-            _row.districtName = row["__EMPTY"];
-            aggregationRows.push(_row);
-          }
-=======
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
         }
       });
 
       let respObj = await AnalyticsModel.insertMany(parsedRows);
 
-<<<<<<< HEAD
-      const salesData = new SalesDataModel({
-        uploadedFileName: uploadedFileName,
-        dataCollectedDate: collectedDate,
-        depots: rows,
-        districtAggregations: aggregationRows,
-      });
-      const responseObj = await salesData.save();
-      return apiResponse.successResponseWithData(res, responseObj);
-=======
       return apiResponse.successResponseWithData(
         res,
         responseObj
       );
 
->>>>>>> ab752285fc11a9d64270cef69d255928eb1301f5
     } catch (err) {
       return apiResponse.ErrorResponse(res, err);
     }
