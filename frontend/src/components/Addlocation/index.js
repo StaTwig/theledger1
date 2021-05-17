@@ -6,11 +6,15 @@ import SuccessPopup from "../../shared/PopUp/successPopUp";
 import FailPopup from "../../shared/PopUp/failedPopUp";
 import Modal from "../../shared/modal";
 // import React, { useState,useRef } from 'react';
+import {turnOff, turnOn} from "../../actions/spinnerActions";
+import { useSelector, useDispatch } from "react-redux";
+import {getAddressByLatLong} from "../../actions/organisationAction";
 
 import "./style.scss";
 import { Formik } from "formik";
 
 const AddLocation = (props) => {
+  const dispatch = useDispatch();
   const [addressTitle, setAddressTitle] = useState("");
   const [addressLine, setAddressLine] = useState("");
   const [city, setCity] = useState("");
@@ -18,10 +22,36 @@ const AddLocation = (props) => {
   const [country, setCountry] = useState("");
   const [pincode, setPincode] = useState("");
   const [addedLocationModal, setAddedLocationModal] = useState(false);
+  const [pos, setPos] = useState({});
 
   const closeModalAddedLocation = ()=>{
     setAddedLocationModal(false);
     props.history.push('/profile');
+  };
+
+  const getGeoLocation = async () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          setPos(position);
+          dispatch(turnOn());
+          const result = await getAddressByLatLong(position);
+          dispatch(turnOff());
+          console.log("Result of current location");
+          if (result.status === 200) {
+            
+            console.log(result);
+          } else {
+            console.log(result);
+          }
+        },
+        (error) => {
+          console.log("Error", error);
+        }
+      );
+    } else {
+      console.log("Navigator Error");
+    }
   };
 
   const updateStatus = async (values) => {
@@ -282,14 +312,15 @@ const AddLocation = (props) => {
           </div>
         </div>
         <div>
-          {/* <button
+          <button
             class="close"
             className="btn btn-blue btn-lg float-right"
             style={{ position: "relative", top: "-65vh", right: "22px" }}
+            onClick={()=>{getGeoLocation()}}
           >
             <img src={Location} width="26" height="26" className="mr-2 mb-1" />
             <span>Use my current Location</span>
-          </button> */}
+          </button>
         </div>
         {addedLocationModal && (
         <Modal
