@@ -605,28 +605,22 @@ class Profile extends React.Component {
                                 </div>
                                 <div className="card-body">
                                   <div className="total">
-                                    {this.state.warehouseLocations[id].warehouseAddress.city ? (
+                                    {this.state.warehouseLocations[id].warehouseAddress.city && (
                                       <span>
                                         {this.state.warehouseLocations[id].warehouseAddress.city}
                                       </span>
-                                    ) : (
-                                      <span>N/A</span>
                                     )}
-                                    ,
-                                    {this.state.warehouseLocations[id].warehouseAddress.state ? (
+                                    
+                                    {this.state.warehouseLocations[id].warehouseAddress.state && (
                                       <span>
-                                        {this.state.warehouseLocations[id].warehouseAddress.state}
+                                        ,{this.state.warehouseLocations[id].warehouseAddress.state}
                                       </span>
-                                    ) : (
-                                      <span>N/A</span>
                                     )}
-                                    ,
-                                    {this.state.warehouseLocations[id].country.countryName ? (
+                                    
+                                    {this.state.warehouseLocations[id].country.countryName && (
                                       <span>
-                                        {this.state.warehouseLocations[id].country.countryName}
+                                        ,{this.state.warehouseLocations[id].country.countryName}
                                       </span>
-                                    ) : (
-                                      <span>N/A</span>
                                     )}
                                   </div>
 
