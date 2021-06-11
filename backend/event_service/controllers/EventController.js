@@ -99,6 +99,7 @@ exports.getAllEventsWithFilter = [ //inventory with filter(skip, limit, dateFilt
 				skip,
 				limit
 			} = req.query;
+			
 			console.log("req.user =======> ", req.user);
 			// console.log("req.query =======> ", req.query);
 			const organisationId  = req.user.organisationId;
@@ -110,6 +111,8 @@ exports.getAllEventsWithFilter = [ //inventory with filter(skip, limit, dateFilt
 			let productName = req.query.productName ? req.query.productName : undefined;
 			let productManufacturer = req.query.productManufacturer ? req.query.productManufacturer : undefined;
 			let status = req.query.status ? req.query.status : undefined;
+			
+
 			switch (req.query.dateFilter) {
 				case "today":
 					fromDateFilter = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
@@ -159,6 +162,7 @@ exports.getAllEventsWithFilter = [ //inventory with filter(skip, limit, dateFilt
 					$gte: fromDateFilter
 				}
 			}
+			
 
 			console.log("elementMatchQuery========>", elementMatchQuery);
 
@@ -237,6 +241,7 @@ exports.getAllEventsWithFilter = [ //inventory with filter(skip, limit, dateFilt
 			// 	console.log(err)
 			// 	return apiResponse.ErrorResponse(res, err);
 			// }
+
 			let inventoryCount = await EventModal.aggregate([
 				{ $lookup: {        
 					   from: 'products',
@@ -266,21 +271,29 @@ exports.getAllEventsWithFilter = [ //inventory with filter(skip, limit, dateFilt
 					{$sort: {createdAt: -1}}
 				]).skip(parseInt(skip)).limit(parseInt(limit))
 				.then(async (eventRecords) => {
+					console.log(eventRecords)
 				let inventoryRecords = [];
 				await Promise.all(eventRecords.map(async function (event) {
 					let eventRecord = JSON.parse(JSON.stringify(event))
 					let payloadRecord = event.payloadData;
 					eventRecord[`inventoryQuantity`] = payloadRecord.data.products.quantity || payloadRecord.data.products.productQuantity ;
+					
 					if (payloadRecord.data.products) {
 						if (payloadRecord.data.id) {
+							console.log(payloadRecord.data.id)
+
 							let shipmentDetails = await ShipmentModel.findOne({
 								id: payloadRecord.data.id
 							});
 							eventRecord[`shipmentDetails`] = shipmentDetails;
+							if(shipmentDetails)
 							eventRecord[`shipmentDetails`].id = payloadRecord.data.id;
 						}
 					}
 					eventRecord[`payloadData`] = payloadRecord;
+					if((eventRecord['eventTypePrimary']  !== 'ADD') && eventRecord[`shipmentDetails`] === null)
+					console.log('deleted entry');
+					else
 					inventoryRecords.push(eventRecord);
 				}))
 				return apiResponse.successResponseWithData(
