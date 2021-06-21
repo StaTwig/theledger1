@@ -29,7 +29,7 @@ const NewOrder = (props) => {
   const editPo = useSelector(state => {
     return state?.reviewPo;
   });
-
+  
   const profile = useSelector((state) => {
     return state.user;
   });
@@ -58,7 +58,7 @@ const NewOrder = (props) => {
   const [category, setCategory] = useState([]);
   const [openExcel, setOpenExcel] = useState(false);
   const [menu, setMenu] = useState(false);
-  const [addProducts, setAddProducts] = useState(editPo !== null ? editPo.products : [{"productId": "","quantity": "","name": "","manufacturer": "","type": ""}]);
+  const [addProducts, setAddProducts] = useState(editPo !== null ? editPo.products : [{"productId": "","id": "","productQuantity": "","name": "","manufacturer": "","type": ""}]);
   const dispatch = useDispatch();
   const [senderOrgId, setSenderOrgId] = useState(
     editPo !== null ? editPo.fromOrgId : "Select Organisation Name"
@@ -154,8 +154,11 @@ const NewOrder = (props) => {
     try {
       const warehouse = await getProductsByCategory(value);
       let newArr = [...addProducts];
-      newArr[index]['type'] = value;
+      newArr[index] = {"productId": "", "id": "", "productQuantity": "", "name": "", "type": value, "manufacturer": ""};
+      newArr[index]['quantity'] = '';
       setAddProducts(prod => [...newArr]);
+      setFieldValue('products', newArr.map(row => ({ "productId": row.id, "id": row.id, "productQuantity": row?.productQuantity ? row?.productQuantity : 0, "name": row.name, "type": row.type, "manufacturer": row.manufacturer })));
+    
       setProducts(warehouse.data.map(item => {
                                       return {
                                         value: item.name,
@@ -173,7 +176,8 @@ const NewOrder = (props) => {
     addProducts.splice(index, 1);
     let newArr = [...addProducts];
     newArr.push(item);
-    setFieldValue('products', newArr.map(row => ({"productId": row.id,"quantity": row?.quantity ? row?.quantity : 0,"name": row.name,"type": row.type,"manufacturer": row.manufacturer})));
+    
+    setFieldValue('products', newArr.map(row => ({"productId": row.id,"id": row.id,"productQuantity": row?.productQuantity ? row?.productQuantity : '',"quantity": row?.productQuantity ? row?.productQuantity : '',"name": row.name,"type": row.type,"manufacturer": row.manufacturer})));
     setAddProducts(prod => [...newArr]);
 
     const prodIndex = products.findIndex(p => p.id === item.id);
@@ -190,7 +194,7 @@ const NewOrder = (props) => {
     addProducts.splice(index, 1);
     let newArr = [...addProducts];
     if (newArr.length > 0)
-      setFieldValue('products', newArr.map(row => ({"productId": row.id,"quantity": row?.quantity,"name": row.name,"type": row.type,"manufacturer": row.manufacturer})));
+      setFieldValue('products', newArr.map(row => ({"productId": row.id,"id": row.id,"productQuantity": row?.productQuantity,"name": row.name,"type": row.type,"manufacturer": row.manufacturer})));
     else
       setFieldValue('products', []);
     setAddProducts(prod => [...newArr]);
@@ -198,23 +202,35 @@ const NewOrder = (props) => {
 
   const onQuantityChange = (v, i, setFieldValue) => {
     let newArr = [...addProducts];
-    newArr[i].quantity = v;
-    setFieldValue('products', newArr.map(row => ({"productId": row.id,"quantity": row.quantity,"name": row.name,"type": row.type,"manufacturer": row.manufacturer})));
+    newArr[i].productQuantity = v;
+    setFieldValue('products', newArr.map(row => ({"productId": row.id,"id": row.id,"productQuantity": row.productQuantity,"name": row.name,"type": row.type,"manufacturer": row.manufacturer})));
     setAddProducts(prod => [...newArr]);
   }
 
   const onAssign = async (values) => {
     let error = false;
-    const { fromOrg, toOrg, toOrgLoc, products,toOrgLocName } = values;
+    let nameError=false;
+    let typeError=false;
+    const { fromOrg, toOrg, toOrgLoc, products, toOrgLocName } = values;
+    console.log("products------",products);
     products.forEach((p) => {
-      if (p.quantity < 1)
+      if(!p.name)
+      {
+        nameError=true;  
+      }
+      if(!p.type)
+      {
+        typeError=true; 
+      }
+      if(p.productQuantity < 1)
+      {
         error = true;
+      }
     });
-
-    if (!error) {
+    if (!error &&  !nameError && !typeError) {
       dispatch(setReviewPos(values));
       props.history.push('/revieworder');
-      // const data = {
+            // const data = {
       //   externalId: "",
       //   supplier: {
       //     supplierIncharge: user.id,
@@ -245,12 +261,23 @@ const NewOrder = (props) => {
       //   setFailedPop(true);
       //   setErrorMessage("Not able to create order. Try again!");
       // }
+
     }
-    else {
+    else if(error) {
       setOrderError("Check product quantity");
       setFailedPop(true);
     }
+    else if(nameError) {
+      setOrderError("Check Product Category");
+      setFailedPop(true);
+    }
+    else if(typeError) {
+      setOrderError("Check Product Type");
+      setFailedPop(true);
+    }
+    
   };
+
 
   return (
     <div className="NewOrder m-3">
@@ -351,15 +378,18 @@ const NewOrder = (props) => {
                   handleQuantityChange={(v, i) => onQuantityChange(v, i, setFieldValue)}
                   onRemoveRow={(index) => onRemoveProduct(index, setFieldValue)}
                   handleProductChange={(index, item) => onProductChange(index, item, setFieldValue)}
-                  handleCategoryChange={onCategoryChange}
+                  handleCategoryChange={(index, item) => onCategoryChange(index, item, setFieldValue)}
                 />
                 <div className="d-flex justify-content-between">
                   <button
                     type="button"
-                    className="btn btn-white bg-white shadow-radius font-bold"
+                    className="btn btn-white bg-white shadow-radius font-bold mb-1"
                     onClick={() => {
-                      let newArr = { productId: '', name: '', manufacturer: '', quantity: '', type: '' };
-                      setAddProducts(prod => [...prod, newArr]);
+                      let arr = addProducts.filter(p => p.productId != '' && p.id != '' && p.name != '' && p.manufacturer != '' && p.productQuantity != '' && p.type != '');
+                      if (arr.length == addProducts.length) {
+                        let newArr = { productId: '', id: '', name: '', manufacturer: '', productQuantity: '', type: '' };
+                        setAddProducts(prod => [...prod, newArr]);
+                      }
                     }}
                   >
                     +<span> Add Another Product</span>
@@ -378,11 +408,12 @@ const NewOrder = (props) => {
                 <div className="row">
                     <div className="col-md-6 com-sm-12">
                       <div className="form-group">
-                        <label htmlFor="organizationName">Organisation Type*</label>
+                        <label className="required-field" htmlFor="organizationName" style={{fontSize:"16px"}}>Organisation Type</label>
                         <div className="form-control">
                           <Select
                             styles={customStyles}
-                            placeholder="Select Organisation Type"
+                            placeholder={<div className="select-placeholder-text">Select Organisation Type</div>}
+                           
                             onChange={(v) => {
                               setFieldValue('type', v?.value);
                               setFieldValue('typeName', v?.label);
@@ -401,7 +432,7 @@ const NewOrder = (props) => {
                 <div className="row">
                   <div className="col-md-6 com-sm-12">
                     <div className="form-group">
-                      <label htmlFor="organizationName">Organisation Name*</label>
+                      <label className="required-field" htmlFor="organizationName" style={{fontSize:"16px"}}>Organisation Name</label>
                       <div className="form-control">
                         {/* <DropdownButton
                           isText={true}
@@ -416,7 +447,8 @@ const NewOrder = (props) => {
                         /> */}
                           <Select
                             styles={customStyles}
-                            placeholder="Select Organisation Name"
+                            placeholder={<div className="select-placeholder-text">Select Organisation Name</div>}
+                          
                             defaultInputValue={values.fromOrgId}
                             onChange={(v) => {
                               setFieldValue('fromOrg', v.value);
@@ -434,7 +466,7 @@ const NewOrder = (props) => {
 
                   <div className="col-md-6 com-sm-12">
                     <div className="form-group">
-                      <label htmlFor="orgLocation">Organization ID*</label>
+                      <label className="required-field" htmlFor="orgLocation" style={{fontSize:"16px"}}>Organization ID</label>
                       <div className="form-control border-0">
                         {values.fromOrg}
                       </div>
@@ -453,11 +485,12 @@ const NewOrder = (props) => {
                  <div className="row">
                     <div className="col-md-6 com-sm-12">
                       <div className="form-group">
-                        <label htmlFor="organizationName">Organisation Type*</label>
+                        <label className="required-field" htmlFor="organizationName" style={{fontSize:"16px"}}>Organisation Type</label>
                         <div className="form-control">
                           <Select
                             styles={customStyles}
-                            placeholder="Select Organisation Type"
+                           
+                            placeholder={<div className="select-placeholder-text">Select Organisation Type</div>}
                             defaultInputValue={values.rtypeName}
                             onChange={(v) => {
                               setFieldValue('rtype', v.value);
@@ -475,7 +508,7 @@ const NewOrder = (props) => {
                 <div className="row">
                   <div className="col-md-6 com-sm-12">
                     <div className="form-group">
-                      <label htmlFor="organizationName">Organisation Name*</label>
+                      <label className="required-field" htmlFor="organizationName" style={{fontSize:"16px"}}>Organisation Name</label>
                       <div className="form-control">
                         {/* <DropdownButton
                           isText={true}
@@ -493,7 +526,8 @@ const NewOrder = (props) => {
                         /> */}
                           <Select
                             styles={customStyles}
-                            placeholder="Select Organisation Name"
+                            placeholder={<div className="select-placeholder-text">Select Organisation Name</div>}
+                            
                             defaultInputValue={values.toOrgName}
                             onChange={(v) => {
                               setFieldValue('toOrgLoc', '');
@@ -513,17 +547,17 @@ const NewOrder = (props) => {
 
                   <div className="col-md-6 com-sm-12">
                     <div className="form-group">
-                      <label htmlFor="delLocation">Organisation ID*</label>
+                      <label className="required-field" htmlFor="delLocation" style={{fontSize:"16px"}}>Organisation ID</label>
                       <div className="form-control border-0">
                         {values.toOrg}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="row mt-4">
+                <div className="row">
                   <div className="col-md-6 com-sm-12">
                     <div className="form-group">
-                      <label htmlFor="delLocation">Delivery Location*</label>
+                      <label className="required-field" htmlFor="delLocation" style={{fontSize:"16px"}}>Delivery Location</label>
                       <div className="form-control">
                         {/* <DropdownButton
                           isText={true}
@@ -550,7 +584,8 @@ const NewOrder = (props) => {
 
                           <Select
                             styles={customStyles}
-                            placeholder="Select Delivery Location"
+                            placeholder={<div className="select-placeholder-text">Select Delivery Location</div>}
+                           
                             defaultInputValue={values.toOrgLocName}
                             onChange={(v) => {
                               setFieldValue('toOrgLocName', v.label);
@@ -568,14 +603,14 @@ const NewOrder = (props) => {
                 </div>
               </div>
             </div>
-            <div className="d-flex pt-4 justify-content-between">
+            <div className="d-flex pt-4 justify-content-between mb-1">
               <div className="value">{quantity}</div>
               <div className="d-flex">
-                <button type="button" className="btn btn-white shadow-radius font-bold mr-2"onClick={() => props.history.push('/orders')}>
+                <button type="button" className="btn btn-white shadow-radius font-bold mr-2"onClick={() => {dispatch(resetReviewPos({})); props.history.push('/orders')}}>
                   Cancel
                 </button>
 
-                <button className="btn btn-primary fontSize20 font-bold">
+                <button className="btn btn-orange fontSize20 font-bold mb-2">
                   <img src={OrderIcon} width="20" height="17" className="mr-2 mb-1" />
                   <span>Review Order</span>
                 </button>

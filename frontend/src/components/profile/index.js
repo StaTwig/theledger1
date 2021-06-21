@@ -54,6 +54,7 @@ class Profile extends React.Component {
       warehouseAddress_secondline: "",
       warehouseAddress_state: "",
       title: "",
+      warehouseLocByOrg: [],
     };
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -106,7 +107,6 @@ class Profile extends React.Component {
         warehouseAddress_zipcode,
         warehouseAddress_secondline,
         warehouseAddress_state,
-
         title,
       });
     } else {
@@ -120,17 +120,19 @@ class Profile extends React.Component {
     if (wareHouseResponse.status === 1) {
       const wareHouseIdResult = wareHouseResponse.data.map((txn) => txn.id);
       const wareHouseAddresses = wareHouseResponse.data;
-      console.log("Results");
-      console.log(wareHouseAddresses);
+      // console.log(wareHouseAddresses,"All warehouses");
       this.setState({
         wareIds: wareHouseIdResult,
         warehouseLocations: wareHouseAddresses,
+        warehouseLocByOrg:wareHouseAddresses
       });
+      console.log(this.state.warehouseLocByOrg,"warehouseLocByOrg");
+      // warehouseLocByOrg.push(this.state.warehouseLocations);
+      this.state.warehouseLocations.map((id)=>{
+        this.state.warehouseLocations= this.state.warehouseLocations.filter((data)=>response.data.data.warehouseId.includes(data.id));
+      })
     }
-    // console.log("Full Data", wareHouseResponse);
-    // console.log("warehouses", this.state.warehouseLocations);
   }
-  //console.log("res",wareHouseIdResult);
 
 
   closeModal() {
@@ -282,7 +284,6 @@ class Profile extends React.Component {
       warehouseAddress_zipcode,
       warehouseAddress_secondline,
       warehouseAddress_state,
-
       title,
     } = this.state;
     const imgs = config().fetchProfileImage;
@@ -375,7 +376,9 @@ class Profile extends React.Component {
                         style={{ position: "absolute", marginLeft: "64%" }}
                         value={this.state.phoneNumber}
                         onChange={(phone) =>
-                          this.setState({ phoneNumber: "+"+phone })
+                          // {phone > 0 &&
+                            this.setState({ phoneNumber: phone })
+                          // }
                         }  
                       />
                     </div>
@@ -407,7 +410,7 @@ class Profile extends React.Component {
                                 size="" //for other size's use `modal-lg, modal-md, modal-sm`
                               >
                                 <PopUpLocation
-                                  wareHouses={this.state.warehouseLocations}
+                                  wareHouses={this.state.warehouseLocByOrg}
                                 />
                               </Modal>
                             )}
@@ -475,7 +478,7 @@ class Profile extends React.Component {
                               />
                               <input
                                 className="total-input"
-                                value={this.state.warehouseLocations[id].country.countryName}
+                                value={this.state.warehouseLocations[id].warehouseAddress.country}
                                 onChange={(e) =>
                                   this.setState({
                                     warehouseAddress_country: e.target.value,
@@ -577,8 +580,8 @@ class Profile extends React.Component {
                           height="20"
                           className="mr-3"
                         />
-                        {this.state.phoneNumber ? (
-                          <span>{this.state.phoneNumber}</span>
+                        {(this.state.phoneNumber) ? (
+                          <span>{"+"+this.state.phoneNumber}</span>
                         ) : (
                           <span>N/A</span>
                         )}
@@ -592,6 +595,7 @@ class Profile extends React.Component {
                       style={{ width: "50vw", overflow: "hidden" }}
                     >
                       {Object.keys(this.state.warehouseLocations).map((id) => {
+                        console.log(this.state.warehouseLocations,"this.state.warehouseLocations");
                         return (
                           <div className="col">
                             <div className="location-cards">
@@ -605,28 +609,22 @@ class Profile extends React.Component {
                                 </div>
                                 <div className="card-body">
                                   <div className="total">
-                                    {this.state.warehouseLocations[id].warehouseAddress.city ? (
+                                    {this.state.warehouseLocations[id].warehouseAddress.city && (
                                       <span>
                                         {this.state.warehouseLocations[id].warehouseAddress.city}
                                       </span>
-                                    ) : (
-                                      <span>N/A</span>
                                     )}
-                                    ,
-                                    {this.state.warehouseLocations[id].warehouseAddress.state ? (
+                                    
+                                    {this.state.warehouseLocations[id].warehouseAddress.state && (
                                       <span>
-                                        {this.state.warehouseLocations[id].warehouseAddress.state}
+                                        ,{this.state.warehouseLocations[id].warehouseAddress.state}
                                       </span>
-                                    ) : (
-                                      <span>N/A</span>
                                     )}
-                                    ,
-                                    {this.state.warehouseLocations[id].country.countryName ? (
+                                    
+                                    {this.state.warehouseLocations[id].warehouseAddress.country && (
                                       <span>
-                                        {this.state.warehouseLocations[id].country.countryName}
+                                        ,{this.state.warehouseLocations[id].warehouseAddress.country}
                                       </span>
-                                    ) : (
-                                      <span>N/A</span>
                                     )}
                                   </div>
 

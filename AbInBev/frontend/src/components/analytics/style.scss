@@ -170,7 +170,7 @@ body {
 }
 .uploadModal{
     background-color: #E5E0E9;
-    height:400px;
+    height:auto;
     width:600px;
     padding:25px;
     border-radius: 15px;
@@ -212,6 +212,10 @@ body {
     border-radius: 10px;
     width:100%;
   }
+
+.subTitle{
+    font-size: small;
+}
   
 .filterInput{
     padding: 9px 17px;
@@ -534,7 +538,6 @@ body {
 }
 .geoAnalyticsCard{
     position: relative;
-    height: 500px;
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 0px 3px 6px #54265E26;
     border-radius: 25px;
@@ -620,6 +623,15 @@ body {
         tbody{
             min-height: 100vh;
             overflow-y: auto;
+        }
+        thead{
+            border-bottom: 2px solid #54265E;    
+        }
+        th{
+            padding: 10px;
+            font-size: 16px;
+            color: #54265E;
+            font-weight: bolder;
         }
         tr{
             border-bottom: 1px solid #E5E0E9; 
@@ -908,6 +920,9 @@ body {
         color: #FDAB0F;
     }
 }
+.card:hover{
+    cursor: pointer;
+}
 .geocard{
     background-color: #FFFFFF;
     margin-right: 6px;
@@ -925,6 +940,7 @@ body {
         justify-content: flex-start;
         align-items: center;
         .info{
+            margin-left: 1rem;
             .name{
                 font-size: 18px;
                 font-weight: 600;
@@ -946,6 +962,7 @@ body {
     justify-content: flex-start;
     align-items: center;
     .info{
+        margin-left: 1rem;
         .name{
             font-size: 18px;
             font-weight: 600;
@@ -1013,6 +1030,7 @@ body {
         justify-content: flex-start;
         align-items: center;   
         .info{
+            margin-left: 1rem;
             .name{
                 font-size: 18px;
                 font-weight: 600;
@@ -1140,7 +1158,21 @@ body {
     font-size: 1.5em;
 }
 
-    
+    .boldGreen{
+        color:green;
+        font-weight: bolder;
+        font-size: 16px;
+    }
+    .boldPurple{
+        color:purple;
+        font-weight: bolder;
+        font-size: 16px;    
+    }
+    .boldblue{
+        color:blue;
+        font-weight: bolder;
+        font-size: 16px;    
+    }
     .badge-purple{
         padding: 2px 10px;
         border-radius: 10px;

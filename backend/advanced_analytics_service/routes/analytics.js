@@ -16,6 +16,7 @@ router.get("/getStatsBySKU", AnalyticsController.getStatsBySKU);
 router.get("/getStatsByBrand", AnalyticsController.getStatsByBrand);
 router.get("/getSalesStatsByBrand", AnalyticsController.getSalesStatsByBrand);
 router.get("/getStatsByOrg", AnalyticsController.getStatsByOrg);
+router.get("/getStatsByOrgType", AnalyticsController.getStatsByOrgType);
 
 router.get("/getLeadTimes", AnalyticsController.getLeadTimes);
 router.get("/getSupplierPerfomance", AnalyticsController.getSupplierPerformance);
@@ -27,7 +28,8 @@ router.get("/getReturnedRate/:state/:tenure", AnalyticsController.getAllStats);
 router.get("/getTarget/:state/:tenure", AnalyticsController.getAllStats);
 router.get("/getInventoryBySku/:sku/:state", AnalyticsController.getAllStats);
 router.get("/getInventoryByBrand/:brand/:state/", AnalyticsController.getAllStats);
-
+router.get("/getMonthlySalesOfSkuByBrand", AnalyticsController.getMonthlySalesOfSkuByBrand)
+router.get("/getSalesTotalOfAllBrands", AnalyticsController.getSalesTotalOfAllBrands);
 /*
 /getProductsById --> Get Product details --> Product Service
 

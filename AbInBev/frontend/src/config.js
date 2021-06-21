@@ -1,7 +1,7 @@
-export const TEST_SERVER_URL = 'http://test.vaccineledger.com:9001';
+export const TEST_SERVER_URL = 'https://test.vaccineledger.com';
 export const PROD_SERVER_URL = 'http://api.vaccineledger.com:9001';
-export const ABINBEVPROD_SERVER_URL = 'http://abinbev.statledger.io:9001';
-export const ABINBEVTEST_SERVER_URL = 'http://test.abinbev.statledger.io:9001';
+export const ABINBEVPROD_SERVER_URL = 'https://abinbev.statledger.io';
+export const ABINBEVTEST_SERVER_URL = 'https://test.abinbev.statledger.io';
 export const DEMO_SERVER_URL = 'http://vaccineledger.com:9001';
 export const LOCAL_SERVER_URL_USER = 'http://localhost:3001';
 export const LOCAL_SERVER_URL_SHIPPINGORDER = 'http://localhost:3013';
@@ -21,7 +21,6 @@ export const STABLE_SERVER_URL_TRACKANDTRACE = 'http://54.164.66.73:3005';
 export const STABLE_SERVER_URL_NOTIFICATION = 'http://54.164.66.73:3006';
 export const STABLE_SERVER_URL_PRODUCTS = 'http://54.164.66.73:3010';
 export const DEV_SERVER_URL = 'http://127.0.0.1:9001';
-
 
 /*Shipping order URL needs to be updated for stable server*/
 
@@ -80,7 +79,7 @@ export function config() {
       getDistrictsByState: `${ABINBEVPROD_SERVER_URL}/inventorymanagement/api/inventory/getDistrictsByState`,
       getAllSKUs: `${ABINBEVPROD_SERVER_URL}/inventorymanagement/api/inventory/getAllSKUs`,
       getOrganizationInfoByID: `${ABINBEVPROD_SERVER_URL}/inventorymanagement/api/inventory/getOrganizationInfoByID`,
-
+      uploadSalesData: `${ABINBEVPROD_SERVER_URL}/inventorymanagement/api/inventory/uploadSalesData`,
 
       trackShipment: `${ABINBEVPROD_SERVER_URL}/shipmentmanagement/api/shipping/trackShipment?shipmentId=`,
       poDetailsByShipmentId: `${ABINBEVPROD_SERVER_URL}/shipmentmanagement/api/shipping/fetchPOdetailsByShipmentID?shipmentId=`,
@@ -102,9 +101,9 @@ export function config() {
       getAnalyticsByBrandurl: `${ABINBEVPROD_SERVER_URL}/advancedanalytics/api/analytics/getStatsByBrand`,
       getAllBrandsurl: `${ABINBEVPROD_SERVER_URL}/advancedanalytics/api/analytics/getAllBrands`,
       getOrganisationStatsurl: `${ABINBEVPROD_SERVER_URL}/advancedanalytics/api/analytics/getStatsByOrg`,
+      getOrganisationTypeStatsurl: `${ABINBEVPROD_SERVER_URL}/advancedanalytics/api/analytics/getStatsByOrgType`,
       getOverviewStats: `${ABINBEVPROD_SERVER_URL}/advancedanalytics/api/analytics/getOverviewStats`,
       getSupplierPerfomance: `${ABINBEVPROD_SERVER_URL}/advancedanalytics/api/analytics/getSupplierPerfomance`,
-
     },
     ainbevtest: {
       loginUrl: `${ABINBEVTEST_SERVER_URL}/usermanagement/api/auth/login`,
@@ -159,7 +158,7 @@ export function config() {
       getDistrictsByState: `${ABINBEVTEST_SERVER_URL}/inventorymanagement/api/inventory/getDistrictsByState`,
       getAllSKUs: `${ABINBEVTEST_SERVER_URL}/inventorymanagement/api/inventory/getAllSKUs`,
       getOrganizationInfoByID: `${ABINBEVTEST_SERVER_URL}/inventorymanagement/api/inventory/getOrganizationInfoByID`,
-
+      uploadSalesData: `${ABINBEVTEST_SERVER_URL}/inventorymanagement/api/inventory/uploadSalesData`,
       trackShipment: `${ABINBEVTEST_SERVER_URL}/shipmentmanagement/api/shipping/trackShipment?shipmentId=`,
       poDetailsByShipmentId: `${ABINBEVTEST_SERVER_URL}/shipmentmanagement/api/shipping/fetchPOdetailsByShipmentID?shipmentId=`,
       productDetailsByShipmentId: `${ABINBEVTEST_SERVER_URL}/shipmentmanagement/api/shipping/fetchProductdetailsByShipmentID?shipmentId=`,
@@ -180,9 +179,9 @@ export function config() {
       getAnalyticsByBrandurl: `${ABINBEVTEST_SERVER_URL}/advancedanalytics/api/analytics/getStatsByBrand`,
       getAllBrandsurl: `${ABINBEVTEST_SERVER_URL}/advancedanalytics/api/analytics/getAllBrands`,
       getOrganisationStatsurl: `${ABINBEVTEST_SERVER_URL}/advancedanalytics/api/analytics/getStatsByOrg`,
+      getOrganisationTypeStatsurl: `${ABINBEVTEST_SERVER_URL}/advancedanalytics/api/analytics/getStatsByOrgType`,
       getOverviewStats: `${ABINBEVTEST_SERVER_URL}/advancedanalytics/api/analytics/getOverviewStats`,
       getSupplierPerfomance: `${ABINBEVTEST_SERVER_URL}/advancedanalytics/api/analytics/getSupplierPerfomance`,
-
     },
   };
 
