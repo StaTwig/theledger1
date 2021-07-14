@@ -27,7 +27,7 @@ const Chart = () => {
 
 
   return (
-    <div>
+    <div className="col-12">
       <LineChart
         ymin="-5" ymax="10" min={-5} max={10}
         colors={["#FA7923", "#666"]}
