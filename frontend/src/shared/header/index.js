@@ -8,7 +8,7 @@ import dropdownIcon from '../../assets/icons/dropdown_selected.png';
 import Location from '../../assets/icons/location_blue.png';
 import { Redirect } from 'react-router-dom';
 import DrawerMenu from './drawerMenu';
-import { getActiveWareHouses, getUserInfo, logoutUser, registerUser, setUserLocation } from '../../actions/userActions';
+import { getActiveWareHouses, getUserInfo, logoutUser, postUserLocation, registerUser, setUserLocation } from '../../actions/userActions';
 import logo from '../../assets/brands/VACCINELEDGER.png';
 //import searchingIcon from '../../assets/icons/searching@2x.png';
 //import bellIcon from '../../assets/icons/bellwhite.png';
@@ -22,6 +22,7 @@ import Modal from "../modal/index";
 import FailedPopUp from "../PopUp/failedPopUp";
 import {getShippingOrderIds,fetchAllairwayBillNumber} from "../../actions/shippingOrderAction";
 import { getOrderIds} from "../../actions/poActions";
+import axios from 'axios';
 //import Badge from '@material-ui/core/Badge';
 //import MailIcon from '@material-ui/icons/Mail';
 //import Divider from '@material-ui/core/Divider';
@@ -196,9 +197,21 @@ const ref = useOnclickOutside(() => {
     localStorage.setItem('location', location?.id);
   },[location]);
 
-  const handleLocation=(item)=>{
+  const handleLocation=async (item)=>{
+    console.log("item",item);
+    console.log("item id",item.id);
     setLocation(item);
+    const body={warehouseId:item.id};
+
     dispatch(setUserLocation(item));
+
+    dispatch(turnOn());
+    const result=await postUserLocation(body);
+    dispatch(turnOff());
+
+    if(result.status === 200){
+      console.log("successful result");
+    }
   }
 
   const clearNotification = async notification => {
