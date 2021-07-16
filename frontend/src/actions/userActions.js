@@ -24,7 +24,7 @@ export const addWarehouse = async (data) => {
 export const postUserLocation = async (data)=>{
   try{
     console.log("data",data);
-    const result=await axios.post('http://54.164.66.73:3001/usermanagement/api/auth/switchLocation',data);
+    const result=await axios.post(config().locationUrl,data);
     console.log(result);
     return result;
   }catch(e){

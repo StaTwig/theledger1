@@ -168,38 +168,49 @@ const ref = useOnclickOutside(() => {
           ...item
         };
       }));
-      // console.log("usersLocation",usersLocation);
-      setLocation(prod => warehouses[0]);
-      if (warehouses.length > 0)
-        if(warehouses[0].id)
-          localStorage.setItem('location', warehouses[0].id);
-    
-      if (Object.keys(usersLocation).length === 0) {
-        if (warehouses.length > 0)
-          if (warehouses[0].id) {
-            setLocation(warehouses[0]);
-            localStorage.setItem('location', warehouses[0].id);
-          }
+      // console.log("localStorage",JSON.parse(localStorage?.getItem("location")));
+
+      if(localStorage.getItem("location")!=null){
+        setLocation(prod=>JSON.parse(localStorage.getItem("location")));
       }
-      else {
-        if (usersLocation.id) {
-          localStorage.setItem('location', usersLocation.id);
-          setLocation(usersLocation);
-        }
+      else{
+            setLocation(prod=>warehouses[0]);
+            localStorage.setItem('location', JSON.stringify(warehouses[0]));
       }
+
+
+      // setLocation(prod => localStorage.getItem('location'));
+      // if (warehouses.length > 0)
+      //   if(warehouses[0].id)
+      //     localStorage.setItem('location', warehouses[0].id);
+      // if (Object.keys(localStorage.getItem("location")).length === 0) {
+      //   if (warehouses.length > 0)
+      //     if (warehouses[0].id) {
+      //       setLocation(prod=>warehouses[0]);
+      //       localStorage.setItem('location', warehouses[0]);
+      //     }
+      // }
+      // else {
+      //   // if (usersLocation.id) {
+      //   //   localStorage.setItem('location', usersLocation.id);
+
+      //     setLocation(prod=>localStorage.getItem("location"));
+      //   console.log("location",location);
+
+      //   // }
+      // }
     }
     fetchApi();
     
   }, []);
   
-  useEffect(() => {
-    if(location?.id)
-    localStorage.setItem('location', location?.id);
-  },[location]);
+  // useEffect(() => {
+  //   if(location)
+  //   localStorage.setItem('location', location);
+  // },[location]);
 
   const handleLocation=async (item)=>{
-    console.log("item",item);
-    console.log("item id",item.id);
+    localStorage.setItem("location",JSON.stringify(item));
     setLocation(item);
     const body={warehouseId:item.id};
 
