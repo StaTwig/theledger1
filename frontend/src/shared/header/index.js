@@ -310,7 +310,7 @@ const imgs = config().fetchProfileImage;
            <DropdownButton
             // name={location?.title+"\n Address-"+location?.warehouseAddress?.firstLine}
             name={location?.title}
-
+            arrowImg={dropdownIcon}
             onSelect={item=>{handleLocation(item)}}
             groups={activeWarehouses}
            />
