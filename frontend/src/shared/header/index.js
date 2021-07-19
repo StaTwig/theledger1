@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation} from 'react-router-dom';
+// import { useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import './style.scss';
 import searchingIcon from '../../assets/icons/search.png';   //'../../assets/icons/search_head.svg'
@@ -33,6 +34,7 @@ import Select from '@material-ui/core/Select';
 import DropdownButton from "../../shared/dropdownButtonGroup";
 import { resetShipments } from '../../actions/shipmentActions';
 import { userLocationReducer } from '../../reducers/userLocationReducer';
+import setAuthToken from '../../utils/setAuthToken';
 
 const Header = props => {
   const dispatch = useDispatch();
@@ -219,9 +221,18 @@ const ref = useOnclickOutside(() => {
     dispatch(turnOn());
     const result=await postUserLocation(body);
     dispatch(turnOff());
-
     if(result.status === 200){
+      console.log("result token",result);
       console.log("successful result");
+      const token=result.data.data.token;
+      setAuthToken(token);
+      localStorage.setItem('theLedgerToken', token);
+      // const loc=useLocation();
+      // console.log("path",loc)
+      console.log("path window",window.location.pathname)
+      props.history.push("/overview");
+      props.history.replace(`${window.location.pathname}`);
+      // props.history.replace(`${loc.pathname}`);
     }
   }
 
