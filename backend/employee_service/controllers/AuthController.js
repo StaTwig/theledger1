@@ -6,7 +6,6 @@ const OrganisationModel = require('../models/OrganisationModel');
 const ConfigurationModel = require('../models/ConfigurationModel');
 const CounterModel = require('../models/CounterModel');
 const { body, validationResult} = require('express-validator');
-const { sanitizeBody } = require('express-validator');
 //helper file to prepare responses.
 const apiResponse = require('../helpers/apiResponse');
 const utility = require('../helpers/utility');
@@ -14,7 +13,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mailer = require('../helpers/mailer');
 const { constants } = require('../helpers/constants');
-var base64Img = require('base64-img');
 const auth = require('../middlewares/jwt');
 const axios = require('axios');
 const dotenv = require('dotenv').config();
@@ -24,7 +22,6 @@ const twilio_service_id = process.env.TWILIO_SERVICE_ID;
 const client = require('twilio')(accountSid, authToken, {
   lazyLoading: true
 });
-const moveFile = require("move-file");
 const blockchain_service_url = process.env.URL;
 const stream_name = process.env.INV_STREAM;
 const checkToken = require('../middlewares/middleware').checkToken;
@@ -178,10 +175,10 @@ exports.checkEmail = [
        if(emailId.indexOf('@')>-1)
           user= await EmployeeModel.findOne({emailId});
           if (user) {
-                  logger.log(
-                    'info',
-                    '<<<<< UserService < AuthController < register : Entered email is already present in EmployeeModel',
-                  );
+                  // logger.log(
+                  //   'info',
+                  //   '<<<<< UserService < AuthController < register : Entered email is already present in EmployeeModel',
+                  // );
                   return Promise.reject('E-mail/Mobile already in use');
                 }
               }
@@ -198,53 +195,25 @@ exports.checkEmail = [
          console.log(phone)
          user = await EmployeeModel.findOne({phoneNumber:phone});
         if (user) {
-                logger.log(
-                  'info',
-                  '<<<<< UserService < AuthController < register : Phone Number is already present in EmployeeModel',
-                );
+                // logger.log(
+                //   'info',
+                //   '<<<<< UserService < AuthController < register : Phone Number is already present in EmployeeModel',
+                // );
                 return Promise.reject('Mobile already in use');
               }
             }
       }),
-  // body('emailId')
-  //   .isLength({ min: 1 })
-  //   .trim()
-  //   .withMessage('Email must be specified.')
-  //   // .isEmail()
-  //   // .withMessage('Email must be a valid email address.')
-  //   .custom(async (value) => {
-  //     const emailId = value.toLowerCase().replace(' ', '');
-  //     let user;
-  //     let phone = '';
-  //     if (!emailId.match(phoneRgex) && !emailId.match(emailRegex))
-  //       return Promise.reject('E-mail/Mobile not in valid');
-  //     if (emailId.indexOf('@') > -1)
-  //       user = await EmployeeModel.findOne({ emailId });
-  //     else {
-  //       phone = '+' + emailId;
-  //       user = await EmployeeModel.findOne({ phoneNumber: phone });
-  //     }
-  //     // return EmployeeModel.findOne({ emailId: value.toLowerCase() }).then(user => {
-  //     if (user) {
-  //       logger.log(
-  //         'info',
-  //         '<<<<< UserService < AuthController < register : Entered email is already present in EmployeeModel',
-  //       );
-  //       return Promise.reject('E-mail/Mobile already in use');
-  //     }
-  //     // });
-  //   }),
-  // Process request after validation and sanitization.
+
   async (req, res) => {
     try {
       if (
         !req.body.firstName.match('[A-Za-z0-9]') ||
         !req.body.lastName.match('[A-Za-z0-9]')
       ) {
-        logger.log(
-          'warn',
-          '<<<<< UserService < AuthController < register : Name should only consist of letters',
-        );
+        // logger.log(
+        //   'warn',
+        //   '<<<<< UserService < AuthController < register : Name should only consist of letters',
+        // );
         return apiResponse.ErrorResponse(
           res,
           'Name should be specified',
@@ -260,10 +229,6 @@ exports.checkEmail = [
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         // Display sanitized values/errors messages.
-        logger.log(
-          'error',
-          '<<<<< UserService < AuthController < register : Validation error',
-        );
         return apiResponse.validationErrorWithData(
           res,
           'Validation Error.',
@@ -278,22 +243,34 @@ exports.checkEmail = [
       } else {
         //hash input password
         // generate OTP for confirmation
-        logger.log(
-          'info',
-          '<<<<< UserService < AuthController < register : Generating Hash for Input Password',
-        );
+        // logger.log(
+        //   'info',
+        //   '<<<<< UserService < AuthController < register : Generating Hash for Input Password',
+        // );
         var organisationId = req.body.organisationId;
         var warehouseId = 'NA';
-        const incrementCounterEmp = await CounterModel.update({
+        // const incrementCounterEmp = await CounterModel.update({
+        //   'counters.name': "employeeId"
+        // }, {
+        //   $inc: {
+        //     "counters.$.value": 1
+        //   }
+        // })
+
+        const incrementCounterEmp = await CounterModel.findOneAndUpdate({
           'counters.name': "employeeId"
         }, {
           $inc: {
             "counters.$.value": 1
           }
-        })
+        },{ new:true} )
+        console.log(incrementCounterEmp);
+
         const empCounter = await CounterModel.findOne({ 'counters.name': "employeeId" }, { "counters.name.$": 1 })
+        console.log(empCounter);
         var employeeId = empCounter.counters[0].format + empCounter.counters[0].value;
-        //var employeeId = uniqid('emp-');
+        console.log(empCounter.counters[0].format)
+        console.log(employeeId)
         var employeeStatus = 'NOTAPPROVED';
         let addr = '';
         //create organisation if doesn't exists 
@@ -311,6 +288,7 @@ exports.checkEmail = [
             //   }
             // }
             const country = req.body?.address?.country ? req.body.address?.country : 'India';
+            const region = req.body?.address?.region ? req.body.address?.region : 'Asia';
             const address = req.body?.address ? req.body.address :  {};
             addr = address.line1 + ', ' + address.city + ', ' + address.state + ', ' + address.pincode;
             const incrementCounterOrg = await CounterModel.update({
@@ -322,7 +300,6 @@ exports.checkEmail = [
             })
             const orgCounter = await CounterModel.findOne({ 'counters.name': "orgId" }, { "counters.name.$": 1 })
             organisationId = orgCounter.counters[0].format + orgCounter.counters[0].value;
-            //organisationId = uniqid('org-');
             const incrementCounterWarehouse = await CounterModel.update({
               'counters.name': "warehouseId"
             }, {
@@ -332,7 +309,6 @@ exports.checkEmail = [
             })
             const warehouseCounter = await CounterModel.findOne({ 'counters.name': "warehouseId" }, { "counters.name.$": 1 })
             warehouseId = warehouseCounter.counters[0].format + warehouseCounter.counters[0].value;
-            //warehouseId = uniqid('war-');
             const org = new OrganisationModel({
               primaryContactId: employeeId,
               name: organisationName,
@@ -343,13 +319,15 @@ exports.checkEmail = [
               warehouses: [warehouseId],
               warehouseEmployees: [employeeId],
               country: {
-                countryId: '001',
-                countryName: country
+                name: country
+              },
+              region:{
+                name: region
               },
               configuration_id: 'CONF000',
               authority: req.body?.authority
             });
-            await org.save();
+            // await org.save();
             const incrementCounterInv = await CounterModel.update({
               'counters.name': "inventoryId"
             }, {
@@ -414,63 +392,9 @@ exports.checkEmail = [
         });
         await user.save()
         return apiResponse.successResponse(res, 'User registered Success');
-        // Html email body
-        /* let html = EmailContent({
-           name: req.body.name,
-           origin: req.headers.origin,
-           otp,
-         });
-         // Send confirmation email
-         mailer
-           .send(
-             constants.confirmEmails.from,
-             req.body.emailId,
-             constants.confirmEmails.subject,
-             html,
-           )
-           .then(function() {
-             // Save user.
-             user.save(function(err) {
-               if (err) {
-                 logger.log(
-                   'info',
-                   '<<<<< UserService < AuthController < register : Error while saving User',
-                 );
-                 return apiResponse.ErrorResponse(res, err);
-               }
-               let userData = {
-                 id: user.id,
-                 firstName: user.firstName,
-                 lastName: user.lastName,
-                 emailId: user.emailId,
-                 warehouseId:user.warehouseId,
-               };
-               logger.log(
-                 'info',
-                 '<<<<< UserService < AuthController < register : Successfully saving User',
-               );
-               return apiResponse.successResponseWithData(
-                 res,
-                 'Registration Success.',
-                 userData,
-               );
-             });
-           })
-           .catch(err => {
-             logger.log(
-               'error',
-               '<<<<< UserService < AuthController < register : Error in catch block 1',
-             );
-             return apiResponse.ErrorResponse(res, err);
-           });*/
       }
     } catch (err) {
       console.log(err);
-      //throw error in json response with status 500.
-      logger.log(
-        'error',
-        '<<<<< UserService < AuthController < register : Error in catch block 2',
-      );
       return apiResponse.ErrorResponse(res, err.message);
     }
   },
@@ -488,20 +412,12 @@ exports.sendOtp = [
   body('emailId')
     .isLength({ min: 10 })
     .trim()
-    .withMessage('Email/Mobile must be specified.')
+    .withMessage('Email/Mobile must be specified.'),
   //   .isEmail()
   // .withMessage('Email must be a valid email address.')
-  ,
-  sanitizeBody('emailId').escape(),
   async (req, res) => {
     try {
       const errors = validationResult(req);
-      /* EmployeeModel.collection.dropIndexes(function(){
-         EmployeeModel.collection.reIndex(function(finished){
-                  console.log("finished re indexing")
-                })
-              })*/
-      //EmployeeModel.createIndexes();
       if (!errors.isEmpty()) {
         logger.log(
           'info',
@@ -955,52 +871,6 @@ exports.updatePassword = [
     }
   },
 ];
-
-/*exports.uploadImage = [
-  auth,
-  (req, res) => {
-    try {
-      EmployeeModel.findOne({ emailId: req.user.emailId }).then(user => {
-        if (user) {
-          logger.log(
-            'info',
-            '<<<<< UserService < AuthController < uploadImage : user exist',
-          );
-          base64Img.base64('uploads/' + req.file.filename, function (err, data) {
-            var base64ImgData = data;
-            user.profile_picture = data;
-            user.image_location = req.file.filename;
-            // Save user.
-            user.save(function (err) {
-              if (err) {
-                logger.log(
-                  'error',
-                  '<<<<< UserService < AuthController < uploadImage : error while uploading image',
-                );
-                return apiResponse.ErrorResponse(res, err);
-              }
-              logger.log(
-                'info',
-                '<<<<< UserService < AuthController < uploadImage : uploading user image successfully',
-              );
-              return apiResponse.successResponseWithData(
-                res,
-                'Updated',
-                base64ImgData,
-              );
-            });
-          });
-        }
-      });
-    } catch (err) {
-      logger.log(
-        'error',
-        '<<<<< UserService < AuthController < uploadImage : error (catch block)',
-      );
-      return apiResponse.ErrorResponse(res, err);
-    }
-  },
-];*/
 
 exports.createUserAddress = [
   async (req, res) => {

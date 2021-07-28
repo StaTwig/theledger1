@@ -10,8 +10,8 @@ var OrganisationSchema = new mongoose.Schema(
     region: {
       type: Object,
       default: {
-        id: 'reg123',
-        name: 'Earth Prime',
+        id: '001',
+        name: 'Earth',
       },
     },
     country: {
