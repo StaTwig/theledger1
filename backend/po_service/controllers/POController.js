@@ -274,8 +274,6 @@ exports.changePOStatus = [
           };
           checkPermissions(permission_request, async permissionResult => {
             if (permissionResult.success) {
-              try {
-
                 const { orderID, status } = req.body;
                 const po = await RecordModel.findOne({ id : orderID });
                 if (po && po.customer.customer_incharge === address) {
@@ -292,28 +290,14 @@ exports.changePOStatus = [
                       $push: { poUpdates: updates },
                       $set: {poStatus :status }
                 })
-                try{
                   let event = Event.findOne({'payloadData.data.order_id': orderID})
                   
                   if (status === "ACCEPTED")
                     event.eventType.primary = "RECEIVE";
                   else event.eventType.primary = "UPDATE";
 
-                  event.eventType.description = "ORDER";
-                
-                  async function compute(event) {
-                    resultt = await logEvent(event);
-                    return resultt;     
-                  }
-                  console.log(result);
-                  compute(event).then((response) => {
-                    console.log(response);
-          
-                  });
-                }catch(error){
-                  console.log(error);
-                }
-                try{
+                event.eventType.description = "ORDER";
+                await logEvent(event);
                   let event = Event.findOne({'payloadData.data.order_id': orderID})
                   var evid = Math.random().toString(36).slice(2);
                   var datee = new Date();
@@ -359,17 +343,7 @@ exports.changePOStatus = [
                   event_data.eventType.description = "ORDER";
                   event_data.payloaData = event.payloaData;
                 
-                  async function compute(event_data) {
-                    resultt = await logEvent(event_data);
-                    return resultt;     
-                  }
-                  console.log(result);
-                  compute(event_data).then((response) => {
-                    console.log(response);
-                  });
-                }catch(error){
-                  console.log(error);
-                }
+                await logEvent(event_data);
                 return apiResponse.successResponseWithData(
                       res,
                       'PO Status',
@@ -381,14 +355,12 @@ exports.changePOStatus = [
                       'You are not authorised to change the status',
                   );
                 }
-              } catch (e) {
-                return apiResponse.ErrorResponse(res, e.message);
-              }
               } else {
                return apiResponse.forbiddenResponse(res, 'User does not have enough Permissions');
             }
           });
     } catch (err) {
+      console.log(err);
       return apiResponse.ErrorResponse(res, err.message);
     }
   },
