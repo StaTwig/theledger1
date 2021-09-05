@@ -331,50 +331,32 @@ const Header = (props) => {
               />
             )}
           />
-          {/* <input
-            type="text"
-            // value={search}
-            placeholder="Search PO ID/ Shipment ID/ Transit Number"
-            onFocus={(e) => e.target.placeholder = ''}
-            onBlur={(e) => e.target.placeholder = 'Search PO ID/ Shipment ID/ Transit Number'}
-            onChange={onSearchChange}
-            className= "form-control search-field"
-        /> */}
-
           <img src={searchingIcon} onClick={onSeach} alt='searching' />
-        </div>
-        <div>
-        
+        </div>        
        <div className="user-info ">
        <div className="notifications">
-                <img src={bellIcon} onClick={showNotifications} alt="notification" /><bellIcon />
-                  
-                    <div className="bellicon-wrap" onClick={() => setShowNotifications(!showNotifications)}>
-            
+          <img src={bellIcon} onClick={showNotifications} alt="notification" /><bellIcon />
+            <div className="bellicon-wrap" onClick={() => setShowNotifications(!showNotifications)}>
               {notifications.length >= 0 && <span className="badge badge-light">{notifications.length }</span> }
             </div>
             {showNotifications && notifications.length >= 0 && (
               <div className="slider-menu">
-                <React.Fragment>
                   <div className="nheader" style={{backgroundImage: "linear-gradient(to right, #0092e8, #0a6bc6)"}}>
                     <text style={{color: "white", fontSize: "20px", fontWeight: "bold", padding: "10px"}}>User Notifications</text> 
                     <text style={{backgroundColor: "#fa7a23", padding: "5px", color: "white", textAlign: 'right', borderRadius: "6px"}}>{notifications.length} new</text> 
-                  <div className="section">
-                    <button style={{backgroundColor: "transparent", color: "white", borderColor: "transparent"}} onClick={() => {setAlertType('ALERT'); changeNotifications('ALERT')}}>Alerts</button>
-                    <button style={{backgroundColor: "transparent", color: "white", borderColor: "transparent"}} onClick={() => {setAlertType('TRANSACTION'); changeNotifications('TRANSACTION')}}>Transactions</button>
+                    <div className="section">
+                      <button style={{backgroundColor: "transparent", color: "white", borderColor: "transparent"}} onClick={() => {setAlertType('ALERT'); changeNotifications('ALERT')}}>Alerts</button>
+                      <button style={{backgroundColor: "transparent", color: "white", borderColor: "transparent"}} onClick={() => {setAlertType('TRANSACTION'); changeNotifications('TRANSACTION')}}>Transactions</button>
+                    </div>
                   </div>
-                  </div>
-                  {notifications.map(notification =>  <div className="slider-item">
+                  {notifications.map(notification => 
+                  <div className="slider-item">
                     <div className="row justify-content-between align-items-center" onClick={() => clearNotification(notification)}>
                       <div className="col-sm-10">
-                      
-                        <div>
                            <img style={{size: '15px', marginLeft: '-20px'}} src={notifIcon(notification)}/>
                            <a href={"/" + viewUrl(notification) + notification.transactionId} >
                            {notification.message}
-                           </a>
-                        </div>
-                    
+                           </a>                    
                       </div>
                       <div className="col-sm-2">
                         <button
@@ -399,13 +381,11 @@ const Header = (props) => {
                           onClick={() => clearNotification(notification)}
                         >
                           <div className='col-sm-10'>
-                            <div>
                               <img
                                 style={{ size: "15px", marginLeft: "-20px" }}
                                 src={notifIcon(notification.message)}
                               />{" "}
                               {notification.message}
-                            </div>
                           </div>
                           <div className='col-sm-2'>
                             <button className='close' aria-label='Close'>
@@ -415,16 +395,11 @@ const Header = (props) => {
                         </div>
                       </div>
                     ))}
-                  </React.Fragment>
                 </div>
               )}
             </div>
-            {/* <div className="userName" style={{fontSize: "13px", marginBottom:"0px"}}> 
-          <p className="cname1"><b>{activeWarehouses[0]?.title}</b></p>
-          <p className="uname"> {activeWarehouses[0]?.warehouseAddress.firstLine}</p>
-          </div> */}
+            )}
             <img className='locationimg' src={Location} />
-
             <div className='userName'>
               <DropdownButton
                 name={
@@ -469,7 +444,6 @@ const Header = (props) => {
                 onClick={() => setMenu(!menu)}
               />
             </div>
-          </div>
           {menu && (
             <div className='slider-menu' ref={ref}>
               {
@@ -500,12 +474,10 @@ const Header = (props) => {
               }
             </div>
           )}
-
           {sidebar && (
             <DrawerMenu {...props} close={() => openSidebar(false)} />
           )}
-        </div>
-        {invalidSearch && (
+        {invalidSearch && 
           <Modal
             close={() => closeModalFail()}
             size='modal-sm' //for other size's use `modal-lg, modal-md, modal-sm`
@@ -516,10 +488,11 @@ const Header = (props) => {
               message='Invalid Search'
             />
           </Modal>
-        )}
-      </div>
-    </div>
-  );
-};
-
+        }
+  </div> 
+  </div>
+  </div>
+  </div>
+  )
+}  
 export default Header;
