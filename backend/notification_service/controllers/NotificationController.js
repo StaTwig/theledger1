@@ -12,6 +12,7 @@ const client = require('twilio')(accountSid, authToken, {
 const mailer = require("../helpers/mailer");
 const { constants } = require("../helpers/constants");
 const fromMobile = '+1234567890'
+
 function sendEmail(subject,content,emailId){
   mailer.send(
     constants.confirmEmails.from,
@@ -137,7 +138,22 @@ exports.createTwilioBinding = [
 exports.sendOtp = [
   async (req, res) => {
     try {
+      let message = "Your OTP to login to " + req.body.source + " is " + req.body.OTP + ". It is valid for 10 minutes"
+      if(req.body.mobile) sendSMS(message,req.body.mobile)
+      if(req.body.email) sendEmail(message,req.body.email)
+    } catch (err) {
+      console.log(err)
+      return apiResponse.ErrorResponse(res, err);
+    }
+  },
+];
 
+
+exports.sendMessage = [
+  async (req, res) => {
+    try {
+      if(req.body.mobile) sendSMS(req.body.message,req.body.mobile)
+      if(req.body.email) sendEmail(req.body.message,req.body.email)
     } catch (err) {
       console.log(err)
       return apiResponse.ErrorResponse(res, err);
