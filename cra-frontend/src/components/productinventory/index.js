@@ -11,7 +11,6 @@ const ProductInventory = props => {
   const [category, setCategory] = useState(props.match.params?.category);
   const [data, setData] = useState([]);
   const [enable, setEnable] = useState(true);
-  const [more, setMore] = useState([]);
 
   const { products, inventories } = props;
   // console.log(products,"products");
@@ -70,7 +69,7 @@ const ProductInventory = props => {
         <div className="d-flex">
         <Link to="/addNewCategory">
             <button className="btn btn-yellow mr-3" style={{position:"relative", top:"-15px"}}>
-              <img src={Add} width="13" height="13" className="mr-2 mb-1" />
+              <img src={Add} width="13" height="13" className="mr-2 mb-1" alt = ""/>
               <span><b>Add New Category</b></span>
             </button>
           </Link>

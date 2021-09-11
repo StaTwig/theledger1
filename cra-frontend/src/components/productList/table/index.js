@@ -7,7 +7,7 @@ const Table = props => {
     <div className="producttable">
       <div className="rTable">
         <div className="overflow">
-         {props.inventories.length == 0 && <div className="rTableRow pt-2 pb-2 justify-content-center text-muted shadow-none">No records found</div>}
+         {props.inventories.length === 0 && <div className="rTableRow pt-2 pb-2 justify-content-center text-muted shadow-none">No records found</div>}
           {props.inventories.map((inventory,index) => (
             <div>
               <div className="rTableRow">

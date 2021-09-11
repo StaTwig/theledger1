@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import './style.scss';
 import Checked from "../../assets/icons/cancel.svg";
 

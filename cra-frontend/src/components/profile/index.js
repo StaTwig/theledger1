@@ -1,8 +1,8 @@
-import React, { Component, useState } from "react";
-import ProfilePic from "../../assets/brands/user-image/Image73@2x.png";
-import { useDispatch } from "react-redux";
+import React from "react";
+// import ProfilePic from "../../assets/brands/user-image/Image73@2x.png";
+// import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import DropdownButton from "../../shared/dropdownButtonGroup";
+// import DropdownButton from "../../shared/dropdownButtonGroup";
 import Pen from "../../assets/icons/pen.svg";
 import Mail from "../../assets/icons/mail.svg";
 import Briefcase from "../../assets/icons/briefcase.svg";
@@ -11,22 +11,22 @@ import "./style.scss";
 import { config } from "../../config";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { Alert, AlertTitle } from '@material-ui/lab';
+// import { Alert, AlertTitle } from '@material-ui/lab';
 import { getImage } from '../../actions/notificationActions';
 import SuccessPopUp from "./successPopup";
 
 import {
   getUserInfoUpdated,
   updateProfile,
-  getUserInfo,
-  updateWarehouse,
+  // getUserInfo,
+  // updateWarehouse,
 } from "../../actions/userActions";
 import { getWarehouseByOrgId } from "../../actions/productActions";
 import PopUpLocation from "./popuplocation";
 
 import Modal from "./modal/index";
 import Modal1 from "../../shared/modal";
-import { turnOff, turnOn } from "../../actions/spinnerActions";
+// import { turnOff, turnOn } from "../../actions/spinnerActions";
 
 const axios = require("axios");
 
@@ -287,31 +287,12 @@ class Profile extends React.Component {
   render() {
     const {
       editMode,
-      role,
       selectedFile,
-      organisation,
-      warehouseId,
-      walletAddress,
-      phoneNumber,
-      status,
-      email,
       firstName,
-      message,
       lastName,
-      location,
-      orgs,
-      wareIds,
-      profile_picture,
-      warehouseAddress_country,
-      warehouseAddress_city,
-      warehouseAddress_firstline,
-      warehouseAddress_zipcode,
-      warehouseAddress_secondline,
-      warehouseAddress_state,
-      title,
       image
     } = this.state;
-    const imgs = config().fetchProfileImage;
+    // const imgs = config().fetchProfileImage;
     
     return (
       <div className="profile">
@@ -326,11 +307,13 @@ class Profile extends React.Component {
                     name="photo"
                     src={`${URL.createObjectURL(selectedFile)}`}
                     className="rounded rounded-circle"
+                    alt=""
                   />:
                   <img
                     name="photo"
                     src={`${image}`}
                     className="rounded rounded-circle"
+                    alt=""
                   />}
                 </div>
                 <input

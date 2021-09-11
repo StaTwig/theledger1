@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './style.scss';
 import user from '../../assets/icons/brand.svg';
@@ -17,7 +17,7 @@ const ProductCategory = props => {
         <div className="d-flex mr-5" style={{position:"relative", left:"-30px"}}>
           <Link to="/addNewCategory">
             <button className="btn btn-yellow">
-              <img src={Add} width="13" height="13" className="mr-2" />
+              <img src={Add} width="13" height="13" className="mr-2" alt = ""/>
               <span><b>Add New Category</b></span>
             </button>
           </Link>
@@ -27,7 +27,7 @@ const ProductCategory = props => {
         {categoryArray.map(cat => {
           let sum = 0;
           let displayCount = false;
-          let prods = products.filter(p => p.type == cat)
+          let prods = products.filter(p => p.type === cat)
           return (
               <div className="panel m-2 ">
                 <Link to={`/productinventory/${cat}`}>

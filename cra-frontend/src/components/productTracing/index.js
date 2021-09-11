@@ -17,9 +17,9 @@ const ProductTracing = props => {
           <input type="text" className="form-control search-field" />
           <button className="btn btn-main-blue fontSize20 font-bold floated">
             <div className="allfilterbtn">
-              <img src={Filter} />
+              <img src={Filter} alt = ""/>
               <span> All Filter</span>
-              <img src={updownarrow} />
+              <img src={updownarrow} alt = ""/>
             </div>
           </button>
           <img src={searchingIcon} alt="searching" className="search-icon" />
@@ -61,6 +61,7 @@ const ProductTracing = props => {
                       width="20"
                       height="20"
                       className="mr-2"
+                      alt = ""
                     />
 
                     <div className="d-flex flex-column">
