@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 import {
   Link
@@ -19,7 +19,9 @@ const SideBar = ({
   match,
   location
 }) => {
-  const { url } = match;
+  // const { url } = match;
+  // const  [url, setUrl]  = useState('/orders');
+  const url = '/orders';
   return (
     <div className="sidebar">
       <ul >
@@ -78,6 +80,13 @@ const SideBar = ({
             <span className="ml-2">Last Mile</span>
           </Link>
         </li>
+        {/* <li className={(url === '/layout') ? 'active' : ''}>
+          <Link to="/layout" className="d-inline-block">
+            <img src={(url === '/layout') ? lastMileIcon : lastMileIcon} alt="layout" />
+
+            <span className="ml-2">layout</span>
+          </Link>
+        </li> */}
       </ul>
       <Footer />
     </div>
