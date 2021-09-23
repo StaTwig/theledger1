@@ -87,8 +87,11 @@ const AdvanceTableFilter = (props) => {
     showDropDownForDeliveryLocation,
     orderSentToData,
     setShowDropDownForOrderSentTo,
-    showDropDownForOrderSentTo
+    showDropDownForOrderSentTo,
+    setShowCalendar,
+    showCalendar
   } = props;
+
   const renderColumn6 = (columnData) => {
     if (columnData === "Status") {
       return (<div className="box col-1">
@@ -188,8 +191,27 @@ const AdvanceTableFilter = (props) => {
       );
     }
   }
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+    if (props.type === 'ORDERS') {
+      setShowDropDownForDeliveryLocation(false);
+      setShowDropDownForProductName(false);
+      setShowDropDownForOrderId(false);
+      setShowCalendar(false);
+      setShowDropDownForOrderSentTo(false);
+      props.setShowExportFilter(false);
+    } else if(props.type === 'INVENTORY') {
+      props.setShowDropDownForCategory(false);
+      props.setShowDropDownForProductName(false);
+      props.setShowCalendar(false);
+    } else if(props.type === "SHIPMENT"){
+      setShowDropDownForFromFilter(false);
+      setShowDropDownForToFilter(false);
+      setShowDropDownForShipmentId(false);
+      props.setShowExportFilter(false);
+      setShowCalendar(false);
+    }
   };
 
   const handleClose = () => {
@@ -312,9 +334,19 @@ const AdvanceTableFilter = (props) => {
 
     else if (columnData == "Delivery Location") {
       return (<div className="box col">
-        <a className="filter-item ml-5" 
-        onClick={() => setShowDropDownForDeliveryLocation(!showDropDownForDeliveryLocation)} 
-        style={{ position: "relative", left: "-35px" }}>
+        <a className="filter-item ml-5"
+          onClick={() => {
+            setShowDropDownForDeliveryLocation(!showDropDownForDeliveryLocation);
+            if (!showDropDownForDeliveryLocation) {
+              setShowDropDownForProductName(false);
+              setShowDropDownForOrderSentTo(false);
+              setShowDropDownForOrderId(false);
+              setShowCalendar(false);
+              setInventoryStatusAnchorEl(null);
+              props.setShowExportFilter(false);
+            }
+          }}
+          style={{ position: "relative", left: "-35px" }}>
           <div className="icon mr-2">
             {props.data.img5}
           </div>
@@ -374,6 +406,25 @@ const AdvanceTableFilter = (props) => {
 
   const handleInventoryStatusClick = (event) => {
     setInventoryStatusAnchorEl(event.currentTarget);
+    if (props.type === 'ORDERS') {
+      setShowDropDownForDeliveryLocation(false);
+      setShowDropDownForProductName(false);
+      setShowDropDownForOrderId(false);
+      setShowCalendar(false);
+      setShowDropDownForOrderSentTo(false);
+      props.setShowExportFilter(false);
+    } else if(props.type === "INVENTORY") {
+      props.setShowDropDownForCategory(false);
+      props.setShowDropDownForProductName(false);
+      props.setShowCalendar(false);
+    } else if(props.type === "SHIPMENT"){
+      setShowDropDownForFromFilter(false);
+      setShowDropDownForToFilter(false);
+      setShowDropDownForShipmentId(false);
+      setShowCalendar(false);
+      props.setShowExportFilter(false);
+    }
+
   };
 
   const handleInventoryStatusClose = () => {
@@ -390,7 +441,15 @@ const AdvanceTableFilter = (props) => {
       return (<div className="box col-3">
         <a className="filter-item"
           onClick={() =>
-            setShowDropDownForToFilter(!showDropDownForToFilter)
+            {
+              setShowDropDownForToFilter(!showDropDownForToFilter);
+              if(!showDropDownForToFilter){
+                setShowDropDownForShipmentId(false);
+                setShowCalendar(false);
+                setShowDropDownForFromFilter(false);
+                props.setShowExportFilter(false);
+              }
+            }
           }
           style={{ position: "relative", left: "-80px" }}>
           <div className="icon mr-0">
@@ -412,6 +471,14 @@ const AdvanceTableFilter = (props) => {
       return (<div className="box col-3" >
         <a className="filter-item" onClick={() => {
           setShowDropDownForProductName(!showDropDownForProductName)
+          if (!showDropDownForProductName) {
+            setShowDropDownForDeliveryLocation(false);
+            setShowDropDownForOrderSentTo(false);
+            setShowDropDownForOrderId(false);
+            setShowCalendar(false);
+            setInventoryStatusAnchorEl(null);
+            props.setShowExportFilter(false);
+          }
         }}
           style={{ position: "relative", left: "-50px" }}>
           <div className="icon mr-2">
@@ -517,7 +584,15 @@ const AdvanceTableFilter = (props) => {
     if (columnData == "From") {
       return (<div className="box col-4">
         <a className="filter-item ml-4" onClick={() =>
-          setShowDropDownForFromFilter(!showDropDownForFromFilter)
+         {
+          setShowDropDownForFromFilter(!showDropDownForFromFilter);
+          if(!showDropDownForFromFilter){
+            setShowDropDownForShipmentId(false);
+            setShowDropDownForToFilter(false);
+            setShowCalendar(false);
+            props.setShowExportFilter(false);
+          }
+         }
         } style={{ position: "relative", left: "-70px" }}>
           <div className="icon mr-2">
             {props.data.img3}
@@ -536,8 +611,18 @@ const AdvanceTableFilter = (props) => {
       </div>);
     } else if (columnData == "Order ID") {
       return (<div className="box col-2">
-        <a className="filter-item" onClick={() =>
-          setShowDropDownForOrderId(!showDropDownForOrderId)
+        <a className="filter-item" onClick={() => {
+          setShowDropDownForOrderId((prev) => !prev);
+          if (!showDropDownForOrderId) {
+            setShowDropDownForDeliveryLocation((prev) => prev = false);
+            setShowDropDownForProductName((prev) => prev = false);
+            setShowDropDownForOrderSentTo((prev) => prev = false);
+            setShowCalendar((prev) => prev = false);
+            setInventoryStatusAnchorEl(null);
+            props.setShowExportFilter((prev) => prev = false);
+          }
+        }
+
         }>
           <div className="icon mr-2">
             {props.data.img3}
@@ -597,14 +682,21 @@ const AdvanceTableFilter = (props) => {
     // }
     else {
       return (
-        <div className="box col-3"
+        <div className="box"
           style={{
             position: 'relative',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            width: '144px',
           }}>
           <a
             className="filter-item"
-            onClick={() => props.setShowCalendar(!props.showCalendar)}>
+            onClick={() => {
+              props.setShowCalendar(!showCalendar);
+              if(!showCalendar) {
+                props.setShowDropDownForProductName(false);
+                props.setShowDropDownForCategory(false);
+              }
+            }}>
             <div className="icon mr-2">
               {props.data.img3}
             </div>
@@ -621,6 +713,8 @@ const AdvanceTableFilter = (props) => {
             }}>
               <Calendar
                 filterTableByCalendar={props.filterTableByCalendar}
+                startDate={props.startDate}
+                endDate={props.endDate}
               />
             </div>
           }
@@ -628,60 +722,26 @@ const AdvanceTableFilter = (props) => {
     }
   }
 
-
-  const setInventoryProductCategoryFilterOnSelect = (selectedVal) => {
-    props.setInventoryProductCategoryFilterOnSelect(selectedVal);
-    handleInventoryProductCategoryClose();
-  }
-
-  const handleInventoryProductCategoryClick = (event) => {
-    setInventoryProductCategoryAnchorEl(event.currentTarget);
-  };
-
   const handleInventoryProductCategoryClose = () => {
     setInventoryProductCategoryAnchorEl(null);
   };
   const renderColumn2 = (columnData) => {
     if (columnData == "Product Category") {
       return (<div className="box col-3">
-        <a className="filter-item ml-4" onClick={() =>
-          props.setShowDropDownForCategory(!props.showDropDownForCategory)
-        } style={{ position: "relative", left: "-70px" }}>
+        <div className="filter-item" onClick={() => {
+          props.setShowDropDownForCategory(!props.showDropDownForCategory);
+          if(!props.showDropDownForCategory) {
+            props.setShowDropDownForProductName(false);
+            props.setShowCalendar(false);
+          }
+        }
+        }>
           <div className="icon mr-2">
             {props.data.img2}
           </div>
           <div className="filterTitle">{props.data.coloumn2}</div>
-          <img src={updownarrow} width="10" height="10" className="ml-3" style={{ position: "relative", left: "140px" }} />
-        </a>
-        {/* <StyledMenu
-          id="customized-menu"
-          anchorEl={inventoryProductCategoryAnchorEl}
-          keepMounted
-          open={Boolean(inventoryProductCategoryAnchorEl)}
-          onClose={handleInventoryProductCategoryClose}
-        >
-          <div className="d-flex flex-column align-items-center">
-            <StyledMenuItem>
-              <Button style={{ padding: "10px", height: "40px", width: "130px" }} class="btn btn-link btn-sm font-weight-bold" variant="outlined" color="primary" onClick={() => setInventoryProductCategoryFilterOnSelect("")}>Clear</Button>
-            </StyledMenuItem>
-            {inventoryProductCategoryAnchorEl ?
-              <Autocomplete
-                id="ProductCategory"
-                options={props.inventoryFilterData}
-                getOptionLabel={(options) => options.category}
-                onChange={(event, newValue) => {
-                  setInventoryProductCategoryFilterOnSelect(newValue.id)
-                }}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label={'Search Category'} variant="outlined" />}
-              />
-              :
-              <div>
-                Empty List
-            </div>
-            }
-          </div>
-        </StyledMenu> */}
+          <img src={updownarrow} width="10" height="10" className="ml-3" style={{ position: "relative", left: "20px" }} />
+        </div>
         {props.showDropDownForCategory && props.categoryData &&
           <DropDownFilter
             onChangeOfSearchInput={props.onChangeOfSearchForFilterInput}
@@ -693,22 +753,33 @@ const AdvanceTableFilter = (props) => {
       </div>);
     } else {
       return (
-        <div className="box col-3"
-          style={{
-            position: 'relative',
-            cursor: 'pointer'
-          }}>
-          <a
-            className="filter-item"
-            onClick={() => props.setShowCalendar(!props.showCalendar)}>
+        <div className="box col-2">
+          <a className="filter-item" onClick={() => {
+            setShowCalendar(!showCalendar)
+            if (!showCalendar) {
+              if(props.type === 'ORDERS') {
+                setShowDropDownForDeliveryLocation(false);
+                setShowDropDownForProductName(false);
+                setShowDropDownForOrderId(false);
+                setShowDropDownForOrderSentTo(false);
+                props.setShowExportFilter(false);
+              } else {
+                setShowDropDownForFromFilter(false);
+                setShowDropDownForToFilter(false);
+                setShowDropDownForShipmentId(false);
+                props.setShowExportFilter(false);
+              } 
+            }
+          }
+          }>
             <div className="icon mr-2">
               {props.data.img2}
             </div>
             <div className="filterTitle">{props.data.coloumn2}</div>
-            <img src={updownarrow} width="10" height="10" className="ml-3" style={{ position: "relative", left: "20px" }} />
+            <img src={updownarrow} width="10" height="10" className="ml-3" />
           </a>
           {
-            props.showCalendar && (props.type === 'SHIPMENT' || props.type === 'ORDERS') &&
+            showCalendar && (props.type === 'SHIPMENT' || props.type === 'ORDERS') &&
             <div style={{
               position: 'absolute',
               zIndex: 1,
@@ -717,11 +788,12 @@ const AdvanceTableFilter = (props) => {
             }}>
               <Calendar
                 filterTableByCalendar={props.filterTableByCalendar}
+                startDate={props.startDate}
+                endDate={props.endDate}
               />
             </div>
           }
-        </div>
-      );
+        </div>);
     }
   }
 
@@ -774,9 +846,17 @@ const AdvanceTableFilter = (props) => {
   const renderColumn1 = (columnData) => {
     if (columnData == "Shipment ID") {
       return (<div className="box col-2">
-        <a className="filter-item ml-4" onClick={() =>
-          setShowDropDownForShipmentId(!showDropDownForShipmentId)
-        } style={{ position: "relative", left: "-70px" }}>
+        <a className="filter-item" onClick={() =>
+          {
+            setShowDropDownForShipmentId(!showDropDownForShipmentId);
+            if(!showDropDownForShipmentId) {
+              props.setShowCalendar(false);
+              props.setShowDropDownForFromFilter(false);
+              props.setShowDropDownForToFilter(false);
+              props.setShowExportFilter(false);
+            }
+          }
+        }>
           <div className="icon mr-2">
             {props.data.img1}
           </div>
@@ -892,9 +972,13 @@ const AdvanceTableFilter = (props) => {
       </div>);
     } else if (columnData == "Product Name") {
       return (<div className="box col-4">
-        <a className="filter-item ml-4" onClick={() =>
-          props.setShowDropDownForProductName(!props.showDropDownForProductName)
-        } style={{ position: "relative", left: "-70px" }}>
+        <a className="filter-item ml-4" onClick={() => {
+          props.setShowDropDownForProductName(!props.showDropDownForProductName);
+          if(!props.showDropDownForProductName) {
+            props.setShowDropDownForCategory(false);
+            props.setShowCalendar(false);
+          }
+        }} style={{ position: "relative", left: "-70px" }}>
           <div className="icon mr-2">
             {props.data.img1}
           </div>
@@ -912,9 +996,18 @@ const AdvanceTableFilter = (props) => {
       </div>);
     } else {
       return (<div className="box col">
-        <a className="filter-item ml-4" onClick={() =>
+        <a className="filter-item" onClick={() => {
           setShowDropDownForOrderSentTo(!showDropDownForOrderSentTo)
-        } style={{ position: "relative", left: "-70px" }}>
+          if (!showDropDownForOrderSentTo) {
+            setShowDropDownForDeliveryLocation(false);
+            setShowDropDownForProductName(false);
+            setShowDropDownForOrderId(false);
+            setShowCalendar(false);
+            setInventoryStatusAnchorEl(null);
+            props.setShowExportFilter(false);
+          }
+        }
+        }>
           <div className="icon mr-2">
             {props.data.img1}
           </div>
@@ -935,8 +1028,8 @@ const AdvanceTableFilter = (props) => {
 
   return (
     <div className="filter">
-      <div className="d-flex justify-content-between">
-        <div className="row" style={{ flexBasis: props.fb, flexWrap: 'nowrap' }}>
+      <div className="d-flex justify-content-between" style={{ alignItems: 'center' }}>
+        <div className="row" style={{ flexBasis: props.fb }}>
           {/* <div className="box col">
             <div className="filter-item">
               <div className="icon mr-2">
@@ -1076,7 +1169,24 @@ const AdvanceTableFilter = (props) => {
             </StyledMenu>
             {!props?.isReportDisabled &&
               <button className="btn-filter-blue ml-2"
-                onClick={() => props.setShowExportFilter(!props.showExportFilter)}
+                onClick={() => {
+                  console.log('inside shot', props.showExportFilter)
+                  if (props.type === 'ORDERS' || props.type === 'SHIPMENT') {
+                    props.setShowExportFilter(!props.showExportFilter);
+                    if (!props.showExportFilter && props.type === 'ORDERS') {
+                      setShowDropDownForDeliveryLocation(false);
+                      setShowDropDownForProductName(false);
+                      setShowDropDownForOrderId(false);
+                      setShowCalendar(false);
+                      setShowDropDownForOrderSentTo(false);
+                    } else if(!props.showExportFilter && props.type === 'SHIPMENT') {
+                      setShowDropDownForFromFilter(false);
+                      setShowDropDownForToFilter(false);
+                      setShowDropDownForShipmentId(false);
+                      setShowCalendar(false);
+                    }
+                  }
+                }}
               >
                 <div className="d-flex  align-items-center">
                   <img src={ExportIcon} width="14" height="14" className="mr-2" />

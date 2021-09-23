@@ -6,27 +6,34 @@ import 'react-date-range/dist/theme/default.css'; // theme css file
 import './style.scss';
 
 const Calendar = (props) => {
-    const { filterTableByCalendar } = props;
+    const { filterTableByCalendar, startDate, endDate } = props;
 
     const [state, setState] = useState([
         {
-            startDate: new Date(),
-            endDate: null,
+            startDate,
+            endDate,
             key: 'selection'
         }
     ]);
 
-    useEffect(() => {
-        if(state[0] && state[0].endDate !== null) {
-            setTimeout(() => {
-                filterTableByCalendar(state[0]);
-            }, 1000);
-        }
-    }, [state]);
+    // useEffect(() => {
+    //     if(state[0] && state[0].endDate !== null) {
+    //         setTimeout(() => {
+    //             filterTableByCalendar(state[0]);
+    //         }, 1000);
+    //     }
+    // }, [state]);
+
+    const onDateChange = (values) => {
+        filterTableByCalendar(values.selection);
+        setState([values.selection]);
+    }
 
     return (
         <DateRange
-            onChange={item => setState([item.selection])}
+            endDatePlaceholder={'End Date'}
+            startDatePlaceholder={'Start Date'}
+            onChange={onDateChange}
             editableDateInputs={true}
             moveRangeOnFirstSelection={false}
             ranges={state}

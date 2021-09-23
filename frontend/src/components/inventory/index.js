@@ -24,17 +24,6 @@ import { isAuthenticated } from '../../utils/commonHelper';
 
 const Inventory = props => {
 
-  const {
-    productNameData,
-    showDropDownForProductName,
-    setShowDropDownForProductName,
-    onChangeOfSearchForFilterInput,
-    onSelectionOfDropdownValue,
-    categoryData,
-    setShowDropDownForCategory,
-    showDropDownForCategory
-  } = props;
-
   const headers = {
     coloumn1: 'Product Name',
     coloumn2: 'Product Category',
@@ -70,6 +59,27 @@ const Inventory = props => {
   const [productsList, setProductsList] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
 
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const [dateFilter, setDateFilter] = useState("");
+
+
+  const [productNameData, setProductNameData] = useState([]);
+  const [productNameReplicaData, setProductNameReplicaData] = useState([]);
+  const [showDropDownForProductName, setShowDropDownForProductName] = useState(false);
+
+  const [categoryData, setCategoryData] = useState([]);
+  const [categoryReplicaData, setCategoryReplicaData] = useState([]);
+  const [showDropDownForCategory, setShowDropDownForCategory] = useState(false);
+
+  const [inventoryList, setInventoryList] = useState([]);
+
+
+  const [queryKey, setQueryKey] = useState("");
+  const [queryValue, setQueryValue] = useState("");
+
+
   const dispatch = useDispatch();
   /* const colors = ["#ffbcc4", "#c1e3f2", "#ffc18c", "#ffef83",
         "#d4e7ff", "#e0b0ff", "#F1EFCE", "#D7FAF1", "#F2B6AF" ];*/
@@ -78,23 +88,83 @@ const Inventory = props => {
     "#D8E5FB", "#FFEF83", "#DFF1F2", "#EBDDED", "#D9E5EF", "#FFC18C", "#F1DDC6", "#BCFFF2", "#FFD0CA", "#63B7AF", "#FFCB91", "#FFEFA1", "#94EBCD", "#6DDCCF", "#FFE194", "#E8F6EF", "#B8DFD8",];
 
   const [inventoryAnalytics, setInventoryAnalytics] = useState({})
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const result = await getInventoryAnalytics();
-  //     setInventoryAnalytics(result.data.inventory);
-  //   }
-  //   fetchData();
-  // }, []);
 
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
-  const [count, setCount] = useState(0);
-  const [dateFilter, setDateFilter] = useState("");
+
+  const [selectedDate, setSelectedDate] = useState(false);
+
   const [productNameFilter, setProductNameFilter] = useState("");
   const [productCategoryFilter, setProductCategoryFilter] = useState("");
-  const [manufacturerFilter, setManufacturerFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
+  const getStartDate = (!!startDate && selectedDate) ? getFormatedDate(startDate) : '';
+  const getEndDate = (!!endDate && selectedDate) ? getFormatedDate(endDate) : '';
+
+  const prepareDropdownData = (data) => {
+    let finalDropDownData = [];
+    data?.forEach(item => {
+      let obj = {};
+      obj['key'] = item.id ? item['id'] : item.toLowerCase();
+      obj['value'] = item.name ? item['name'] : item;
+      obj['checked'] = false;
+      finalDropDownData.push(obj);
+    });
+    return finalDropDownData;
+  }
+
+  const getUniqueStringFromOrgListForGivenType = (data, ...args) => {
+    console.log(args);
+    const availableList = data?.map(item => args.length > 1 ? (item && item.hasOwnProperty(args[0]) && item[args[0]].hasOwnProperty(args[1])) && item[args[0]][args[1]] : item[args[0]]).filter(item => item);
+    return [...new Set(availableList)];
+  };
+
+  useEffect(() => {
+    if (queryKey && queryValue) {
+      if (queryValue === 'productName') {
+        dispatch(getInventories(0, 10, queryKey, productCategoryFilter, statusFilter, getStartDate, getEndDate, dateFilter));
+      } else if (queryValue === 'category') {
+        dispatch(getInventories(0, 10, productNameFilter, queryKey, statusFilter, getStartDate, getEndDate, dateFilter));
+      } 
+    } else {
+      async function fetchData() {
+        dispatch(resetInventories());
+        const value = await dispatch(getInventories(0, 10, productNameFilter, productCategoryFilter, statusFilter, getStartDate, getEndDate, dateFilter));
+        setInventoryList(value.inventoryRecords); //(skip, limit, productName, productCategory, status)
+      }
+
+      setStartDate(prevState => !!prevState ? prevState : new Date());
+      setEndDate(prevState => !!prevState ? prevState : new Date());
+      fetchData();
+    }
+  }, [queryKey, queryValue]);
+
+  useEffect(() => {
+    if (inventoryList && inventoryList.length > 0) {
+      
+      if(!productNameFilter) {
+        setProductNameData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inventoryList, 'productDetails', 'name'))]);
+        setProductNameReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inventoryList, 'productDetails', 'name'))]);
+      }
+      
+      if(!productCategoryFilter) {
+        setCategoryData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inventoryList, 'productDetails', 'type'))]);
+        setCategoryReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inventoryList, 'productDetails', 'type'))]);
+      }
+
+    } 
+  }, [inventoryList, productCategoryFilter, productNameFilter]);
+
+  const setCheckedAndUnCheckedOfProvidedList = (typeOriginalData, index) => {
+    return typeOriginalData.map((item, i) => {
+      if (i === index) {
+        item.checked = !item.checked;
+      } else {
+        item.checked = false
+      }
+      return item;
+    });
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -127,67 +197,97 @@ const Inventory = props => {
       setStockOut(
         resultAnalytics.data.inventory.stockOut
       )
-
     }
     fetchData();
   }, []);
-
 
   const onPageChange = async (pageNum) => {
     console.log("onPageChange =========>", pageNum)
     const recordSkip = (pageNum - 1) * limit;
     setSkip(recordSkip);
-    dispatch(getInventories(recordSkip, limit, productNameFilter, productCategoryFilter, statusFilter, '', ''));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
+    dispatch(getInventories(recordSkip, limit, productNameFilter, productCategoryFilter, statusFilter, getStartDate, getEndDate, dateFilter));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
+  };
+
+  const setInventoryStatusFilterOnSelect = async (statusFilterSelected) => {
+    console.log("setInventoryStatusFilterOnSelect =========>", statusFilterSelected);
+    setStatusFilter(statusFilterSelected);
+    setSkip(0);
+    dispatch(getInventories(0, limit, productNameFilter, productCategoryFilter, statusFilterSelected, getStartDate, getEndDate, dateFilter));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
+  }
+
+  const filterTableByCalendar = async (selectedDateRange) => {
+    setSelectedDate(c => c = true);
+    const fromDate = new Date(selectedDateRange.startDate.getTime() - (selectedDateRange.startDate.getTimezoneOffset() * 60000))
+      .toISOString()
+      .split("T")[0];
+
+    setStartDate(new Date(fromDate));
+
+    const toDate = new Date(selectedDateRange.endDate.getTime() - (selectedDateRange.endDate.getTimezoneOffset() * 60000))
+      .toISOString()
+      .split("T")[0];
+    setShowCalendar(false);
+    setSkip(0);
+
+    setEndDate(new Date(toDate));
+
+    dispatch(getInventories(0, limit, productNameFilter, productCategoryFilter, statusFilter, fromDate, toDate, dateFilter));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
+  }
+
+  const onSelectionOfDropdownValue = (index, type, value) => {
+    if (type === 'productName') {
+      setProductNameData([...setCheckedAndUnCheckedOfProvidedList(productNameData, index)]);
+      setQueryKeyAndQueryValue(setQueryKey, value, setQueryValue, type, productNameData, index);
+
+      if(productNameData[index].checked) {
+        setProductNameFilter(value);
+      } else {
+        setProductNameFilter('');
+      }
+      markOpenedDrownsToFalse(setShowDropDownForProductName, setShowDropDownForCategory);
+    } else if (type === 'category') {
+      setCategoryData([...setCheckedAndUnCheckedOfProvidedList(categoryData, index)]);
+      setQueryKeyAndQueryValue(setQueryKey, value, setQueryValue, type, categoryData, index);
+      setProductCategoryFilter(value);
+      if(categoryData[index].checked) {
+        setProductCategoryFilter(value);
+      } else {
+        setProductCategoryFilter('');
+      }
+      markOpenedDrownsToFalse(setShowDropDownForProductName, setShowDropDownForCategory);
+    }
+  };
+
+  const markOpenedDrownsToFalse = () => {
+    setShowDropDownForProductName(false);
+    setShowDropDownForCategory(false);
+  }
+
+  const filterListForSearchInput = (data, searchInput) => data.filter(item => {
+    return item.value.toLowerCase().includes(searchInput.toLowerCase());
+  });
+
+  const onChangeOfSearchForFilterInput = (searchInput, type) => {
+    if (type === 'productName' && searchInput) {
+      setProductNameData(filterListForSearchInput(productNameData, searchInput));
+    } else if (type === 'category' && searchInput) {
+      setCategoryData(filterListForSearchInput(categoryData, searchInput))
+    } else {
+      if (type === 'productName') {
+        setProductNameData([...productNameReplicaData]);
+      } else if (type === 'category') {
+        setCategoryData([...categoryReplicaData]);
+      } 
+    }
   };
 
   const setDateFilterOnSelect = async (dateFilterSelected) => {
     console.log("setDateFilterOnSelect =========>", dateFilterSelected)
     setDateFilter(dateFilterSelected);
     setSkip(0);
-    dispatch(getInventories(0, limit, dateFilterSelected, productNameFilter, productCategoryFilter, statusFilter));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
+    dispatch(getInventories(0, limit,  productNameFilter, productCategoryFilter, statusFilter, getStartDate, getEndDate, dateFilterSelected));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
   }
 
-  const setInventoryStatusFilterOnSelect = async (statusFilterSelected) => {
-    console.log("setInventoryStatusFilterOnSelect =========>", statusFilterSelected);
-    setStatusFilter(statusFilterSelected);
-    setSkip(0);
-    dispatch(getInventories(0, limit, dateFilter, productNameFilter, productCategoryFilter, statusFilterSelected));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
-  }
-
-  const setInventoryProductNameFilterOnSelect = async (productNameFilterSelected) => {
-    console.log("setInventoryProductNameFilterOnSelect =========>", productNameFilterSelected)
-    setProductNameFilter(productNameFilterSelected);
-    setSkip(0);
-    dispatch(getInventories(0, limit, dateFilter, productNameFilterSelected, productCategoryFilter, statusFilter));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
-  }
-
-  const setInventoryManufacturerFilterOnSelect = async (manufacturerFilterSelected) => {
-    console.log("setInventoryManufacturerFilterOnSelect =========>", manufacturerFilterSelected)
-    setManufacturerFilter(manufacturerFilterSelected);
-    setSkip(0);
-    dispatch(getInventories(0, limit, dateFilter, productNameFilter, manufacturerFilterSelected, statusFilter));  //(skip, limit, dateFilter, productName, productManufacturer, status)
-  }
-
-  const setInventoryProductCategoryFilterOnSelect = async (categoryFilterSelected) => {
-    console.log("setInventoryProductCategoryFilterOnSelect =========>", categoryFilterSelected)
-    setProductCategoryFilter(categoryFilterSelected);
-    setSkip(0);
-    dispatch(getInventories(0, limit, dateFilter, productNameFilter, categoryFilterSelected, statusFilter));  //(skip, limit, dateFilter, productName, productCategory, status)
-  }
-
-  const filterTableByCalendar = async (selectedDateRange) => {
-    const fromDate = new Date(selectedDateRange.startDate.getTime() - (selectedDateRange.startDate.getTimezoneOffset() * 60000 ))
-    .toISOString()
-    .split("T")[0];
-
-    const toDate = new Date(selectedDateRange.endDate.getTime() - (selectedDateRange.endDate.getTimezoneOffset() * 60000 ))
-    .toISOString()
-    .split("T")[0];
-    setShowCalendar(false);
-    setSkip(0);
-
-    dispatch(getInventories(0, limit, dateFilter, productNameFilter, productCategoryFilter, statusFilter, fromDate, toDate));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
-  }
 
   return (
     <div className="inventory">
@@ -385,12 +485,7 @@ const Inventory = props => {
         <TableFilter
           isReportDisabled={!isAuthenticated('inventoryExportReport')}
           data={headers}
-          inventoryFilterData={props.inventoryFilterData}
-          setInventoryProductNameFilterOnSelect={setInventoryProductNameFilterOnSelect}
-          setInventoryManufacturerFilterOnSelect={setInventoryManufacturerFilterOnSelect}
           setInventoryStatusFilterOnSelect={setInventoryStatusFilterOnSelect}
-          setDateFilterOnSelect={setDateFilterOnSelect}
-          setInventoryProductCategoryFilterOnSelect={setInventoryProductCategoryFilterOnSelect}
           filterTableByCalendar={filterTableByCalendar}
           showCalendar={showCalendar}
           setShowCalendar={setShowCalendar}
@@ -403,8 +498,13 @@ const Inventory = props => {
           categoryData={categoryData}
           showDropDownForCategory={showDropDownForCategory}
           setShowDropDownForCategory={setShowDropDownForCategory}
-          fb="76%" 
-          />
+          startDate={startDate}
+          endDate={endDate}
+          setDateFilterOnSelect={setDateFilterOnSelect}
+          // closeAllFiltersOpenAndReset={closeAllFiltersOpenAndReset}
+          fb="80%"
+          
+        />
       </div>
       <div className="ribben-space">
         <div className="row no-gutter">
@@ -450,3 +550,20 @@ const Inventory = props => {
 };
 
 export default Inventory;
+
+function getFormatedDate(date) {
+  date = new Date(date);
+  return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+    .toISOString()
+    .split("T")[0];
+}
+
+function setQueryKeyAndQueryValue(setQueryValue, value, setQueryType, type, data, index) {
+  if(data[index].checked) {
+    setQueryValue(value);
+    setQueryType(type);
+  } else {
+    setQueryValue();
+    setQueryType(type);
+  }
+}

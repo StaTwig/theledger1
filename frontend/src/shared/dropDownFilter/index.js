@@ -4,7 +4,7 @@ import "./style.scss";
 
 const DropDownFilter = (props) => {
      return (
-        <div className={`card rounded bg-white border-white role-card-container`} style={{ left: '2rem' }}>
+        <div className={`card rounded bg-white border-white role-card-container`} style={{ left: '2rem', maxHeight: '250px' }}>
             <SearchBar
                 onChangeOfSearchInput={props.onChangeOfSearchInput}
                 type={props.type}

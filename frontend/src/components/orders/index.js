@@ -77,25 +77,34 @@ const Orders = (props) => {
   const [deliveryLocationReplicaData, setDeliveryLocationReplicaData] = useState([]);
   const [showDropDownForDeliveryLocation, setShowDropDownForDeliveryLocation] = useState(false);
 
+  const [selectedDate, setSelectedDate] = useState(false);
+
   const [queryKey, setQueryKey] = useState("");
   const [queryValue, setQueryValue] = useState("");
 
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const [orderSentToFilter, setOrderSentToFilter] = useState("");
+
   if (!isAuthenticated('viewInboundOrders') && !isAuthenticated('viewOutboundOrders')) props.history.push(`/profile`);
 
+  const getStartDate = (!!startDate && selectedDate) ? getFormatedDate(startDate) : '';
+  const getEndDate = (!!endDate && selectedDate) ? getFormatedDate(endDate) : '';
 
   useEffect(() => {
     if (queryKey && queryValue) {
       if (queryValue === 'orderSentTo') {
         if (visible === 'one') {
           async function fetchData() {
-            const outboundRes = await getSentPOs(queryKey, '', '', '', '', 0, limit, '', ''); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
+            const outboundRes = await getSentPOs(queryKey, orderIdFilter, productNameFilter, locationFilter, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
             setOutboundRecords(outboundRes.data.outboundPOs);
             setCount(outboundRes.data.count);
           }
           fetchData();
         } else {
           async function fetchData() {
-            const inboundRes = await getReceivedPOs(queryKey, '', '', '', '', 0, limit, '', ''); //from, orderId, productName, deliveryLocation, date,status, skip, limit
+            const inboundRes = await getReceivedPOs(queryKey, orderIdFilter, productNameFilter, locationFilter, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //from, orderId, productName, deliveryLocation, date,status, skip, limit
             setInboundRecords(inboundRes.data.inboundPOs);
             setCount(inboundRes.data.count);
           }
@@ -104,14 +113,14 @@ const Orders = (props) => {
       } else if (queryValue === 'orderId') {
         if (visible === 'one') {
           async function fetchData() {
-            const outboundRes = await getSentPOs('', queryKey, '', '', '', 0, limit, '', ''); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
+            const outboundRes = await getSentPOs(orderSentToFilter, queryKey, productNameFilter, locationFilter, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
             setOutboundRecords(outboundRes.data.outboundPOs);
             setCount(outboundRes.data.count);
           }
           fetchData();
         } else {
           async function fetchData() {
-            const inboundRes = await getReceivedPOs('', queryKey, '', '', '', 0, limit, '', ''); //from, orderId, productName, deliveryLocation, date,status, skip, limit
+            const inboundRes = await getReceivedPOs(orderSentToFilter, queryKey, productNameFilter, locationFilter, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //from, orderId, productName, deliveryLocation, date,status, skip, limit
             setInboundRecords(inboundRes.data.inboundPOs);
             setCount(inboundRes.data.count);
           }
@@ -120,14 +129,14 @@ const Orders = (props) => {
       } else if (queryValue === 'productName') {
         if (visible === 'one') {
           async function fetchData() {
-            const outboundRes = await getSentPOs('', '', queryKey, '', '', 0, limit, '', ''); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
+            const outboundRes = await getSentPOs(orderSentToFilter, orderIdFilter, queryKey, locationFilter, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
             setOutboundRecords(outboundRes.data.outboundPOs);
             setCount(outboundRes.data.count);
           }
           fetchData();
         } else {
           async function fetchData() {
-            const inboundRes = await getReceivedPOs('', '', queryKey, '', '', '', 0, limit, '', ''); //from, orderId, productName, deliveryLocation, date,status, skip, limit
+            const inboundRes = await getReceivedPOs(orderSentToFilter, orderIdFilter, queryKey, locationFilter, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //from, orderId, productName, deliveryLocation, date,status, skip, limit
             setInboundRecords(inboundRes.data.inboundPOs);
             setCount(inboundRes.data.count);
           }
@@ -136,14 +145,14 @@ const Orders = (props) => {
       } else if (queryValue === 'deliveryLocation') {
         if (visible === 'one') {
           async function fetchData() {
-            const outboundRes = await getSentPOs('', '', '', queryKey, '', 0, limit, '', ''); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
+            const outboundRes = await getSentPOs(orderSentToFilter, orderIdFilter, productNameFilter, queryKey, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
             setOutboundRecords(outboundRes.data.outboundPOs);
             setCount(outboundRes.data.count);
           }
           fetchData();
         } else {
           async function fetchData() {
-            const inboundRes = await getReceivedPOs('', '', '', queryKey, '', '', 0, limit, '', ''); //from, orderId, productName, deliveryLocation, date,status, skip, limit
+            const inboundRes = await getReceivedPOs(orderSentToFilter, orderIdFilter, productNameFilter, queryKey, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //from, orderId, productName, deliveryLocation, date,status, skip, limit
             setInboundRecords(inboundRes.data.inboundPOs);
             setCount(inboundRes.data.count);
           }
@@ -152,42 +161,32 @@ const Orders = (props) => {
       }
     } else {
       async function fetchData() {
-        if (visible == "one") {
-          setDateFilter("");
-          setProductNameFilter("");
-          setToFilter("");
-          setFromFilter("");
-          setOrderIdFilter("");
-          setStatusFilter("");
-          setLocationFilter("");
-          const outboundRes = await getSentPOs("", "", "", "", "", 0, limit, '', ''); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
+        if (visible === "one") {
+          setShowDropDownForDeliveryLocation(false);
+          setShowDropDownForOrderId(false);
+          setShowDropDownForOrderSentTo(false);
+          setShowDropDownForProductName(false);
+          setShowExportFilter(false);
+          setShowCalendar(false);
+          const outboundRes = await getSentPOs(orderSentToFilter, orderIdFilter, productNameFilter, queryKey, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
           setOutboundRecords(outboundRes.data.outboundPOs);
           setOutBoundData(outboundRes.data.outboundPOs);
           setCount(outboundRes.data.count);
         } else {
-          setDateFilter("");
-          setProductNameFilter("");
-          setToFilter("");
-          setFromFilter("");
-          setOrderIdFilter("");
-          setStatusFilter("");
-          setLocationFilter("");
-          const inboundRes = await getReceivedPOs(
-            "",
-            "",
-            "",
-            "",
-            "",
-            0,
-            limit,
-            '',
-            ''
-          ); //from, orderId, productName, deliveryLocation, date,status, skip, limit
+          setShowDropDownForDeliveryLocation(false);
+          setShowDropDownForOrderId(false);
+          setShowDropDownForOrderSentTo(false);
+          setShowDropDownForProductName(false);
+          setShowExportFilter(false);
+          setShowCalendar(false);
+          const inboundRes = await getReceivedPOs(orderSentToFilter, orderIdFilter, productNameFilter, queryKey, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //from, orderId, productName, deliveryLocation, date,status, skip, limit
           setInboundRecords(inboundRes.data.inboundPOs);
           setInBoundData(inboundRes.data.inboundPOs);
           setCount(inboundRes.data.count);
         }
 
+        setStartDate(prevState => !!prevState ? prevState : new Date());
+        setEndDate(prevState => !!prevState ? prevState : new Date());
         const orderIdListRes = await getOrderIds();
         setPoOrderIdList(orderIdListRes);
 
@@ -203,37 +202,52 @@ const Orders = (props) => {
       }
       fetchData();
     }
-  }, [visible, queryKey]);
+  }, [visible, queryKey, queryValue]);
 
 
   useEffect(() => {
-    console.log('outboundData: ', outBoundData);
     if (visible === 'one' && outBoundData && outBoundData.length > 0) {
-      setOrderSentToData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'supplier', 'organisation', 'id'))]);
-      setOrderSentToReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'supplier', 'organisation', 'id'))]);
-
-      setOrderIdData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
-      setOrderIdReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
-
-      setProductNameData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
-      setProductNameReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
-
-      setDeliveryLocationData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'customer', 'warehouse', 'id'))]);
-      setDeliveryLocationReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'customer', 'warehouse', 'id'))]);
-
+      if(!orderSentToFilter) {
+        setOrderSentToData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'supplier', 'organisation', 'id'))]);
+        setOrderSentToReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'supplier', 'organisation', 'id'))]);
+      }
+      
+      if(!orderIdFilter){
+        setOrderIdData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
+        setOrderIdReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
+      }
+     
+      if(!productNameFilter){
+        setProductNameData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
+        setProductNameReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
+      }
+     
+      if(!locationFilter){
+        setDeliveryLocationData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'customer', 'warehouse', 'id'))]);
+        setDeliveryLocationReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'customer', 'warehouse', 'id'))]);
+      }
+      
     } else if (visible === 'two' && inBoundData && inBoundData.length > 0) {
-      setOrderSentToData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'supplier', 'organisation', 'id'))]);
-      setOrderSentToReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'supplier', 'organisation', 'id'))]);
 
-      setOrderIdData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'id'))]);
-      setOrderIdReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'id'))]);
+      if(!orderSentToFilter){
+        setOrderSentToData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'supplier', 'organisation', 'id'))]);
+        setOrderSentToReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'supplier', 'organisation', 'id'))]);
+      }
 
-      setProductNameData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'id'))]);
-      setProductNameReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'id'))]);
-
+      if(!orderIdFilter){
+        setOrderIdData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'id'))]);
+        setOrderIdReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'id'))]);
+      }
+      
+      if(!productNameFilter){
+        setProductNameData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'id'))]);
+        setProductNameReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'id'))]);  
+      }
+      
+      if(!locationFilter){
       setDeliveryLocationData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'customer', 'warehouse', 'id'))]);
       setDeliveryLocationReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(inBoundData, 'customer', 'warehouse', 'id'))]);
-
+      }
     }
   }, [inBoundData, outBoundData]);
 
@@ -242,29 +256,31 @@ const Orders = (props) => {
     setSkip(recordSkip);
     if (visible == "one") {
       const outboundRes = await getSentPOs(
-        toFilter,
+        orderSentToFilter,
         orderIdFilter,
         productNameFilter,
         locationFilter,
         statusFilter,
         recordSkip,
         limit,
-        '',
-        ''
+        getStartDate,
+        getEndDate,
+        dateFilter
       ); //to, orderId, productName, deliveryLocation, date, skip, limit
       setOutboundRecords(outboundRes.data.outboundPOs);
       setCount(outboundRes.data.count);
     } else {
       const inboundRes = await getReceivedPOs(
-        fromFilter,
+        orderSentToFilter,
         orderIdFilter,
         productNameFilter,
         locationFilter,
         statusFilter,
         recordSkip,
         limit,
-        '',
-        ''
+        getStartDate,
+        getEndDate,
+        dateFilter
       ); //from, orderId, productName, deliveryLocation, date, skip, limit
       console.log(inboundRes.data.inboundPOs);
       setInboundRecords(inboundRes.data.inboundPOs);
@@ -301,32 +317,37 @@ const Orders = (props) => {
     setvisible(v);
     setAlerts(a);
   };
+
   const setDateFilterOnSelect = async (dateFilterSelected) => {
     setDateFilter(dateFilterSelected);
     setSkip(0);
     if (visible == "one") {
       const outboundRes = await getSentPOs(
-        toFilter,
+        orderSentToFilter,
         orderIdFilter,
         productNameFilter,
         locationFilter,
-        dateFilterSelected,
         statusFilter,
         0,
-        limit
+        limit,
+        getStartDate,
+        getEndDate,
+        dateFilterSelected
       ); //to, orderId, productName, deliveryLocation, date, skip, limit
       setOutboundRecords(outboundRes.data.outboundPOs);
       setCount(outboundRes.data.count);
     } else {
       const inboundRes = await getReceivedPOs(
-        fromFilter,
+        orderSentToFilter,
         orderIdFilter,
         productNameFilter,
         locationFilter,
-        dateFilterSelected,
         statusFilter,
         0,
-        limit
+        limit,
+        getStartDate,
+        getEndDate,
+        dateFilterSelected
       ); //from, orderId, productName, deliveryLocation, date, skip, limit
       setInboundRecords(inboundRes.data.inboundPOs);
       setCount(inboundRes.data.count);
@@ -430,33 +451,38 @@ const Orders = (props) => {
   };
 
   const setStatusFilterOnSelect = async (statusFilterSelected) => {
-    console.log(statusFilterSelected);
     setStatusFilter(statusFilterSelected);
     setSkip(0);
     if (visible == "one") {
       const outboundRes = await getSentPOs(
-        toFilter,
+        orderSentToFilter,
         orderIdFilter,
         productNameFilter,
         locationFilter,
         dateFilter,
         statusFilterSelected,
         0,
-        limit
+        limit,
+        getStartDate,
+        getEndDate,
+        dateFilter
       ); //to, orderId, productName, deliveryLocation, date,status, skip, limit
       console.log(outboundRes.data.outboundPOs);
       setOutboundRecords(outboundRes.data.outboundPOs);
       setCount(outboundRes.data.count);
     } else {
       const inboundRes = await getReceivedPOs(
-        fromFilter,
+        orderSentToFilter,
         orderIdFilter,
         productNameFilter,
         locationFilter,
         dateFilter,
         statusFilterSelected,
         0,
-        limit
+        limit,
+        getStartDate,
+        getEndDate,
+        dateFilter
       ); //from, orderId, productName, deliveryLocation, date, skip, limit
       console.log(inboundRes.data.inboundPOs);
       setInboundRecords(inboundRes.data.inboundPOs);
@@ -519,7 +545,6 @@ const Orders = (props) => {
       .toISOString()
       .split("T")[0];
     const HHMMSS_format = `${date.getHours()}${date.getMinutes()}`;
-    console.log(HHMMSS_format);
     if (visible === 'one') {
       return `Orders_outbound_${YYYYMMDD_format}_${HHMMSS_format}hrs.${value.toLowerCase() === 'excel' ? 'xlsx' : value.toLowerCase()}`
     } else {
@@ -554,36 +579,28 @@ const Orders = (props) => {
   }
 
   const filterTableByCalendar = async (selectedDateRange) => {
-    console.log(selectedDateRange);
+    setSelectedDate(true);
     const fromDate = new Date(selectedDateRange.startDate.getTime() - (selectedDateRange.startDate.getTimezoneOffset() * 60000))
       .toISOString()
       .split("T")[0];
+
+    setStartDate(() => new Date(fromDate));
 
     const toDate = new Date(selectedDateRange.endDate.getTime() - (selectedDateRange.endDate.getTimezoneOffset() * 60000))
       .toISOString()
       .split("T")[0];
 
-    console.log(toDate)
+    setEndDate(() => new Date(toDate));
 
     setShowCalendar(false);
     setSkip(0);
 
     if (visible == 'one') {
-      const outboundRes = await getSentPOs("", "", "", "", "", 0, limit, fromDate, toDate); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
+      const outboundRes = await getSentPOs(orderSentToFilter, orderIdFilter, productNameFilter, locationFilter, statusFilter, 0, limit, fromDate, toDate, dateFilter); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
       setOutboundRecords(outboundRes.data.outboundPOs);
       setCount(outboundRes.data.count);
     } else {
-      const inboundRes = await getReceivedPOs(
-        "",
-        "",
-        "",
-        "",
-        "",
-        0,
-        limit,
-        fromDate,
-        toDate
-      ); //from, orderId, productName, deliveryLocation, date,status, skip, limit
+      const inboundRes = await getReceivedPOs(orderSentToFilter, orderIdFilter, productNameFilter, locationFilter, statusFilter, 0, limit, fromDate, toDate, dateFilter); //from, orderId, productName, deliveryLocation, date,status, skip, limit
       setInboundRecords(inboundRes.data.inboundPOs);
       setCount(inboundRes.data.count);
     }
@@ -621,20 +638,40 @@ const Orders = (props) => {
     if (type === 'orderSentTo') {
       setOrderSentToData([...setCheckedAndUnCheckedOfProvidedList(orderSentToData, index)]);
       setQueryKeyAndQueryValue(setQueryKey, value, setQueryValue, type, orderSentToData, index);
+      if(orderSentToData[index].checked) {
+        setOrderSentToFilter(value);
+      } else {
+        setOrderSentToFilter('');
+      }
       markOpenedDrownsToFalse();
     } else if (type === 'orderId') {
       setOrderIdData([...setCheckedAndUnCheckedOfProvidedList(orderIdData, index)]);
       setQueryKeyAndQueryValue(setQueryKey, value, setQueryValue, type, orderIdData, index);
+      if(orderIdData[index].checked) {
+        setOrderIdFilter(value);
+      } else {
+        setOrderIdFilter('');
+      }
       markOpenedDrownsToFalse();
 
     } else if (type === 'product') {
       setProductNameData([...setCheckedAndUnCheckedOfProvidedList(productNameData, index)]);
       setQueryKeyAndQueryValue(setQueryKey, value, setQueryValue, type, productNameData, index);
+      if(productNameData[index].checked) {
+        setProductNameFilter(value);
+      } else {
+        setProductNameFilter('');
+      }
       markOpenedDrownsToFalse();
 
     } else if (type === 'deliveryLocation') {
       setDeliveryLocationData([...setCheckedAndUnCheckedOfProvidedList(deliveryLocationData, index)]);
       setQueryKeyAndQueryValue(setQueryKey, value, setQueryValue, type, deliveryLocationData, index);
+      if(deliveryLocationData[index].checked) {
+        setLocationFilter(value);
+      } else {
+        setLocationFilter('');
+      }
       markOpenedDrownsToFalse();
     }
   };
@@ -783,6 +820,8 @@ const Orders = (props) => {
           orderSentToData={orderSentToData}
           setShowDropDownForOrderSentTo={setShowDropDownForOrderSentTo}
           showDropDownForOrderSentTo={showDropDownForOrderSentTo}
+          startDate={startDate}
+          endDate={endDate}
         />
       </div>
       <div className="ribben-space">
@@ -800,6 +839,13 @@ const Orders = (props) => {
 };
 
 export default Orders;
+
+function getFormatedDate(date) {
+  date = new Date(date);
+  return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+    .toISOString()
+    .split("T")[0];
+}
 
 function setQueryKeyAndQueryValue(setQueryValue, value, setQueryType, type, data, index) {
   if (data[index].checked) {
