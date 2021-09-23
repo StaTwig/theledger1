@@ -565,6 +565,6 @@ function setQueryKeyAndQueryValue(setQueryValue, value, setQueryType, type, data
     setQueryType(type);
   } else {
     setQueryValue();
-    setQueryType();
+    setQueryType(type);
   }
 }

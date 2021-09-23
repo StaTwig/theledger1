@@ -168,7 +168,7 @@ const Orders = (props) => {
           setShowDropDownForProductName(false);
           setShowExportFilter(false);
           setShowCalendar(false);
-          const outboundRes = await getSentPOs(orderSentToFilter, orderIdFilter, productNameFilter, queryKey, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
+          const outboundRes = await getSentPOs(orderSentToFilter, orderIdFilter, productNameFilter, locationFilter, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //to, orderId, productName, deliveryLocation, date, statusFilter,skip, limit
           setOutboundRecords(outboundRes.data.outboundPOs);
           setOutBoundData(outboundRes.data.outboundPOs);
           setCount(outboundRes.data.count);
@@ -179,7 +179,7 @@ const Orders = (props) => {
           setShowDropDownForProductName(false);
           setShowExportFilter(false);
           setShowCalendar(false);
-          const inboundRes = await getReceivedPOs(orderSentToFilter, orderIdFilter, productNameFilter, queryKey, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //from, orderId, productName, deliveryLocation, date,status, skip, limit
+          const inboundRes = await getReceivedPOs(orderSentToFilter, orderIdFilter, productNameFilter, locationFilter, statusFilter, 0, limit, getStartDate, getEndDate, dateFilter); //from, orderId, productName, deliveryLocation, date,status, skip, limit
           setInboundRecords(inboundRes.data.inboundPOs);
           setInBoundData(inboundRes.data.inboundPOs);
           setCount(inboundRes.data.count);
@@ -191,7 +191,7 @@ const Orders = (props) => {
         setPoOrderIdList(orderIdListRes);
 
         const productsLocationsOrganisationsRes =
-          await getProductIdDeliveryLocationsOrganisations();
+        await getProductIdDeliveryLocationsOrganisations();
         // console.log('products location', productsLocationsOrganisationsRes);
         setPoDeliveryLocationsList(
           productsLocationsOrganisationsRes.deliveryLocations
@@ -217,9 +217,13 @@ const Orders = (props) => {
         setOrderIdReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
       }
      
+      //BLOCKING THIS FILTER AS SPECIFICS ARE NOT INCLUDED...
       if(!productNameFilter){
-        setProductNameData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
-        setProductNameReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
+        
+        // setProductNameData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
+        // setProductNameReplicaData([...prepareDropdownData(getUniqueStringFromOrgListForGivenType(outBoundData, 'id'))]);
+        setProductNameData([]);
+        setProductNameReplicaData([]);
       }
      
       if(!locationFilter){
@@ -282,7 +286,6 @@ const Orders = (props) => {
         getEndDate,
         dateFilter
       ); //from, orderId, productName, deliveryLocation, date, skip, limit
-      console.log(inboundRes.data.inboundPOs);
       setInboundRecords(inboundRes.data.inboundPOs);
       setCount(inboundRes.data.count);
     }
@@ -467,7 +470,7 @@ const Orders = (props) => {
         getEndDate,
         dateFilter
       ); //to, orderId, productName, deliveryLocation, date,status, skip, limit
-      console.log(outboundRes.data.outboundPOs);
+      
       setOutboundRecords(outboundRes.data.outboundPOs);
       setCount(outboundRes.data.count);
     } else {
@@ -484,7 +487,7 @@ const Orders = (props) => {
         getEndDate,
         dateFilter
       ); //from, orderId, productName, deliveryLocation, date, skip, limit
-      console.log(inboundRes.data.inboundPOs);
+      
       setInboundRecords(inboundRes.data.inboundPOs);
       setCount(inboundRes.data.count);
     }
@@ -635,6 +638,7 @@ const Orders = (props) => {
   }
 
   const onSelectionOfDropdownValue = (index, type, value) => {
+    
     if (type === 'orderSentTo') {
       setOrderSentToData([...setCheckedAndUnCheckedOfProvidedList(orderSentToData, index)]);
       setQueryKeyAndQueryValue(setQueryKey, value, setQueryValue, type, orderSentToData, index);
@@ -853,7 +857,7 @@ function setQueryKeyAndQueryValue(setQueryValue, value, setQueryType, type, data
     setQueryType(type);
   } else {
     setQueryValue();
-    setQueryType();
+    setQueryType(type);
   }
 }
 
