@@ -1,5 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "./style.scss";
+import Table from "../../shared/table";
+import TableFilter from "../../shared/advanceTableFilter";
+import { getInventoryAnalytics } from "../../actions/analyticsAction";
+import { getProductList } from "../../actions/productActions";
+import TotalInventoryAdded from "../../assets/icons/TotalInventoryAddedcopy.svg";
+import currentinventory from "../../assets/icons/CurrentInventory.svg";
+import Expiration from "../../assets/icons/TotalVaccinenearExpiration.svg";
+import TotalVaccineExpired from "../../assets/icons/TotalVaccineExpired.svg";
+import Add from "../../assets/icons/add.svg";
+import calender from "../../assets/icons/calendar.svg";
+import Status from "../../assets/icons/Status.svg";
+import Quantity from "../../assets/icons/Quantity.png";
+import Product from "../../assets/icons/Producttype.png";
+import { useDispatch } from "react-redux";
+import { getInventories } from "../../actions/inventoryActions";
+import { isAuthenticated } from "../../utils/commonHelper";
 
 import './style.scss';
 import Table from '../../shared/table';
@@ -42,11 +59,11 @@ const Inventory = props => {
 
   };
 
-  if (!isAuthenticated('viewInventory')) props.history.push(`/profile`);
+  if (!isAuthenticated("viewInventory")) props.history.push(`/profile`);
   const tableHeaders = {
-    coloumn1: 'Product Name',
-    // coloumn2: 'Manufacturer',
-    coloumn3: 'Quantity',
+    coloumn1: "Product Name",
+    coloumn2: "Product Category",
+    coloumn3: "Quantity",
   };
   const MAX_LENGTH = 20;
   const [inventoryNearExpiration, setInventoryNearExpiration] = useState('');
@@ -209,7 +226,10 @@ const Inventory = props => {
   };
 
   const setInventoryStatusFilterOnSelect = async (statusFilterSelected) => {
-    console.log("setInventoryStatusFilterOnSelect =========>", statusFilterSelected);
+    console.log(
+      "setInventoryStatusFilterOnSelect =========>",
+      statusFilterSelected
+    );
     setStatusFilter(statusFilterSelected);
     setSkip(0);
     dispatch(getInventories(0, limit, productNameFilter, productCategoryFilter, statusFilterSelected, getStartDate, getEndDate, dateFilter));  //(skip, limit, dateFilter, productName, productCategoryFilter, status)
@@ -290,18 +310,20 @@ const Inventory = props => {
 
 
   return (
-    <div className="inventory">
-      <div className="d-flex justify-content-between">
-        <h1 className="breadcrumb">INVENTORY </h1>
-        <div className="d-flex">
-          {isAuthenticated('addInventory') &&
-            <Link to="/newinventory">
-              <button className="btn btn-yellow mt-2">
-                <img src={Add} width="13" height="13" className="mr-2" />
-                <span><b>Add Inventory</b></span>
+    <div className='inventory'>
+      <div className='d-flex justify-content-between'>
+        <h2 className='breadcrumb'>INVENTORY </h2>
+        <div className='d-flex'>
+          {isAuthenticated("addInventory") && (
+            <Link to='/newinventory'>
+              <button className='btn btn-yellow mt-2'>
+                <img src={Add} width='13' height='13' className='mr-2' alt='' />
+                <span>
+                  <b>Add Inventory</b>
+                </span>
               </button>
             </Link>
-          }
+          )}
         </div>
       </div>
       {isAuthenticated('inventoryAnalytics') &&

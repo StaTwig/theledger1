@@ -11,7 +11,6 @@ import Package from "../../assets/icons/package.svg";
 import calender from "../../assets/icons/calendar.svg";
 import Order from "../../assets/icons/orders.svg";
 import Totalshipments from "../../assets/icons/TotalShipment.svg";
-import { useDispatch, useSelector } from "react-redux";
 import ExportIcon from "../../assets/icons/Export.svg";
 import dropdownIcon from "../../assets/icons/drop-down.svg";
 import ExcelPopUp from "./ExcelPopup";
@@ -22,14 +21,11 @@ import {
   getReceivedPOs,
   getOrderIds,
   getProductIdDeliveryLocationsOrganisations,
-  getPOs,
-  resetPOs,
-  resetReviewPos,
   getExportFile,
 } from "../../actions/poActions";
 import { config } from "../../config";
 import uuid from "react-uuid";
-import { isAuthenticated } from '../../utils/commonHelper';
+import { isAuthenticated } from "../../utils/commonHelper";
 
 const Orders = (props) => {
   const [menu, setMenu] = useState(false);
@@ -37,9 +33,9 @@ const Orders = (props) => {
   const [openExcel, setOpenExcel] = useState(false);
   const [visible, setvisible] = useState("one");
   const [skip, setSkip] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const [alerts, setAlerts] = useState(false);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [outboundRecords, setOutboundRecords] = useState([]);
   const [inboundRecords, setInboundRecords] = useState([]);
   const [dateFilter, setDateFilter] = useState("");
@@ -258,7 +254,7 @@ const Orders = (props) => {
   const onPageChange = async (pageNum) => {
     const recordSkip = (pageNum - 1) * limit;
     setSkip(recordSkip);
-    if (visible == "one") {
+    if (visible === "one") {
       const outboundRes = await getSentPOs(
         orderSentToFilter,
         orderIdFilter,
@@ -293,28 +289,28 @@ const Orders = (props) => {
   };
 
   const headers = {
-    coloumn1: visible == "one" ? "Order Sent To" : "Order CreatedBy",
+    coloumn1: visible === "one" ? "Order Sent To" : "Order CreatedBy",
     coloumn2: "Order Date",
     coloumn3: "Order ID",
     coloumn4: "Product",
     coloumn5: "Delivery Location",
     coloumn6: "Status",
 
-    img1: <img src={mon} width="16" height="16" />,
-    img2: <img src={calender} width="16" height="16" />,
-    img3: <img src={Order} width="18" height="16" />,
-    img4: <img src={Package} width="16" height="16" />,
-    img5: <img src={Totalshipments} width="18" height="18" />,
-    img6: <img src={Status} width="16" height="16" />,
+    img1: <img src={mon} width='16' height='16' alt='' />,
+    img2: <img src={calender} width='16' height='16' alt='' />,
+    img3: <img src={Order} width='18' height='16' alt='' />,
+    img4: <img src={Package} width='16' height='16' alt='' />,
+    img5: <img src={Totalshipments} width='18' height='18' alt='' />,
+    img6: <img src={Status} width='16' height='16' alt='' />,
   };
 
   const closeExcelModal = () => {
     setOpenExcel(false);
   };
 
-  const closeModal = () => {
-    setOpenCreatedOrder(false);
-  };
+  // const closeModal = () => {
+  //   setOpenCreatedOrder(false);
+  // };
 
   const setData = (v, a = false) => {
     setvisible(v);
@@ -324,7 +320,7 @@ const Orders = (props) => {
   const setDateFilterOnSelect = async (dateFilterSelected) => {
     setDateFilter(dateFilterSelected);
     setSkip(0);
-    if (visible == "one") {
+    if (visible === "one") {
       const outboundRes = await getSentPOs(
         orderSentToFilter,
         orderIdFilter,
@@ -360,7 +356,7 @@ const Orders = (props) => {
   const setLocationFilterOnSelect = async (locationFilterSelected) => {
     setLocationFilter(locationFilterSelected);
     setSkip(0);
-    if (visible == "one") {
+    if (visible === "one") {
       const outboundRes = await getSentPOs(
         toFilter,
         orderIdFilter,
@@ -392,7 +388,7 @@ const Orders = (props) => {
   const setProductNameFilterOnSelect = async (productNameFilterSelected) => {
     setProductNameFilter(productNameFilterSelected);
     setSkip(0);
-    if (visible == "one") {
+    if (visible === "one") {
       const outboundRes = await getSentPOs(
         toFilter,
         orderIdFilter,
@@ -424,7 +420,7 @@ const Orders = (props) => {
   const setOrderIdNameFilterOnSelect = async (orderIdFilterSelected) => {
     setOrderIdFilter(orderIdFilterSelected);
     setSkip(0);
-    if (visible == "one") {
+    if (visible === "one") {
       const outboundRes = await getSentPOs(
         toFilter,
         orderIdFilterSelected,
@@ -456,7 +452,7 @@ const Orders = (props) => {
   const setStatusFilterOnSelect = async (statusFilterSelected) => {
     setStatusFilter(statusFilterSelected);
     setSkip(0);
-    if (visible == "one") {
+    if (visible === "one") {
       const outboundRes = await getSentPOs(
         orderSentToFilter,
         orderIdFilter,
@@ -497,7 +493,7 @@ const Orders = (props) => {
     setFromFilter(fromToFilterSelected);
     setToFilter(fromToFilterSelected);
     setSkip(0);
-    if (visible == "one") {
+    if (visible === "one") {
       const outboundRes = await getSentPOs(
         fromToFilterSelected,
         orderIdFilter,
@@ -527,7 +523,7 @@ const Orders = (props) => {
   };
 
   const sendData = () => {
-    let rtnArr = visible == "one" ? outboundRecords : inboundRecords;
+    let rtnArr = visible === "one" ? outboundRecords : inboundRecords;
     if (alerts)
       rtnArr = rtnArr.filter((row) => row?.shipmentAlerts?.length > 0);
     return rtnArr ? rtnArr : [];
@@ -557,12 +553,16 @@ const Orders = (props) => {
 
   const onSelectionOfExportDropdown = (index, type, value) => {
     setShowExportFilter(false);
-    let url = ''
-    if (visible === 'one') {
-      url = `${config().getExportFileForOutboundPurchaseOrdersUrl}?type=${value.toLowerCase()}`;
+    let url = "";
+    if (visible === "one") {
+      url = `${
+        config().getExportFileForOutboundPurchaseOrdersUrl
+      }?type=${value.toLowerCase()}`;
     }
-    if (visible === 'two') {
-      url = `${config().getExportFileForInboundPurchaseOrdersUrl}?type=${value.toLowerCase()}`;
+    if (visible === "two") {
+      url = `${
+        config().getExportFileForInboundPurchaseOrdersUrl
+      }?type=${value.toLowerCase()}`;
     }
 
     getExportFile(url)
@@ -715,58 +715,71 @@ const Orders = (props) => {
 
 
   return (
-    <div className="orders">
-      <div className="d-flex justify-content-between">
-        <h1 className="breadcrumb">YOUR ORDERS</h1>
-        <div className="d-flex">
-          {isAuthenticated('createOrder') &&
-            <Link to="/neworder">
-              <button className="btn btn-orange fontSize20 font-bold mt-1">
+    <div className='orders'>
+      <div className='d-flex justify-content-between'>
+        <h1 className='breadcrumb'>YOUR ORDERS</h1>
+        <div className='d-flex'>
+          {isAuthenticated("createOrder") && (
+            <Link to='/neworder'>
+              <button className='btn btn-orange fontSize20 font-bold mt-1'>
                 <img
                   src={OrderIcon}
-                  width="20"
-                  height="17"
-                  className="mr-2 mb-1"
+                  width='20'
+                  height='17'
+                  className='mr-2 mb-1'
+                  alt=''
                 />
                 <span style={{ color: "white" }}>
                   <b>Create New Order</b>
                 </span>
               </button>
             </Link>
-          }
+          )}
 
           {/* <div className="d-flex flex-column align-items-center"> */}
-          {isAuthenticated('importOrder') &&
+          {isAuthenticated("importOrder") && (
             <button
-              className="btn-primary btn fontSize20 font-bold mt-1 ml-2"
+              className='btn-primary btn fontSize20 font-bold mt-1 ml-2'
               onClick={() => setMenu(!menu)}
             >
-              <div className="d-flex align-items-center">
-                <img src={ExportIcon} width="16" height="16" className="mr-2" />
+              <div className='d-flex align-items-center'>
+                <img
+                  src={ExportIcon}
+                  width='16'
+                  height='16'
+                  className='mr-2'
+                  alt=''
+                />
                 <span>
                   <b>Import</b>
                 </span>
-                <img src={dropdownIcon} width="14" height="14" className="ml-2" />
+                <img
+                  src={dropdownIcon}
+                  width='14'
+                  height='14'
+                  className='ml-2'
+                  alt=''
+                />
               </div>
             </button>
-          }
+          )}
           {menu ? (
-            <div class="menu">
+            <div className='menu'>
               <button
-                className=" btn btn-outline-info mb-2 "
+                className=' btn btn-outline-info mb-2 '
                 onClick={() => setOpenExcel(true)}
               >
                 {" "}
                 Excel
               </button>
-              <button className=" btn btn-outline-info"> Other</button>
+              <button className=' btn btn-outline-info'> Other</button>
             </div>
           ) : null}
           {openExcel && (
             <Modal
-              title="Import"
+              title='Import'
               close={() => closeExcelModal()}
-              size="modal-md" //for other size's use `modal-lg, modal-md, modal-sm`
+              size='modal-md' //for other size's use `modal-lg, modal-md, modal-sm`
             >
               <ExcelPopUp
                 {...props}
@@ -780,13 +793,13 @@ const Orders = (props) => {
           {/* </div> */}
         </div>
       </div>
-      {isAuthenticated('orderAnalytics') &&
+      {isAuthenticated("orderAnalytics") && (
         <Tiles {...props} setData={setData} />
       }
       <div className="mt-4">
         <Tabs {...props} setvisible={setvisible} visible={visible} setShowExportFilter={setShowExportFilter} />
       </div>
-      <div className="full-width-ribben mt-4">
+      <div className='full-width-ribben mt-4'>
         <TableFilter
           visible={visible}
           data={headers}
@@ -800,7 +813,7 @@ const Orders = (props) => {
           setProductNameFilterOnSelect={setProductNameFilterOnSelect}
           setLocationFilterOnSelect={setLocationFilterOnSelect}
           setDateFilterOnSelect={setDateFilterOnSelect}
-          fb="76%"
+          fb='76%'
           showExportFilter={showExportFilter}
           setShowExportFilter={setShowExportFilter}
           exportFilterData={exportFilterData}
@@ -828,7 +841,7 @@ const Orders = (props) => {
           endDate={endDate}
         />
       </div>
-      <div className="ribben-space">
+      <div className='ribben-space'>
         <Table
           {...props}
           skip={skip}

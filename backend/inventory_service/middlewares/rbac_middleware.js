@@ -1,5 +1,9 @@
 const redis = require("redis");
-const client = redis.createClient(process.env.REDIS_URL);
+const client = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT || 6379,
+  password: process.env.REDIS_PASSWORD,
+});
 
 client.on("connect", () => {
   console.log("Connected to Redis");
@@ -49,6 +53,26 @@ const checkPermissions = async (request, next) => {
   }
 };
 
+const checkPermissionAwait = async (request) => {
+  try {
+    const required_permission = request["permissionRequired"];
+    const request_role = request["role"];
+    for (var i = 0; i < required_permission.length; i++) {
+      const result = await member(request_role, required_permission[i]);
+      if (result === 1) {
+        return true;
+      } else {
+        if (i === required_permission.length - 1) {
+          return false;
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
 module.exports = {
   checkPermissions: checkPermissions,
+  checkPermissionAwait: checkPermissionAwait,
 };

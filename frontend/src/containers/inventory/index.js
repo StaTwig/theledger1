@@ -5,11 +5,10 @@ import Sidebar from '../../shared/sidebarMenu';
 import { useDispatch, useSelector } from "react-redux";
 import { getInventories, resetInventories, getInventoryDetails, getTransactionFilterList } from "../../actions/inventoryActions";
 
-const InventoryContainer = props => {
+const InventoryContainer = (props) => {
   const dispatch = useDispatch();
 
   const [skip, setSkip] = useState(0);
-  const [limit, setLimit] = useState(5);
   const [inventoryFilterData, setInventoryFilterData] = useState([]);
   const [inventoryList, setInventoryList] = useState([]);
 
@@ -27,7 +26,7 @@ const InventoryContainer = props => {
 
   // const [loadMore, setLoadMore] = useState(true);
 
-  const inventories = useSelector(state => {
+  const inventories = useSelector((state) => {
     return state.inventories;
   });
   const inventoryDetails = useSelector(state => {
@@ -41,9 +40,9 @@ const InventoryContainer = props => {
 
 
   return (
-    <div className="container-fluid p-0">
+    <div className='container-fluid p-0'>
       <Header {...props} />
-      <div className="d-flex">
+      <div className='d-flex'>
         <Sidebar {...props} />
         <div className="content">
           <Inventory

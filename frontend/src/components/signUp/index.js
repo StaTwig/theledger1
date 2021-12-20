@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import DropdownButton from "../../shared/dropdownButtonGroup";
 import { getOrganisations } from "../../actions/productActions";
 import { getOrganizationsByType } from "../../actions/userActions";
 import { Formik } from "formik";
@@ -8,22 +7,20 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./style.scss";
-import Key from "../../assets/icons/key.png";
 import User from "../../assets/icons/user.png";
 import Mail from "../../assets/icons/mail.png";
 import Phone from "../../assets/icons/phone.png";
-import hide from "../../assets/icons/hide.png";
-import eye from "../../assets/icons/eye.png";
 import org from "../../assets/icons/org.png";
 import Waiting from "../../assets/icons/waiting.png";
 import organisationType from "../../assets/icons/organisationType.png";
 import logo from "../../assets/brands/VaccineLedgerlogo.svg";
-import dropdownIcon from "../../assets/icons/dropdown_selected.png";
 import TextField from "@material-ui/core/TextField";
 import { verifyEmailAndPhoneNo } from "../../actions/userActions";
 import { Alert, AlertTitle } from "@material-ui/lab";
+import { useTranslation } from 'react-i18next';
 
 const FormPage = (props) => {
+  const { t, i18n } = useTranslation();
   const [organisations, setOrganisations] = useState([]);
   const [organisationsType, setOrganisationsType] = useState([]);
   const [organisationsArr, setOrganisationsArr] = useState([]);
@@ -42,11 +39,12 @@ const FormPage = (props) => {
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [checker, setChecker] = useState(true);
+  const other = t('other');
   useEffect(() => {
     async function fetchData() {
       const orgs = await getOrganisations();
-
-      orgs.push({ id: "Other", name: "Other" });
+      
+      orgs.push({ id: t('other'), name: t('other') });
       setOrganisations(orgs);
       setOrganisationsArr(orgs);
     }
@@ -58,7 +56,6 @@ const FormPage = (props) => {
     }
     // async function check(){
     //   const data = await verifyEmailAndPhoneNo("phoneNumber=919461132817");
-    //   console.log(data);
     // }
     // check();
     fetchOrganisationType();
@@ -71,8 +68,8 @@ const FormPage = (props) => {
     }
   });
   const showOrgByType = (value) => {
-    let arr = organisations.filter((data) => data.type == value);
-    arr.push({ name: "Other" });
+    let arr = organisations.filter((data) => data.type === value);
+    arr.push({ name: t('other') });
     return arr;
   };
 
@@ -85,48 +82,31 @@ const FormPage = (props) => {
     let orgs = organisationsArr.filter((org) =>
       org.name.toLowerCase().includes(value_new.toLowerCase())
     );
-    // orgs.push({ id: 0, name: 'Other' });
     setOrganisations(orgs);
-    // console.log(organisations);
-
     if (
       organisationsArr.filter(
-        (org) => org.name.toLowerCase() == value_new.toLowerCase()
+        (org) => org.name.toLowerCase() === value_new.toLowerCase()
       ).length &&
-      value_new != "Other"
+      value_new !== t('other')
     )
       props.onOrgChange(false);
     else {
       props.onOrgChange(true);
       if (e) {
-        setValue("Other");
+        setValue(t('other'));
       }
     }
-
     props.onOrganisationChange({ id: 0, name: value_new });
   };
 
-  // console.log(firstName);
-  // console.log(lastName);
-  // console.log(orgType);
-  // console.log(email);
-  // console.log(value);
-  // console.log(mobileNumber);
   if (
     checker &&
-    firstName.length > 0 &&
-    lastName.length > 0 &&
-    orgType.length > 0 &&
-    value.length > 0 &&
-    (email.length > 0 || mobileNumber.length > 0)
+    firstName?.length > 0 &&
+    lastName?.length > 0 &&
+    orgType?.length > 0 &&
+    value?.length > 0 &&
+    (email?.length > 0 || mobileNumber?.length > 0)
   ) {
-    console.log("Entered");
-    console.log(firstName);
-    console.log(lastName);
-    console.log(orgType);
-    console.log(email);
-    console.log(value);
-    console.log(mobileNumber);
     setsignupDisable(false);
     setChecker(false);
   }
@@ -134,18 +114,18 @@ const FormPage = (props) => {
   return (
     <div className='login-wrapper'>
       <div className='container'>
-        {/* <div className="mobile-header ">
-          <div className="branding">
-            <img src={logo} alt="vaccineledger" />
+        <div className='mobile-header '>
+          <div className='branding'>
+            <img src={logo} alt='vaccineledger' />
           </div>
-        </div> */}
+        </div>
 
         <div className='row'>
           <div className='col-m-6 col-lg-6'>
             <div className='form-content'>
-              <img className='logo' src={logo} />
-              <h1>Welcome,</h1>
-              <p>Signup to continue</p>
+              <img className='logo' src={logo} alt='Logo' />
+              <h1>{t('welcome')},</h1>
+              <p>{t('signup')} {t('to')} {t('continue').toLowerCase()}</p>
             </div>
           </div>
           <div className='col-m-6 col-lg-6'>
@@ -160,8 +140,7 @@ const FormPage = (props) => {
                     className='align-self-center mt-5 mb-2'
                   />
                   <div className='font-weight-bold align-self-center text-center ml-2 mr-2 mb-3 approve'>
-                    Request is pending and you will receive an email/sms after
-                    approval
+                    {t('signup_success_message')}
                   </div>
                 </>
               ) : (
@@ -178,12 +157,11 @@ const FormPage = (props) => {
                     }}
                     validate={(values) => {
                       const errors = {};
-                      console.log(values);
                       if (!values.firstName) {
-                        errors.firstName = "Required";
+                        errors.firstName = t('required');
                       }
                       if (!values.lastName) {
-                        errors.lastName = "Required";
+                        errors.lastName = t('required');
                       }
                       //if (!values.email) {
                       // errors.email = "Required";
@@ -192,7 +170,7 @@ const FormPage = (props) => {
                       //    errors.phone = "Required";
                       //  }
                       if (!values.org) {
-                        errors.org = "Required";
+                        errors.org = t('required');
                       }
                       return errors;
                     }}
@@ -214,7 +192,7 @@ const FormPage = (props) => {
                     }) => (
                       <form onSubmit={handleSubmit} className='mb-5'>
                         <div className='login-form mt-1 pl-5 pr-5 ml-5'>
-                          <div className='card-title mr-5'>Signup</div>
+                              <div className='card-title mr-5'>{t('signup')}</div>
                           <div className='form-group flex-column '>
                             <div
                               style={{
@@ -233,13 +211,12 @@ const FormPage = (props) => {
 
                             <TextField
                               id='standard-basic'
-                              label='First Name'
+                              label={t('first_name')}
                               className='form-controll ml-4'
                               name='firstName'
                               value={props.firstName}
                               onChange={(e) => {
                                 setChecker(true);
-                                console.log(e.target.value.length);
                                 if (e.target.value.length > 0) {
                                   setFirstNameError(false);
                                 } else {
@@ -258,7 +235,7 @@ const FormPage = (props) => {
 
                             {firstNameError && (
                               <span className='error-msg text-dangerS'>
-                                First Name is required
+                                {t('first_name')} {t('is')} {t('required')}
                               </span>
                             )}
                           </div>
@@ -283,13 +260,12 @@ const FormPage = (props) => {
                             </div>
                             <TextField
                               id='standard-basic'
-                              label='Last Name'
+                              label={t('last_name')}
                               className=' form-controll ml-4'
                               name='lastName'
                               value={props.lastName}
                               onChange={(e) => {
                                 setChecker(true);
-                                console.log(e.target.value.length);
                                 if (e.target.value.length > 0) {
                                   setLastNameError(false);
                                 } else {
@@ -308,7 +284,7 @@ const FormPage = (props) => {
 
                             {lastNameError && (
                               <span className='error-msg text-dangerS'>
-                                Last Name is required
+                                {t('last_name')} {t('is')} {t('required')}
                               </span>
                             )}
                           </div>
@@ -333,18 +309,16 @@ const FormPage = (props) => {
                             </div>
                             <TextField
                               id='standard-basic'
-                              label='Email ID'
+                              label={t('email_id')}
                               className='form-controll ml-4'
                               name='email'
                               autoCapitalize='none'
                               value={props.email.toLowerCase()}
                               onChange={(e) => {
                                 setChecker(true);
-                                console.log(e.target.value);
                                 if (e.target.value.length > 0) {
                                   setPhoneNumberError(false);
                                   setMailError(false);
-                                  console.log(mailError);
                                 } else {
                                   setsignupDisable(true);
                                 }
@@ -377,12 +351,12 @@ const FormPage = (props) => {
                             )}
                             {emailError && (
                               <span className='error-msg text-dangerS'>
-                                Email ID Already registered
+                                {t('email_id')} {t('already')} {t('registered')}
                               </span>
                             )}
                             {phoneNumberError && (
                               <span className='error-msg text-dangerS'>
-                                Phone Number or Email ID is required
+                                {t('phone_number')} {t('or')} {t('email_id')} {t('is')} {t('required')}
                               </span>
                             )}
                           </div>
@@ -412,7 +386,7 @@ const FormPage = (props) => {
 
                             <PhoneInput
                               country={"in"}
-                              placeholder='Enter Phone number'
+                              placeholder={t('enter_phone_number')}
                               inputProps={{
                                 name: "phone",
                                 required: false,
@@ -435,8 +409,6 @@ const FormPage = (props) => {
                                   ? verifyEmailAndPhoneNo(
                                       `phoneNumber=${props.phone}`
                                     ).then((v) => {
-                                      console.log("Hi");
-                                      console.log(v.data, "Data");
                                       if (v.data[0].phoneNumber) {
                                         setphoneerror(true);
                                         // setsignupDisable(true);
@@ -456,12 +428,12 @@ const FormPage = (props) => {
                           )}
                           {phoneError && (
                             <span className='error-msg text-dangerS'>
-                              Mobile No. Already registered
+                              {t('phone_number')} {t('already')} {t('registered')}
                             </span>
                           )}
                           {phoneNumberError && (
                             <span className='error-msg text-dangerS'>
-                              Phone Number or Email ID is required
+                             {t('phone_number')} {t('or')} {t('email_id')} {t('is')} {t('required')}
                             </span>
                           )}
 
@@ -501,9 +473,7 @@ const FormPage = (props) => {
                                 value={orgType}
                                 onChange={(event, item) => {
                                   setChecker(true);
-                                  console.log("Hi");
                                   if (firstName.length <= 0) {
-                                    console.log("Hi1");
                                     setFirstNameError(true);
                                   }
                                   if (lastName.length <= 0) {
@@ -528,7 +498,7 @@ const FormPage = (props) => {
                                 renderInput={(params) => (
                                   <TextField
                                     {...params}
-                                    label='Organisation Type'
+                                    label={t('organisation') + " " + t('type')}
                                   />
                                 )}
                               />
@@ -553,10 +523,8 @@ const FormPage = (props) => {
                       placeholder='Organisation Type'
                       onSelect={item => {
                         setChecker(true);
-                        console.log('Hi');
                         if(firstName.length<=0)
                         {
-                          console.log("Hi1");
                           setFirstNameError(true);
                         }
                         if(lastName.length <=0)
@@ -623,12 +591,7 @@ const FormPage = (props) => {
                             >
                               <Autocomplete
                                 onChange={(event, item) => {
-                                  console.log(item, "item-------------");
-                                  console.log(
-                                    "lastName Length " + lastName.length
-                                  );
                                   if (firstName.length <= 0) {
-                                    console.log("Hi1");
                                     setFirstNameError(true);
                                   }
                                   if (lastName.length <= 0) {
@@ -642,11 +605,11 @@ const FormPage = (props) => {
                                   }
                                   setFieldValue("org", item);
                                   props.onOrganisationChange(item);
-                                  if (item.name != "Other") {
+                                  if (item.name !== t('other')) {
                                     setValue(item.name);
                                     props.onOrgChange(false);
                                   }
-                                  if (item.name == "Other") {
+                                  if (item.name === t('other')) {
                                     props.onOrgChange(true);
 
                                     if (
@@ -665,12 +628,12 @@ const FormPage = (props) => {
                                 }}
                                 id='debug'
                                 debug
-                                getOptionLabel={(option) => option.name}
+                                getOptionLabel={(option) => option.name.toLocaleLowerCase()}
                                 options={showOrgByType(selectedType)}
                                 renderInput={(params) => (
                                   <TextField
                                     {...params}
-                                    label='Organisation Name'
+                                    label={t('organisation')+" "+t('name')}
                                   />
                                 )}
                               />
@@ -681,10 +644,8 @@ const FormPage = (props) => {
                     isText={true}
                     placeholder='Organisation Name'
                     onSelect={item => {
-                      console.log("lastName Length " + lastName.length);
                       if(firstName.length<=0)
                       {
-                        console.log("Hi1");
                         setFirstNameError(true);
                       }
                       if(lastName.length <=0)
@@ -717,7 +678,6 @@ const FormPage = (props) => {
                     }}
                     groups={showOrgByType(selectedType)}
                         //   changeFn={(v, e = '') => {
-                        //     console.log(v);
                         //     setFieldValue('org', v); 
                         //     changeFn(v, e);
                         //  }}
@@ -738,7 +698,7 @@ const FormPage = (props) => {
                             <div className='mt-3 mr-4'>
                               {" "}
                               <Alert variant='filled' severity='error'>
-                                <AlertTitle>Error</AlertTitle>
+                                <AlertTitle>{t('error')}</AlertTitle>
                                 {props.errorMessage}
                               </Alert>
                             </div>
@@ -746,19 +706,18 @@ const FormPage = (props) => {
 
                           <div className='text-center'>
                             <br></br>
-                            {console.log(signupDisable)}
                             <button
                               type='submit'
                               className='buttonS btn btn-primary mr-5'
                               disabled={signupDisable}
                             >
-                              SIGNUP
+                              {t('signup')}
                             </button>
                           </div>
                           <div className='signup-link text-center mt-3 mb-4 mr-5'>
-                            Already have an Account?{" "}
+                                {t('already')} {t('have')} {t('an')} {t('account')}?{" "}
                             <Link to='/login'>
-                              <b>Login</b>
+                              <b>{t('login')}</b>
                             </Link>
                           </div>
                         </div>
