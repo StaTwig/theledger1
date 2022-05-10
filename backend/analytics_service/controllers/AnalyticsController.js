@@ -1,6 +1,6 @@
 const RecordModel = require("../models/RecordModel");
 const AtomModel = require("../models/AtomModel");
-const ShipmentModel = require("../models/ShipmentModel");
+			const ShipmentModel = require("../models/ShipmentModel");
 const InventoryModel = require("../models/InventoryModel");
 const ProductModel = require("../models/ProductModel");
 const POModel = require("../models/POModel");

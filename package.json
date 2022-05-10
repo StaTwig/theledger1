@@ -1,0 +1,23 @@
+{
+  "name": "theledger",
+  "version": "1.0.0",
+  "description": "theledger repo",
+  "main": "index.js",
+  "repository": "https://gitlab.com/statwig-public/theledger",
+  "author": "Ravilochan <ravilochan2000@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run pretest"
+    }
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^12.4.1"
+  }
+}
