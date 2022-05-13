@@ -8,11 +8,11 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
+    "pretest": "./node_modules/.bin/eslint --ignore-path . --fix"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run pretest"
+      "pre-commit": "yarn run pretest"
     }
   },
   "devDependencies": {
