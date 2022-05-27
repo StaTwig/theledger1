@@ -26,6 +26,12 @@ const SoChainOfCustody = (props) => {
 
   const isShipment = !update?.isOrder;
 
+  const updatedDate = () => {
+    const dateArr = update.updatedOn.split("/");
+    const date = dateArr[1] + "/" + dateArr[0] + "/" + dateArr[2];
+    return date
+  }
+
   return (
     <>
       {op >= level ? (
@@ -88,7 +94,7 @@ const SoChainOfCustody = (props) => {
                     {new Date(update.updatedOn).toDateString()}
                   </div>
                   <div className='text-muted'>
-                    {formatTimeAMPM(new Date(update.updatedOn).toString().split(" ")[4])}
+                    {formatTimeAMPM(new Date(updatedDate()).toString().split(" ")[4])}
                   </div>
                 </div>
               </div>
